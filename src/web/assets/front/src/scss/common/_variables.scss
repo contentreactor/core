@@ -1,0 +1,44 @@
+$map: (
+  'black': #000000,
+  'white': #ffffff
+);
+
+$weights: (
+  thin: 100,
+  extra-light: 200,
+  ultra-light: 200,
+  light: 300,
+  regular: 400,
+  medium: 500,
+  semi-bold: 600,
+  bold: 700,
+  extra-bold: 800,
+  black: 900
+);
+
+// spacing in rem
+$spaceamounts: (
+ '0': 0,
+ '16': 1,
+);
+
+$sides: (
+  "": "all",
+  "t": "top",
+  "b": "bottom",
+  "l": "left",
+  "r": "right",
+);
+
+
+@each $space in $spaceamounts {
+  @each $prefix, $value in $sides {
+    $property: if($prefix == '', '', -#{$value});
+    .m-#{$prefix}#{$space} {
+      margin#{$property}: #{$space}px;
+    }
+    .p-#{$prefix}#{$space} {
+      padding#{$property}: #{$space}px;
+    }
+  }
+}

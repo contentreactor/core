@@ -1,0 +1,46 @@
+{
+    "name": "developion/core",
+    "description": "Developion Template plugin for site.",
+    "type": "craft-plugin",
+    "version": "0.1.0",
+    "license": "proprietary",
+    "support": {
+        "docs": "https://www.developion.com/#",
+        "issues": "https://www.developion.com/#"
+    },
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "developion"
+    ],
+    "authors": [
+        {
+            "name": "Developion",
+            "homepage": "https://www.developion.com/"
+        },
+        {
+            "name": "Dukas",
+            "email": "dusan.stojnic@developion.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {
+            "Developion\\Core\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Developion Core",
+        "handle": "developion-core",
+        "developer": "Developion",
+        "developerUrl": "https://www.developion.com/",
+        "documentationUrl": "https://www.developion.com/#",
+        "changelogUrl": "https://www.developion.com/#",
+        "class": "Developion\\Core\\Core"
+    }
+}
