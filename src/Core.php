@@ -55,31 +55,6 @@ class Core extends Plugin
 
 	protected function _cpEvents()
 	{
-        Event::on(
-            ClearCaches::class,
-            ClearCaches::EVENT_REGISTER_CACHE_OPTIONS,
-            function (RegisterCacheOptionsEvent $event) {
-                $options = $event->options;
-                $options[] = [
-                    'key' => 'api-storage',
-                    'label' => 'API Images',
-                    'info' => 'Clears any image files generated from the API.',
-                    'action' => function() {
-                        $path = CRAFT_BASE_PATH . "/web/api-render";
-                        FileHelper::clearDirectory($path);
-                        $event = new DeleteRenderedContentEvent(['pages' => []]);
-                        Event::trigger(
-                            DeleteRenderedContentEvent::class,
-                            DeleteRenderedContentEvent::EVENT_AFTER_DELETE_RENDERED_CONTENT,
-                            $event
-                        );
-                        Queue::push(new RenderContent($event->pages));
-                    },
-                ];
-                $event->options = $options;
-                return $event;
-            }
-        );
 	}
 
 	protected function _siteEvents()
