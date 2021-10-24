@@ -28,6 +28,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
+        "craftcms/cms": "^3.7"
     },
     "autoload": {
         "psr-4": {

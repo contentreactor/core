@@ -3,22 +3,36 @@
 namespace Developion\Core\web\twig;
 
 use Craft;
-use craft\elements\Entry;
 use craft\elements\Asset;
-use craft\helpers\ArrayHelper;
+use craft\elements\Entry;
 use craft\helpers\UrlHelper;
-use craft\image\Raster;
-use craft\web\View;
-use Developion\Core\web\AssetManager;
-use Twig\Environment;
+use craft\services\Security;
+use Developion\Core\Core;
+use Developion\Core\services\ImagesService;
+use GuzzleHttp\Client;
 use Twig\Extension\AbstractExtension;
-use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
-use Yii;
 
-class Extension extends AbstractExtension implements GlobalsInterface
+class Extension extends AbstractExtension
 {
+    /** @var ImagesService $images */
+    protected $images;
+
+    public function __construct()
+    {
+        $this->images = Core::$plugin->images;
+    }
+    /**
+     * Return our Twig Extension name
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return 'Core';
+    }
+
     /**
      * Return our Twig functions
      *
@@ -28,9 +42,8 @@ class Extension extends AbstractExtension implements GlobalsInterface
     {
         return [
             new TwigFunction('baseUrl', [UrlHelper::class, 'rootRelativeUrl']),
-            new TwigFunction('storeImage', [$this, 'storeImage']),
-            new TwigFunction('storeImageExternal', [$this, 'storeImageExternal']),
-            new TwigFunction('field', [$this, 'renderFormMacro'], ['is_safe' => ['html']]),
+            new TwigFunction('image', [$this, 'imageFunction']),
+            new TwigFunction('fetch', [$this, 'fetch']),
         ];
     }
 
@@ -42,51 +55,130 @@ class Extension extends AbstractExtension implements GlobalsInterface
     public function getFilters(): array
     {
         return [
-            new TwigFilter('sluggifyCamel', [$this, 'sluggifyCamel']),
-            new TwigFilter('readTime', [$this, 'readTime'])
+            new TwigFilter('readTime', [$this, 'readTimeFilter']),
+            new TwigFilter('splice', [$this, 'spliceFilter'])
         ];
     }
 
     /**
-     * Return our Twig Extension name
+     * Twig abstraction for Guzzlehttp.
      *
+     * @param string $baseUrl
+     * @param string $endpoint
+     * @param array $config
+     * @return array
+     */
+    public function fetch($baseUrl, $endpoint, $config = [])
+    {
+        $config = array_merge([
+            'parseJson' => true,
+            'method' => 'GET',
+            'options' => [],
+            'duration' => 60 * 60 * 24,
+            'key' => ''
+        ], $config);
+        extract($config);
+
+        $client = new Client([
+            'base_uri' => $baseUrl,
+            'timeout' => 10
+        ]);
+
+        $hash = Craft::$app->security->hashData($endpoint, null);
+        $key = $key ?: $hash;
+        $error = false;
+        if (Craft::$app->cache->exists($key)) {
+            $body = Craft::$app->cache->get($key);
+        } else {
+            try {
+                $response = $client->request($method, $endpoint, $options);
+
+                if ($parseJson) {
+                    $body = json_decode($response->getBody(), true);
+                } else {
+                    $body = (string)$response->getBody();
+                }
+                $body = Craft::$app->cache->add($key, $body, $duration);
+                $statusCode = $response->getStatusCode();
+                $reason = $response->getReasonPhrase();
+            } catch (\Exception $e) {
+                $error = true;
+                $reason = $e->getMessage();
+            }
+        }
+        return [
+            'reason' => $reason,
+            'status' => $error ?? $statusCode,
+            'body' => $body
+        ];
+    }
+
+    /**
+     * Renders responsive image template.
+     *
+     * @param Asset|string $image
+     * @param array $config
+     * @param Asset|string|null $imageMobile
+     * @param string $alt
      * @return string
      */
-    public function getName(): string
+    public function imageFunction(Asset|string $image, $config = [], Asset|string $imageMobile = null, string $alt = ''): string
     {
-        return 'Core';
+        $thumbs = $mobile = [];
+        $config = array_merge([
+            'template' => 'developion-core/components/image',
+            'params' => []
+        ], $config);
+        extract($config);
+        $imageAsset = $this->images->storeImage($image, [], true);
+        foreach ($params as $paramKey => $param) {
+            $thumbs['webp'][$paramKey] = $this->images->storeImage($imageAsset, $param['params']);
+            $thumbs['jpeg'][$paramKey] = $this->images->storeImage($imageAsset, array_merge($param['params'], ['extension' => 'jpg']));
+        }
+        if ($imageMobile && !empty($params)) {
+            $imageAssetMobile = $this->images->storeImage($imageMobile, [], true);
+            $mobile['webp'] = $this->images->storeImage($imageAssetMobile, $params[0]['params']);
+            $mobile['jpeg'] = $this->images->storeImage($imageAssetMobile, array_merge($params[0]['params'], ['extension' => 'jpg']));
+        }
+
+        $html = Craft::$app->getView()->renderTemplate($template, [
+            'params' => $params,
+            'thumbs' => $thumbs,
+            'mobile' => $mobile,
+            'alt' => $alt ?: $imageAsset->title,
+        ]);
+
+        return $html;
     }
 
-    public function getGlobals()
+    /**
+     * Parse multimedia from html and extracts sources of images and video tags.
+     *
+     * @param string $html
+     * @return string
+     */
+    public function htmlParseFilter($html): string
     {
-        $minified = (object)[
-            'segment' => Craft::$app->request->getSegment(1),
-            'segments' => Craft::$app->request->getSegments(),
-            'segmentjs' => file_exists(CRAFT_BASE_PATH . '/web/assets/' . Craft::$app->request->getSegment(1) . '.js'),
-            'segmentcss' => file_exists(CRAFT_BASE_PATH . '/web/assets/' . Craft::$app->request->getSegment(1) . '.css'),
-            'css' => file_exists(CRAFT_BASE_PATH . '/web/assets/app.css') ? file_get_contents(CRAFT_BASE_PATH . '/web/assets/app.css') : '',
-        ];
-        
-        $assetManager = new AssetManager();
-        
-        return [
-            'minified' => $minified,
-            'assetManager' => $assetManager
-        ];
+        if (empty($html)) return '';
+        $html = preg_replace_callback('/(src=\\")(.*?)(\\")/', function ($matches) {
+            return $matches[1] . $this->images->storeImage($matches[2]) . $matches[3];
+        }, $html);
+        return $html;
     }
 
-    public function sluggifyCamel(string $camel)
-    {
-        return strtolower(preg_replace('/(?<=\d)(?=[A-Za-z])|(?<=[A-Za-z])(?=\d)|(?<=[a-z])(?=[A-Z])/', '-', $camel));
-    }
-
-    public function readTime(Entry $entry): string
+    /**
+     * Estimate reading time required for a markup text.
+     *
+     * @param Entry $entry
+     * @return string
+     */
+    public function readTimeFilter(Entry $entry): string
     {
         $content = $entry->blogContent->all();
-        $content = array_filter($content, function($element) {
+        $content = array_filter($content, function ($element) {
             return $element->text != null;
         });
-        $content = array_map(function($text) {
+        $content = array_map(function ($text) {
             return $text->text->getParsedContent();
         }, $content);
         $content = implode(' ', $content);
@@ -96,128 +188,18 @@ class Extension extends AbstractExtension implements GlobalsInterface
         return "$est $readingTime";
     }
     
-    public function storeImage(Asset $asset, array $config = [])
-    {
-        $config = array_merge([
-            'resx' => 0,
-            'extension' => 'webp',
-            'append' => '',
-            'horizontalCrop' => false
-        ], $config);
-        extract($config);
-        if ($asset->getExtension() === 'svg') {
-            return $asset->getUrl();
-        }
-        $volumePath = $asset->getVolume()->settings['path'];
-        $folderPath = $asset->getFolder()->path;
-        $rawName = substr($asset->filename, 0, strrpos($asset->filename, '.'));
-        $assetFilePath = Yii::getAlias($volumePath) . "/$folderPath{$asset->filename}";
-        $output_file = CRAFT_BASE_PATH . "/web/api-render/$rawName$append.$extension";
-        $image = new Raster();
-        $image->loadImage($assetFilePath);
-
-        if (file_exists($output_file)) {
-            list($width, $height) = getimagesize($output_file);
-            if ($resx === 0 || $resx === $width || (is_array($resx) && $resx['width'] === $width)) return getenv('PRIMARY_SITE_URL') . "/api-render/$rawName$append.$extension";
-        }
-        if (is_array($resx)) {
-            if ($horizontalCrop) {
-                $image->scaleAndCrop($asset->width*$resx['height']/$resx['width'], $asset->height, true, $asset->getFocalPoint());
-            } else {
-                $focal = $asset->getFocalPoint();
-                $full_width = $full_height = false;
-                if ($resx['width'] >= $asset->width) $full_width = true;
-                if ($resx['height'] >= $asset->height) $full_height = true;
-                $x1 = $x2 = $y1 = $y2 = 0;
-                if ($full_width) {
-                    $x1 = 0;
-                    $x2 = $asset->width;
-                } else {
-                    $x1 = $focal['x']*$asset->width - $resx['width']/2;
-                    $x2 = $focal['x']*$asset->width + $resx['width']/2;
-                    if ($x1 < 0) {
-                        $xoffset = 0 - $x1;
-                        $x1 = 0;
-                        $x2 = $x2 + $xoffset;
-                    }
-                    if ($x2 > $asset->width) {
-                        $xoffset = $x2 - $asset->width;
-                        $x2 = $asset->width;
-                        $x1 = $x1 - $xoffset;
-                    }
-                }
-                if ($full_height) {
-                    $y1 = 0;
-                    $y2 = $asset->height;
-                } else {
-                    $y1 = $focal['y']*$asset->height - $resx['height']/2;
-                    $y2 = $focal['y']*$asset->height + $resx['height']/2;
-                    if ($y1 < 0) {
-                        $yoffset = 0 - $y1;
-                        $y1 = 0;
-                        $y2 = $y2 + $yoffset;
-                    }
-                    if ($y2 > $asset->height) {
-                        $yoffset = $y2 - $asset->height;
-                        $y2 = $asset->height;
-                        $y1 = $y1 - $yoffset;
-                    }
-                }
-                $image->crop($x1, $x2, $y1, $y2);
-            }
-        } else {
-            if ($resx !== 0) {
-                $image->scaleToFit($resx);
-            }
-        }
-
-        if ($image->saveAs($output_file)) {
-            return getenv('PRIMARY_SITE_URL') . "/api-render/$rawName$append.$extension";
-        }
-        return $asset->getUrl();
-    }
-
-    public function storeImageExternal(string $url, array $config = [])
-    {
-        $fileInfo = pathinfo($url);
-		if ($fileInfo['extension'] === 'svg') return $url;
-		$tmpPath = CRAFT_BASE_PATH . '/tmp/' . $fileInfo['basename'];
-		file_put_contents($tmpPath, file_get_contents($url));
-		
-        $assets = Craft::$app->getAssets();
-        /** @var \craft\models\VolumeFolder $folder */
-        $folder = $assets->findFolder(['name' => 'Main Volume']);
-        
-        $asset = Asset::find()
-            ->where(['filename' => $fileInfo['basename']])
-            ->one();
-        if ($asset != null) {
-            return $this->storeImage($asset, $config);
-        }
-        
-        $asset = new Asset();
-        $asset->tempFilePath = $tmpPath;
-        $asset->filename = $fileInfo['basename'];
-        $asset->newFolderId = $folder->id;
-        $asset->volumeId = $folder->volumeId;
-        $asset->avoidFilenameConflicts = false;
-        $asset->setScenario(Asset::SCENARIO_CREATE);
-    
-        $result = Craft::$app->getElements()->saveElement($asset);
-        
-        if ($result) {
-            return $this->storeImage($asset, $config);
-        }
-        return $url;
+    /**
+     * Twig abstraction for array_splice.
+     *
+     * @param array $array
+     * @param integer $offset
+     * @param int $length
+     * @param array $replacement
+     * @return array
+     */
+	public function spliceFilter(array $array, int $offset, $length = null, $replacement = [])
+	{
+		array_splice($array, $offset, $length, $replacement);
+		return $array;
 	}
-    
-    public function renderFormMacro(string $fieldType, array $fieldOptions) : string
-    {
-        $oldMode = Craft::$app->view->getTemplateMode();
-        Craft::$app->view->setTemplateMode(View::TEMPLATE_MODE_CP);
-        $html = Craft::$app->view->renderTemplateMacro('_includes/forms', $fieldType, [$fieldOptions]);
-        Craft::$app->view->setTemplateMode($oldMode);
-        
-        return $html;
-    }
 }

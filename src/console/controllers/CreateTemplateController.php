@@ -56,12 +56,12 @@ class CreateTemplateController extends Controller
 
         if (!file_exists($twigPath)) {
             $twigContent = "\n\n";
-            $twigContent .= "{% css view.assetManager.getPublishedUrl('@Developion/Core/web/assets/front/dist', false, 'builder/{$this->type}s/$assetFileName.css') %}";
+            $twigContent .= "{% css view.assetManager.getPublishedUrl('@Developion/Developion/web/assets/front/dist', false, 'builder/{$this->type}s/$assetFileName.css')|replace('/\.css\?(.*)/', '.css') %}";
 
             if ($this->js) {
                 if (!file_exists($jsPath)) {
                     FileHelper::writeToFile($jsPath, '');
-                    $twigContent .= "\n{% js  view.assetManager.getPublishedUrl('@Developion/Core/web/assets/front/dist', false, '$assetFileName.js') %}";
+                    $twigContent .= "\n{% js  view.assetManager.getPublishedUrl('@Developion/Developion/web/assets/front/dist', false, '$assetFileName.js')|replace('/\.js\?(.*)/', '.js') %}";
                 } else {
                     $messages[] = " - Script file $assetFileName.js already exists.";
                 }

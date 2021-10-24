@@ -7,14 +7,17 @@ use craft\base\Plugin;
 use craft\console\Application;
 use craft\events\RegisterCacheOptionsEvent;
 use craft\events\RegisterComponentTypesEvent;
+use craft\events\RegisterTemplateRootsEvent;
 use craft\helpers\FileHelper;
 use craft\helpers\Queue;
 use craft\i18n\PhpMessageSource;
 use craft\services\Fields;
 use craft\utilities\ClearCaches;
+use craft\web\View;
 use Developion\Core\events\DeleteRenderedContentEvent;
 use Developion\Core\fields\InceptionMatrix;
 use Developion\Core\jobs\RenderContent;
+use Developion\Core\services\ImagesService;
 use Developion\Core\web\twig\Extension;
 use yii\base\Event;
 
@@ -26,6 +29,10 @@ class Core extends Plugin
 	{
 		parent::init();
 		self::$plugin = $this;
+		
+		$this->setComponents([
+			'images' => ImagesService::class,
+		]);
 
 		$request = Craft::$app->getRequest();
 		if ($request->getIsCpRequest()) {
@@ -59,6 +66,13 @@ class Core extends Plugin
 
 	protected function _siteEvents()
 	{
+		Event::on(
+			View::class,
+			View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS,
+			function (RegisterTemplateRootsEvent $event) {
+				$event->roots['developion-core'] = __DIR__ . '/templates';
+			}
+		);
 	}
 
 	protected function _consoleEvents()
