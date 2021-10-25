@@ -88,23 +88,22 @@ class Extension extends AbstractExtension
         $key = $key ?: $hash;
         $error = false;
         if (Craft::$app->cache->exists($key)) {
-            $body = Craft::$app->cache->get($key);
-        } else {
-            try {
-                $response = $client->request($method, $endpoint, $options);
-
-                if ($parseJson) {
-                    $body = json_decode($response->getBody(), true);
-                } else {
-                    $body = (string)$response->getBody();
-                }
-                $body = Craft::$app->cache->add($key, $body, $duration);
-                $statusCode = $response->getStatusCode();
-                $reason = $response->getReasonPhrase();
-            } catch (\Exception $e) {
-                $error = true;
-                $reason = $e->getMessage();
+            return ['body' => Craft::$app->cache->get($key)];
+        }
+        
+        try {
+            $response = $client->request($method, $endpoint, $options);
+            if ($parseJson) {
+                $body = json_decode($response->getBody(), true);
+            } else {
+                $body = (string)$response->getBody();
             }
+            $body = Craft::$app->cache->add($key, $body, $duration);
+            $statusCode = $response->getStatusCode();
+            $reason = $response->getReasonPhrase();
+        } catch (\Exception $e) {
+            $error = true;
+            $reason = $e->getMessage();
         }
         return [
             'reason' => $reason,
@@ -187,7 +186,7 @@ class Extension extends AbstractExtension
         $readingTime = Craft::t('core', 'minutes of reading time');
         return "$est $readingTime";
     }
-    
+
     /**
      * Twig abstraction for array_splice.
      *
@@ -197,9 +196,9 @@ class Extension extends AbstractExtension
      * @param array $replacement
      * @return array
      */
-	public function spliceFilter(array $array, int $offset, $length = null, $replacement = [])
-	{
-		array_splice($array, $offset, $length, $replacement);
-		return $array;
-	}
+    public function spliceFilter(array $array, int $offset, $length = null, $replacement = [])
+    {
+        array_splice($array, $offset, $length, $replacement);
+        return $array;
+    }
 }
