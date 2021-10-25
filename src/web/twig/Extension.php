@@ -43,7 +43,7 @@ class Extension extends AbstractExtension
         return [
             new TwigFunction('baseUrl', [UrlHelper::class, 'rootRelativeUrl']),
             new TwigFunction('image', [$this, 'imageFunction']),
-            new TwigFunction('fetch', [$this, 'fetch']),
+            new TwigFunction('fetch', [$this, 'fetchFunction']),
         ];
     }
 
@@ -68,7 +68,7 @@ class Extension extends AbstractExtension
      * @param array $config
      * @return array
      */
-    public function fetch($baseUrl, $endpoint, $config = [])
+    public function fetchFunction($baseUrl, $endpoint, $config = [])
     {
         $config = array_merge([
             'parseJson' => true,
