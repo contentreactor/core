@@ -44,6 +44,7 @@ class Extension extends AbstractExtension
             new TwigFunction('baseUrl', [UrlHelper::class, 'rootRelativeUrl']),
             new TwigFunction('image', [$this, 'imageFunction']),
             new TwigFunction('fetch', [$this, 'fetchFunction']),
+            new TwigFunction('dd', 'dd'),
         ];
     }
 
