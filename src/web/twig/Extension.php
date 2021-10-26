@@ -6,10 +6,10 @@ use Craft;
 use craft\elements\Asset;
 use craft\elements\Entry;
 use craft\helpers\UrlHelper;
-use craft\services\Security;
 use Developion\Core\Core;
 use Developion\Core\services\ImagesService;
 use GuzzleHttp\Client;
+use Symfony\Component\VarDumper\VarDumper;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -44,7 +44,7 @@ class Extension extends AbstractExtension
             new TwigFunction('baseUrl', [UrlHelper::class, 'rootRelativeUrl']),
             new TwigFunction('image', [$this, 'imageFunction']),
             new TwigFunction('fetch', [$this, 'fetchFunction']),
-            new TwigFunction('dd', 'dd'),
+            new TwigFunction('ddd', [$this, 'ddFunction']),
         ];
     }
 
@@ -59,6 +59,15 @@ class Extension extends AbstractExtension
             new TwigFilter('readTime', [$this, 'readTimeFilter']),
             new TwigFilter('splice', [$this, 'spliceFilter'])
         ];
+    }
+
+    public function ddFunction(...$vars)
+    {
+        foreach ($vars as $v) {
+            VarDumper::dump($v);
+        }
+
+        exit(1);
     }
 
     /**
