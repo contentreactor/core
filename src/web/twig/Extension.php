@@ -42,9 +42,10 @@ class Extension extends AbstractExtension
     {
         return [
             new TwigFunction('baseUrl', [UrlHelper::class, 'rootRelativeUrl']),
-            new TwigFunction('image', [$this, 'imageFunction']),
-            new TwigFunction('fetch', [$this, 'fetchFunction']),
             new TwigFunction('dd', [$this, 'ddFunction']),
+            new TwigFunction('fetch', [$this, 'fetchFunction']),
+            new TwigFunction('image', [$this, 'imageFunction']),
+            new TwigFunction('storeImage', [$this->images, 'storeImage']),
         ];
     }
 
