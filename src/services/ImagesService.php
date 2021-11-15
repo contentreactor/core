@@ -3,7 +3,9 @@
 namespace Developion\Core\services;
 
 use Craft;
+use craft\base\ApplicationTrait;
 use craft\base\Component;
+use craft\base\VolumeInterface;
 use craft\elements\Asset;
 use craft\helpers\FileHelper;
 use craft\helpers\Session;
@@ -12,7 +14,8 @@ use craft\helpers\UrlHelper;
 use craft\image\Raster;
 use craft\models\VolumeFolder;
 use craft\services\AssetIndexer;
-use craft\services\Assets;
+use craft\volumes\Local;
+use Developion\Cache\Plugin as CachePlugin;
 use Yii;
 
 class ImagesService extends Component
@@ -22,17 +25,33 @@ class ImagesService extends Component
 
 	public $renderPath = 'api-render';
 
-	public $importedPath = 'assets/Imported';
+	public $importedPath = 'imported';
 
-	public function __construct()
+	public $temporaryPath = 'tmp';
+
+	private function createDirs()
 	{
-	    
-		if (!is_dir(Yii::getAlias("@webroot/{$this->importedPath}"))) {
-			FileHelper::createDirectory(Yii::getAlias("@webroot/{$this->importedPath}"));
+		/** @var ApplicationTrait */
+		$app = Craft::$app;
+
+		$pluginService = $app->getPlugins();
+		if ($pluginService->isPluginEnabled('developion-cache')) {
+			$this->renderPath		= CachePlugin::$plugin->getSettings()->renderPath['value'];
+			$this->importedPath		= CachePlugin::$plugin->getSettings()->volumePath['value'];
+			$this->temporaryPath	= CachePlugin::$plugin->getSettings()->temporaryPath['value'];
+		}
+
+		$tmpDir = sprintf('%s/%s', $app->getPath()->getStoragePath(), $this->temporaryPath);
+		if (!is_dir($tmpDir)) {
+			FileHelper::createDirectory($tmpDir);
+		}
+
+		if (!is_dir(Yii::getAlias("@webroot/{$this->getVolume()->path}/{$this->importedPath}"))) {
+			FileHelper::createDirectory(Yii::getAlias("@webroot/{$this->getVolume()->path}/{$this->importedPath}"));
 			/** @var AssetIndexer $assetIndexerService */
-			$assetIndexerService = Craft::$app->getAssetIndexer();
+			$assetIndexerService = $app->getAssetIndexer();
 			$sessionId = $assetIndexerService->getIndexingSessionId();
-			$volumeIds = Craft::$app->getVolumes()->getViewableVolumeIds();
+			$volumeIds = $app->getVolumes()->getViewableVolumeIds();
 
 			$missingFolders = [];
 			$skippedFiles = [];
@@ -62,11 +81,14 @@ class ImagesService extends Component
 			Session::set('assetsMissingFolders', $missingFolders);
 			Session::set('assetsSkippedFiles', $skippedFiles);
 		}
-		$this->folder = Craft::$app->getAssets()
+		$this->folder = $app->getAssets()
 			->findFolder([
-				'name' => substr($this->importedPath, stripos($this->importedPath, '/') + 1)
-			]);
-		parent::__construct();
+				'name' => $this->importedPath
+			]);	
+
+		if (!is_dir(Yii::getAlias("@webroot/{$this->renderPath}"))) {
+			FileHelper::createDirectory(Yii::getAlias("@webroot/" . $this->renderPath));
+		}
 	}
 
     /**
@@ -75,7 +97,7 @@ class ImagesService extends Component
      * @param Asset|string $asset
      * @param array $config
      * @param boolean $returnAsset
-     * @return Asset|string
+     * @return Asset|string|bool
      */
 	public function storeImage($asset, array $config = [], $returnAsset = false)
 	{
@@ -177,51 +199,17 @@ class ImagesService extends Component
      * @param string $url
      * @return Asset|bool
      */
-	protected function storeImageExternal(string $url)
+	protected function storeImageExternal(string $url, )
 	{
+		/** @var ApplicationTrait */
+		$app = Craft::$app;
+
+		$this->createDirs();
+
 		if (!$this->readTest($url)) return false;
 
-		if (!is_dir(Yii::getAlias("@webroot/" . $this->renderPath))) {
-			FileHelper::createDirectory(Yii::getAlias("@webroot/" . $this->renderPath));
-		}
-		if (!is_dir(Yii::getAlias("@webroot/{$this->importedPath}"))) {
-			FileHelper::createDirectory(Yii::getAlias("@webroot/{$this->importedPath}"));
-			/** @var AssetIndexer $assetIndexerService */
-			$assetIndexerService = Craft::$app->getAssetIndexer();
-			$sessionId = $assetIndexerService->getIndexingSessionId();
-			$volumeIds = Craft::$app->getVolumes()->getViewableVolumeIds();
-
-			$missingFolders = [];
-			$skippedFiles = [];
-
-			foreach ($volumeIds as $volumeId) {
-				$indexList = $assetIndexerService->prepareIndexList($sessionId, $volumeId);
-
-				if (!empty($indexList['error'])) {
-					return false;
-				}
-
-				if (isset($indexList['missingFolders'])) {
-					$missingFolders += $indexList['missingFolders'];
-				}
-
-				if (isset($indexList['skippedFiles'])) {
-					$skippedFiles = $indexList['skippedFiles'];
-				}
-
-				$response['volumes'][] = [
-					'volumeId' => $volumeId,
-					'total' => $indexList['total'],
-				];
-			}
-
-			Session::set('assetsVolumesBeingIndexed', $volumeIds);
-			Session::set('assetsMissingFolders', $missingFolders);
-			Session::set('assetsSkippedFiles', $skippedFiles);
-		}
-
 		$fileInfo = pathinfo($url);
-		$tmpPath = CRAFT_BASE_PATH . '/tmp/' . $fileInfo['basename'];
+		$tmpPath = sprintf('%s/%s/%s', $app->getPath()->getStoragePath(), $this->temporaryPath, $fileInfo['basename']);
 		file_put_contents($tmpPath, file_get_contents($url));
 
 		/** @var Asset $asset */
@@ -231,7 +219,7 @@ class ImagesService extends Component
 
 		if ($asset) {
 			if ($this->readTest(UrlHelper::siteUrl($asset->getUrl()))) return $asset;
-			else Craft::$app->elements->deleteElement($asset);
+			else $app->elements->deleteElement($asset);
 		}
 
 		$asset = new Asset();
@@ -243,7 +231,7 @@ class ImagesService extends Component
 		$asset->avoidFilenameConflicts = false;
 		$asset->setScenario(Asset::SCENARIO_CREATE);
 
-		$result = Craft::$app->getElements()->saveElement($asset, false);
+		$result = $app->getElements()->saveElement($asset, false);
 
 		if ($result) {
 			return $asset;
@@ -273,5 +261,29 @@ class ImagesService extends Component
 		}
 
 		return true;
+	}
+
+	private function getVolume(): VolumeInterface
+	{
+		/** @var ApplicationTrait */
+		$app = Craft::$app;
+
+		$assetVolumes = $app->getVolumes()->getAllVolumes();
+		/** @var Local */
+		$defaultVolume = array_shift($assetVolumes);
+		if (!$defaultVolume) {
+			$defaultVolume = new Local([
+				'name' => 'Blog Images',
+				'handle' => 'blogImages',
+				'hasUrls' => true,
+				'titleTranslationMethod' => 'site',
+				'titleTranslationKeyFormat' => null,
+				'url' => '@web/blogImages',
+				'path' => '@webroot/blogImages',
+			]);
+			$app->getVolumes()->saveVolume($defaultVolume);
+		}
+
+		return $defaultVolume;
 	}
 }

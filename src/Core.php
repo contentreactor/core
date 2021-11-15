@@ -74,7 +74,7 @@ class Core extends Plugin
 			Plugins::EVENT_AFTER_INSTALL_PLUGIN,
 			function (PluginEvent $event) {
 				if ($event->plugin === $this) {
-					$this->_registerSettings();
+					// $this->_registerSettings();
 				}
 			}
 		);
