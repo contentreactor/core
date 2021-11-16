@@ -28,6 +28,8 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
+        "craftcms/cms": "^3.7",
+		"symfony/var-dumper": "*"
     },
     "autoload": {
         "psr-4": {

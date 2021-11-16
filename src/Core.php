@@ -4,17 +4,16 @@ namespace Developion\Core;
 
 use Craft;
 use craft\base\Plugin;
-use craft\console\Application;
-use craft\events\RegisterCacheOptionsEvent;
+use craft\events\PluginEvent;
 use craft\events\RegisterComponentTypesEvent;
-use craft\helpers\FileHelper;
-use craft\helpers\Queue;
+use craft\events\RegisterTemplateRootsEvent;
 use craft\i18n\PhpMessageSource;
 use craft\services\Fields;
-use craft\utilities\ClearCaches;
-use Developion\Core\events\DeleteRenderedContentEvent;
+use craft\services\Plugins;
+use craft\web\View;
 use Developion\Core\fields\InceptionMatrix;
-use Developion\Core\jobs\RenderContent;
+use Developion\Core\services\ImagesService;
+use Developion\Core\services\InstallService;
 use Developion\Core\web\twig\Extension;
 use yii\base\Event;
 
@@ -27,63 +26,73 @@ class Core extends Plugin
 		parent::init();
 		self::$plugin = $this;
 
-		$request = Craft::$app->getRequest();
-		if ($request->getIsCpRequest()) {
-			$this->_cpEvents();
-		} elseif ($request->getIsConsoleRequest()) {
-			$this->_consoleEvents();
-		} else {
-			$this->_siteEvents();
-		}
-		$this->_twigExtensions();
+		$this->setComponents([
+			'images' => ImagesService::class,
+			'install' => InstallService::class,
+		]);
 
-		Craft::$app->i18n->translations['core'] = [
+		$request = Craft::$app->getRequest();
+		if ($request->getIsConsoleRequest()) {
+			$this->_consoleEvents();
+		}
+		
+		$this->_config();
+		$this->_events();
+		$this->_twigExtensions();
+	}
+
+	protected function _config()
+	{
+		Craft::$app->getI18n()->translations['core'] = [
 			'class' => PhpMessageSource::class,
 			'basePath' => __DIR__ . '/translations',
 			'allowOverrides' => true,
-			'forceTranslation' => true
+			'forceTranslation' => true,
 		];
-		
-        Event::on(Fields::class, Fields::EVENT_REGISTER_FIELD_TYPES, function (RegisterComponentTypesEvent $event) {
-            $event->types[] = InceptionMatrix::class;
-        });
-        
-        if ( Craft::$app instanceof Application) {
-			$this->controllerNamespace = 'Developion\Core\console\controllers';
-		}
 	}
 
-	protected function _cpEvents()
+	protected function _events()
 	{
-        Event::on(
-            ClearCaches::class,
-            ClearCaches::EVENT_REGISTER_CACHE_OPTIONS,
-            function (RegisterCacheOptionsEvent $event) {
-                $options = $event->options;
-                $options[] = [
-                    'key' => 'api-storage',
-                    'label' => 'API Images',
-                    'info' => 'Clears any image files generated from the API.',
-                    'action' => function() {
-                        $path = CRAFT_BASE_PATH . "/web/api-render";
-                        FileHelper::clearDirectory($path);
-                        $event = new DeleteRenderedContentEvent(['pages' => []]);
-                        Event::trigger(
-                            DeleteRenderedContentEvent::class,
-                            DeleteRenderedContentEvent::EVENT_AFTER_DELETE_RENDERED_CONTENT,
-                            $event
-                        );
-                        Queue::push(new RenderContent($event->pages));
-                    },
-                ];
-                $event->options = $options;
-                return $event;
-            }
-        );
-	}
+		Event::on(
+			View::class,
+			View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS,
+			function (RegisterTemplateRootsEvent $event) {
+				$event->roots['developion-core'] = __DIR__ . '/templates';
+			}
+		);
 
-	protected function _siteEvents()
-	{
+		Event::on(
+			Fields::class,
+			Fields::EVENT_REGISTER_FIELD_TYPES,
+			function (RegisterComponentTypesEvent $event) {
+				$event->types[] = InceptionMatrix::class;
+			}
+		);
+
+		Event::on(
+			Plugins::class,
+			Plugins::EVENT_AFTER_INSTALL_PLUGIN,
+			function (PluginEvent $event) {
+				if ($event->plugin === $this) {
+					// $this->_registerSettings();
+				}
+			}
+		);
+
+		Event::on(
+			Plugins::class,
+			Plugins::EVENT_BEFORE_UNINSTALL_PLUGIN,
+			function (PluginEvent $event) {
+				$developionPlugins = array_filter(array_keys(Craft::$app->getPlugins()->getAllPlugins()), function($pluginHandle) {
+					return $pluginHandle != 'developion-core' && str_contains($pluginHandle, 'developion');
+				});
+				if ($event->plugin === $this) {
+					foreach ($developionPlugins as $developionPlugin) {
+						Craft::$app->getPlugins()->uninstallPlugin($developionPlugin);
+					}
+				}
+			}
+		);
 	}
 
 	protected function _consoleEvents()

@@ -1,0 +1,14 @@
+{% if thumbs|length > 0 %}
+	<picture>
+		{% for paramKey, param in params %}
+			{% if mobile|length > 0 and loop.first %}
+				<source {% if 'media' in param|keys %} media="{{ param.media }}" {% endif %} srcset="{{ mobile['webp'] }}" type="image/webp">
+				<source {% if 'media' in param|keys %} media="{{ param.media }}" {% endif %} srcset="{{ mobile['jpeg'] }}" type="image/jpeg">
+			{% else %}
+				<source {% if 'media' in param|keys %} media="{{ param.media }}" {% endif %} srcset="{{ thumbs['webp'][paramKey] }}" type="image/webp">
+				<source {% if 'media' in param|keys %} media="{{ param.media }}" {% endif %} srcset="{{ thumbs['jpeg'][paramKey] }}" type="image/jpeg">
+			{% endif %}
+		{% endfor %}
+		<img src="{{ thumbs['webp'][0] }}" alt="{{ alt }}"/>
+	</picture>
+{% endif %}
