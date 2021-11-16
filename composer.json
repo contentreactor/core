@@ -2,12 +2,8 @@
     "name": "developion/core",
     "description": "Developion Template plugin for site.",
     "type": "craft-plugin",
-    "version": "0.1.0",
-    "license": "proprietary",
-    "support": {
-        "docs": "https://www.developion.com/#",
-        "issues": "https://www.developion.com/#"
-    },
+    "version": "0.1.1",
+    "license": "MIT",
     "keywords": [
         "craft",
         "cms",
@@ -21,8 +17,8 @@
             "homepage": "https://www.developion.com/"
         },
         {
-            "name": "Dukas",
-            "email": "dusan.stojnic@developion.com"
+            "name": "Developion Support",
+            "email": "support@developion.com"
         }
     ],
     "minimum-stability": "dev",
@@ -41,8 +37,6 @@
         "handle": "developion-core",
         "developer": "Developion",
         "developerUrl": "https://www.developion.com/",
-        "documentationUrl": "https://www.developion.com/#",
-        "changelogUrl": "https://www.developion.com/#",
         "class": "Developion\\Core\\Core"
     }
 }
