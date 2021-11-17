@@ -111,7 +111,7 @@ class Extension extends AbstractExtension
 			} else {
 				$body = (string)$response->getBody();
 			}
-			$body = Craft::$app->cache->add($key, $body, $duration);
+			Craft::$app->cache->add($key, $body, $duration);
 			$statusCode = $response->getStatusCode();
 			$reason = $response->getReasonPhrase();
 		} catch (\Exception $e) {
