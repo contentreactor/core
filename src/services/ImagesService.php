@@ -102,11 +102,11 @@ class ImagesService extends Component
 	public function storeImage($asset, array $config = [], $returnAsset = false)
 	{
         if ('string' == gettype($asset)) {
-            $asset = $this->storeImageExternal($asset) ?: $asset;
-			if ('string' == gettype($asset)) {
-				if (!$this->readTest($asset)) return false;
+            $assetUpload = $this->storeImageExternal($asset);
+			if (!$assetUpload) {
 				return $asset;
 			}
+			$asset = $assetUpload;
 		}
 		$config = array_merge([
 			'resx' => 0,
@@ -128,7 +128,7 @@ class ImagesService extends Component
 		$rawName = substr($asset->filename, 0, strrpos($asset->filename, '.'));
 		$output_file = Yii::getAlias("@webroot/" . $this->renderPath . "/$rawName$append.$extension");
 		$image = new Raster();
-		$image->loadImage(Yii::getAlias("$volumePath/$folderPath{$asset->filename}"));
+		$image->loadImage(Yii::getAlias("$volumePath$folderPath{$asset->filename}"));
 
 		if (file_exists($output_file)) {
 			list($width, $height) = getimagesize($output_file);
