@@ -86,7 +86,12 @@ class Extension extends AbstractExtension
 		$config = array_merge([
 			'parseJson' => true,
 			'method' => 'GET',
-			'options' => [],
+			'options' => [
+				'headers' => [
+					'Content-Type' => 'application/json',
+					'Accept' => 'application/json'
+				]
+			],
 			'duration' => 60 * 60 * 24,
 			'key' => ''
 		], $config);
