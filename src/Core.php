@@ -21,6 +21,8 @@ class Core extends Plugin
 {
 	public static $plugin;
 
+	public $schemaVersion = '0.2.3';
+
 	public function init()
 	{
 		parent::init();
