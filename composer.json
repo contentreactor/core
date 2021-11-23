@@ -2,7 +2,7 @@
     "name": "developion/core",
     "description": "Developion Template plugin for site.",
     "type": "craft-plugin",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "license": "MIT",
     "keywords": [
         "craft",

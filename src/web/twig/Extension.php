@@ -86,7 +86,12 @@ class Extension extends AbstractExtension
 		$config = array_merge([
 			'parseJson' => true,
 			'method' => 'GET',
-			'options' => [],
+			'options' => [
+				'headers' => [
+					'Content-Type' => 'application/json',
+					'Accept' => 'application/json'
+				]
+			],
 			'duration' => 60 * 60 * 24,
 			'key' => ''
 		], $config);
@@ -111,7 +116,7 @@ class Extension extends AbstractExtension
 			} else {
 				$body = (string)$response->getBody();
 			}
-			$body = Craft::$app->cache->add($key, $body, $duration);
+			Craft::$app->cache->add($key, $body, $duration);
 			$statusCode = $response->getStatusCode();
 			$reason = $response->getReasonPhrase();
 		} catch (\Exception $e) {
