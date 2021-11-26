@@ -31,27 +31,23 @@ class ImagesService extends Component
 
 	private function createDirs()
 	{
-		/** @var ApplicationTrait */
-		$app = Craft::$app;
-
-		$pluginService = $app->getPlugins();
-		if ($pluginService->isPluginEnabled('developion-cache')) {
+		if (Craft::$app->getPlugins()->isPluginEnabled('developion-cache')) {
 			$this->renderPath		= CachePlugin::$plugin->getSettings()->renderPath['value'];
 			$this->importedPath		= CachePlugin::$plugin->getSettings()->volumePath['value'];
 			$this->temporaryPath	= CachePlugin::$plugin->getSettings()->temporaryPath['value'];
 		}
 
-		$tmpDir = sprintf('%s/%s', $app->getPath()->getStoragePath(), $this->temporaryPath);
+		$tmpDir = sprintf('%s/%s', Craft::$app->getPath()->getStoragePath(), $this->temporaryPath);
 		if (!is_dir($tmpDir)) {
 			FileHelper::createDirectory($tmpDir);
 		}
 
 		if (!is_dir(Yii::getAlias("@webroot/{$this->getVolume()->path}/{$this->importedPath}"))) {
-			FileHelper::createDirectory(Yii::getAlias("@webroot/{$this->getVolume()->path}/{$this->importedPath}"));
+			FileHelper::createDirectory(Yii::getAlias("{$this->getVolume()->path}/{$this->importedPath}"));
 			/** @var AssetIndexer $assetIndexerService */
-			$assetIndexerService = $app->getAssetIndexer();
+			$assetIndexerService = Craft::$app->getAssetIndexer();
 			$sessionId = $assetIndexerService->getIndexingSessionId();
-			$volumeIds = $app->getVolumes()->getViewableVolumeIds();
+			$volumeIds = Craft::$app->getVolumes()->getViewableVolumeIds();
 
 			$missingFolders = [];
 			$skippedFiles = [];
@@ -81,28 +77,31 @@ class ImagesService extends Component
 			Session::set('assetsMissingFolders', $missingFolders);
 			Session::set('assetsSkippedFiles', $skippedFiles);
 		}
-		$this->folder = $app->getAssets()
-			->findFolder([
-				'name' => $this->importedPath
-			]);	
 
 		if (!is_dir(Yii::getAlias("@webroot/{$this->renderPath}"))) {
 			FileHelper::createDirectory(Yii::getAlias("@webroot/" . $this->renderPath));
 		}
+
+		if (!$this->folder) {
+			$this->folder = Craft::$app->getAssets()
+				->findFolder([
+					'name' => $this->importedPath
+				]);
+		}
 	}
 
-    /**
-     * Renders URL of the passed CMS Asset or Image URL. Returns original URL if it’s not valid.
-     *
-     * @param Asset|string $asset
-     * @param array $config
-     * @param boolean $returnAsset
-     * @return Asset|string|bool
-     */
+	/**
+	 * Renders URL of the passed CMS Asset or Image URL. Returns original URL if it’s not valid.
+	 *
+	 * @param Asset|string $asset
+	 * @param array $config
+	 * @param boolean $returnAsset
+	 * @return Asset|string|bool
+	 */
 	public function storeImage($asset, array $config = [], $returnAsset = false)
 	{
-        if ('string' == gettype($asset)) {
-            $assetUpload = $this->storeImageExternal($asset);
+		if ('string' == gettype($asset)) {
+			$assetUpload = $this->storeImageExternal($asset);
 			if (!$assetUpload) {
 				return $asset;
 			}
@@ -128,7 +127,7 @@ class ImagesService extends Component
 		$rawName = substr($asset->filename, 0, strrpos($asset->filename, '.'));
 		$output_file = Yii::getAlias("@webroot/" . $this->renderPath . "/$rawName$append.$extension");
 		$image = new Raster();
-		$image->loadImage(Yii::getAlias("$volumePath$folderPath{$asset->filename}"));
+		$image->loadImage(Yii::getAlias("$volumePath/$folderPath{$asset->filename}"));
 
 		if (file_exists($output_file)) {
 			list($width, $height) = getimagesize($output_file);
@@ -193,23 +192,20 @@ class ImagesService extends Component
 		return $returnAsset ? $asset : $asset->getUrl();
 	}
 
-    /**
-     * Generates CMS Asset from given URL. Returns false if URL isn’t valid.
-     *
-     * @param string $url
-     * @return Asset|bool
-     */
-	protected function storeImageExternal(string $url, )
+	/**
+	 * Generates CMS Asset from given URL. Returns false if URL isn’t valid.
+	 *
+	 * @param string $url
+	 * @return Asset|bool
+	 */
+	protected function storeImageExternal(string $url,)
 	{
-		/** @var ApplicationTrait */
-		$app = Craft::$app;
-
 		$this->createDirs();
 
 		if (!$this->readTest($url)) return false;
 
 		$fileInfo = pathinfo($url);
-		$tmpPath = sprintf('%s/%s/%s', $app->getPath()->getStoragePath(), $this->temporaryPath, $fileInfo['basename']);
+		$tmpPath = sprintf('%s/%s/%s', Craft::$app->getPath()->getStoragePath(), $this->temporaryPath, $fileInfo['basename']);
 		file_put_contents($tmpPath, file_get_contents($url));
 
 		/** @var Asset $asset */
@@ -219,7 +215,7 @@ class ImagesService extends Component
 
 		if ($asset) {
 			if ($this->readTest(UrlHelper::siteUrl($asset->getUrl()))) return $asset;
-			else $app->elements->deleteElement($asset);
+			else Craft::$app->elements->deleteElement($asset);
 		}
 
 		$asset = new Asset();
@@ -231,7 +227,7 @@ class ImagesService extends Component
 		$asset->avoidFilenameConflicts = false;
 		$asset->setScenario(Asset::SCENARIO_CREATE);
 
-		$result = $app->getElements()->saveElement($asset, false);
+		$result = Craft::$app->getElements()->saveElement($asset, false);
 
 		if ($result) {
 			return $asset;
@@ -239,18 +235,18 @@ class ImagesService extends Component
 		return false;
 	}
 
-    /**
-     * Test for redirects, availability and validity of image URL.
-     *
-     * @param string $url
-     * @return void
-     */
+	/**
+	 * Test for redirects, availability and validity of image URL.
+	 *
+	 * @param string $url
+	 * @return void
+	 */
 	public function readTest($url)
 	{
 		if (@get_headers($url)[0] == 'HTTP/1.1 302 Found') {
 			$url = StringHelper::slice(@get_headers($url)[7], strlen('Location: '));
 		}
-		
+
 		if (@get_headers($url)[0] !== 'HTTP/1.1 200 OK') {
 			return false;
 		}
@@ -265,10 +261,7 @@ class ImagesService extends Component
 
 	private function getVolume(): VolumeInterface
 	{
-		/** @var ApplicationTrait */
-		$app = Craft::$app;
-
-		$assetVolumes = $app->getVolumes()->getAllVolumes();
+		$assetVolumes = Craft::$app->getVolumes()->getAllVolumes();
 		/** @var Local */
 		$defaultVolume = array_shift($assetVolumes);
 		if (!$defaultVolume) {
@@ -281,7 +274,7 @@ class ImagesService extends Component
 				'url' => '@web/blogImages',
 				'path' => '@webroot/blogImages',
 			]);
-			$app->getVolumes()->saveVolume($defaultVolume);
+			Craft::$app->getVolumes()->saveVolume($defaultVolume);
 		}
 
 		return $defaultVolume;
