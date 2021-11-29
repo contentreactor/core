@@ -168,7 +168,6 @@ class Extension extends AbstractExtension
 
 		if ('object' != gettype($imageAsset)) {
 			if (!empty($fallback)) return Craft::$app->getView()->renderTemplate($fallback);
-			return $image;
 		}
 
 		return $html;
