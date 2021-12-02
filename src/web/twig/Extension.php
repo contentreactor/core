@@ -84,7 +84,6 @@ class Extension extends AbstractExtension
 	public function fetchFunction($baseUrl, $endpoint, $config = [])
 	{
 		$config = array_merge([
-			'parseJson' => true,
 			'method' => 'GET',
 			'options' => [
 				'headers' => [
@@ -92,8 +91,6 @@ class Extension extends AbstractExtension
 					'Accept' => 'application/json'
 				]
 			],
-			'duration' => 60 * 60 * 24,
-			'key' => ''
 		], $config);
 		extract($config);
 
@@ -102,32 +99,17 @@ class Extension extends AbstractExtension
 			'timeout' => 10
 		]);
 
-		$hash = Craft::$app->security->hashData($endpoint, null);
-		$key = $key ?: $hash;
-		$error = false;
-		if (Craft::$app->cache->exists($key)) {
-			return ['body' => Craft::$app->cache->get($key)];
+		try {
+			$response = json_decode(
+				$client->request($method, $endpoint, $options)
+					->getBody(),
+				true,
+			);
+		} catch (\Exception $e) {
+			return [];
 		}
 
-		try {
-			$response = $client->request($method, $endpoint, $options);
-			if ($parseJson) {
-				$body = json_decode($response->getBody(), true);
-			} else {
-				$body = (string)$response->getBody();
-			}
-			Craft::$app->cache->add($key, $body, $duration);
-			$statusCode = $response->getStatusCode();
-			$reason = $response->getReasonPhrase();
-		} catch (\Exception $e) {
-			$error = true;
-			$reason = $e->getMessage();
-		}
-		return [
-			'reason' => $reason,
-			'status' => $error ?? $statusCode,
-			'body' => $body
-		];
+		return $response;
 	}
 
 	/**
@@ -158,7 +140,7 @@ class Extension extends AbstractExtension
 			$mobile['webp'] = $this->images->storeImage($imageAssetMobile, $params[0]['params']);
 			$mobile['jpeg'] = $this->images->storeImage($imageAssetMobile, array_merge($params[0]['params'], ['extension' => 'jpg']));
 		}
-		
+
 		$html = Craft::$app->getView()->renderTemplate($template, [
 			'params' => $params,
 			'thumbs' => $thumbs,

@@ -13,7 +13,6 @@ use craft\services\Plugins;
 use craft\web\View;
 use Developion\Core\fields\InceptionMatrix;
 use Developion\Core\services\ImagesService;
-use Developion\Core\services\InstallService;
 use Developion\Core\web\twig\Extension;
 use yii\base\Event;
 
@@ -21,7 +20,7 @@ class Core extends Plugin
 {
 	public static $plugin;
 
-	public $schemaVersion = '0.2.5';
+	public $schemaVersion = '0.2.6';
 
 	public function init()
 	{
@@ -30,14 +29,13 @@ class Core extends Plugin
 
 		$this->setComponents([
 			'images' => ImagesService::class,
-			'install' => InstallService::class,
 		]);
 
 		$request = Craft::$app->getRequest();
 		if ($request->getIsConsoleRequest()) {
 			$this->_consoleEvents();
 		}
-		
+
 		$this->_config();
 		$this->_events();
 		$this->_twigExtensions();
@@ -73,19 +71,9 @@ class Core extends Plugin
 
 		Event::on(
 			Plugins::class,
-			Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-			function (PluginEvent $event) {
-				if ($event->plugin === $this) {
-					// $this->_registerSettings();
-				}
-			}
-		);
-
-		Event::on(
-			Plugins::class,
 			Plugins::EVENT_BEFORE_UNINSTALL_PLUGIN,
 			function (PluginEvent $event) {
-				$developionPlugins = array_filter(array_keys(Craft::$app->getPlugins()->getAllPlugins()), function($pluginHandle) {
+				$developionPlugins = array_filter(array_keys(Craft::$app->getPlugins()->getAllPlugins()), function ($pluginHandle) {
 					return $pluginHandle != 'developion-core' && str_contains($pluginHandle, 'developion');
 				});
 				if ($event->plugin === $this) {
