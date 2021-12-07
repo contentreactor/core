@@ -1,42 +1,43 @@
 {
-    "name": "developion/core",
-    "description": "Developion Template plugin for site.",
-    "type": "craft-plugin",
-    "version": "0.2.6",
-    "license": "MIT",
-    "keywords": [
-        "craft",
-        "cms",
-        "craftcms",
-        "craft-plugin",
-        "developion"
-    ],
-    "authors": [
-        {
-            "name": "Developion",
-            "homepage": "https://www.developion.com/"
-        },
-        {
-            "name": "Developion Support",
-            "email": "support@developion.com"
-        }
-    ],
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "require": {
-        "craftcms/cms": "^3.7",
+	"name": "developion/core",
+	"description": "Developion Template plugin for site.",
+	"type": "craft-plugin",
+	"version": "0.2.7",
+	"license": "MIT",
+	"keywords": [
+		"craft",
+		"cms",
+		"craftcms",
+		"craft-plugin",
+		"developion"
+	],
+	"authors": [
+		{
+			"name": "Developion",
+			"homepage": "https://www.developion.com/"
+		},
+		{
+			"name": "Developion Support",
+			"email": "support@developion.com"
+		}
+	],
+	"minimum-stability": "dev",
+	"prefer-stable": true,
+	"require": {
+		"php": "^8.0",
+		"craftcms/cms": "^3.7",
 		"symfony/var-dumper": "*"
-    },
-    "autoload": {
-        "psr-4": {
-            "Developion\\Core\\": "src/"
-        }
-    },
-    "extra": {
-        "name": "Developion Core",
-        "handle": "developion-core",
-        "developer": "Developion",
-        "developerUrl": "https://www.developion.com/",
-        "class": "Developion\\Core\\Core"
-    }
+	},
+	"autoload": {
+		"psr-4": {
+			"Developion\\Core\\": "src/"
+		}
+	},
+	"extra": {
+		"name": "Developion Core",
+		"handle": "developion-core",
+		"developer": "Developion",
+		"developerUrl": "https://www.developion.com/",
+		"class": "Developion\\Core\\Core"
+	}
 }

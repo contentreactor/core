@@ -20,7 +20,7 @@ class Core extends Plugin
 {
 	public static $plugin;
 
-	public $schemaVersion = '0.2.6';
+	public $schemaVersion = '0.2.7';
 
 	public function init()
 	{
