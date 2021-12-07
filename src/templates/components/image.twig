@@ -9,6 +9,6 @@
 				<source {% if 'media' in param|keys %} media="{{ param.media }}" {% endif %} srcset="{{ thumbs['jpeg'][paramKey] }}" type="image/jpeg">
 			{% endif %}
 		{% endfor %}
-		<img src="{{ thumbs['webp'][0] }}" alt="{{ alt }}"/>
+		<img src="{{ thumbs['webp'][0] }}" width="{{ sizes[0] }}" height="{{ sizes[1] }}" alt="{{ alt }}"/>
 	</picture>
 {% endif %}

@@ -130,9 +130,11 @@ class Extension extends AbstractExtension
 			'fallback' => '',
 		], $config);
 		extract($config);
+		$sizes = [];
 		$imageAsset = $this->images->storeImage($image, [], true);
 		foreach ($params as $paramKey => $param) {
 			$thumbs['webp'][$paramKey] = $this->images->storeImage($imageAsset, $param['params']);
+			if ($paramKey == 0) $sizes = getimagesize($thumbs['webp'][$paramKey]);
 			$thumbs['jpeg'][$paramKey] = $this->images->storeImage($imageAsset, array_merge($param['params'], ['extension' => 'jpg']));
 		}
 		if ($imageMobile && !empty($params)) {
@@ -142,6 +144,7 @@ class Extension extends AbstractExtension
 		}
 
 		$html = Craft::$app->getView()->renderTemplate($template, [
+			'sizes' => $sizes,
 			'params' => $params,
 			'thumbs' => $thumbs,
 			'mobile' => $mobile,
