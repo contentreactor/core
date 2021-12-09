@@ -8,8 +8,6 @@ use yii\web\NotFoundHttpException;
 
 class SettingsController extends Controller
 {
-	protected $allowAnonymous = ['save-settings'];
-
 	public function actionSaveSettings()
 	{
 		$this->requirePostRequest();
