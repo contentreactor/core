@@ -3,11 +3,8 @@
 namespace Developion\Core\web\twig;
 
 use Craft;
-use craft\elements\Asset;
 use craft\elements\Entry;
 use craft\helpers\UrlHelper;
-use Developion\Core\Core;
-use Developion\Core\services\ImagesService;
 use GuzzleHttp\Client;
 use Symfony\Component\VarDumper\VarDumper;
 use Twig\Extension\AbstractExtension;
@@ -16,13 +13,6 @@ use Twig\TwigFunction;
 
 class Extension extends AbstractExtension
 {
-	/** @var ImagesService $images */
-	protected $images;
-
-	public function __construct()
-	{
-		$this->images = Core::$plugin->images;
-	}
 	/**
 	 * Return our Twig Extension name
 	 *
@@ -44,8 +34,6 @@ class Extension extends AbstractExtension
 			new TwigFunction('baseUrl', [UrlHelper::class, 'rootRelativeUrl']),
 			new TwigFunction('dd', [$this, 'ddFunction']),
 			new TwigFunction('fetch', [$this, 'fetchFunction']),
-			new TwigFunction('image', [$this, 'imageFunction']),
-			new TwigFunction('storeImage', [$this->images, 'storeImage']),
 		];
 	}
 
@@ -110,52 +98,6 @@ class Extension extends AbstractExtension
 		}
 
 		return $response;
-	}
-
-	/**
-	 * Renders responsive image template.
-	 *
-	 * @param Asset|string $image
-	 * @param array $config
-	 * @param Asset|string|null $imageMobile
-	 * @param string $alt
-	 * @return string
-	 */
-	public function imageFunction(Asset|string $image, $config = [], Asset|string $imageMobile = null, string $alt = ''): string
-	{
-		$thumbs = $mobile = [];
-		$config = array_merge([
-			'template' => 'developion-core/components/image',
-			'params' => [],
-			'fallback' => '',
-		], $config);
-		extract($config);
-		$sizes = [];
-		$imageAsset = $this->images->storeImage($image, [], true);
-		foreach ($params as $paramKey => $param) {
-			$thumbs['webp'][$paramKey] = $this->images->storeImage($imageAsset, $param['params']);
-			if ($paramKey == 0) $sizes = getimagesize($thumbs['webp'][$paramKey]);
-			$thumbs['jpeg'][$paramKey] = $this->images->storeImage($imageAsset, array_merge($param['params'], ['extension' => 'jpg']));
-		}
-		if ($imageMobile && !empty($params)) {
-			$imageAssetMobile = $this->images->storeImage($imageMobile, [], true);
-			$mobile['webp'] = $this->images->storeImage($imageAssetMobile, $params[0]['params']);
-			$mobile['jpeg'] = $this->images->storeImage($imageAssetMobile, array_merge($params[0]['params'], ['extension' => 'jpg']));
-		}
-
-		$html = Craft::$app->getView()->renderTemplate($template, [
-			'sizes' => $sizes,
-			'params' => $params,
-			'thumbs' => $thumbs,
-			'mobile' => $mobile,
-			'alt' => $alt ?: $imageAsset->title,
-		]);
-
-		if ('object' != gettype($imageAsset)) {
-			if (!empty($fallback)) return Craft::$app->getView()->renderTemplate($fallback);
-		}
-
-		return $html;
 	}
 
 	/**
