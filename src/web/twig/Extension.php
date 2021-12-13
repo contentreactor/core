@@ -45,7 +45,6 @@ class Extension extends AbstractExtension
 	public function getFilters(): array
 	{
 		return [
-			new TwigFilter('htmlParse', [$this, 'htmlParseFilter']),
 			new TwigFilter('readTime', [$this, 'readTimeFilter']),
 			new TwigFilter('splice', [$this, 'spliceFilter']),
 			new TwigFilter('uncamel', [$this, 'uncamelFilter']),
@@ -98,21 +97,6 @@ class Extension extends AbstractExtension
 		}
 
 		return $response;
-	}
-
-	/**
-	 * Parse multimedia from html and extracts sources of images and video tags.
-	 *
-	 * @param string $html
-	 * @return string
-	 */
-	public function htmlParseFilter($html): string
-	{
-		if (empty($html)) return '';
-		$html = preg_replace_callback('/(src=\\")(.*?)(\\")/', function ($matches) {
-			return $matches[1] . $this->images->storeImage($matches[2]) . $matches[3];
-		}, $html);
-		return $html;
 	}
 
 	/**
