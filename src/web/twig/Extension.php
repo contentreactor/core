@@ -5,13 +5,15 @@ namespace Developion\Core\web\twig;
 use Craft;
 use craft\elements\Entry;
 use craft\helpers\UrlHelper;
+use Developion\Core\web\twig\variables\DevelopionVariable;
 use GuzzleHttp\Client;
 use Symfony\Component\VarDumper\VarDumper;
 use Twig\Extension\AbstractExtension;
+use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
-class Extension extends AbstractExtension
+class Extension extends AbstractExtension implements GlobalsInterface
 {
 	/**
 	 * Return our Twig Extension name
@@ -142,5 +144,12 @@ class Extension extends AbstractExtension
 		$string = implode(' ', $data);
 
 		return ucwords($string);
+	}
+
+	public function getGlobals(): array
+	{
+		return [
+			'developion' => new DevelopionVariable(),
+		];
 	}
 }
