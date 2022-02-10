@@ -3,9 +3,11 @@
 namespace Developion\Core\traits;
 
 use Craft;
+use craft\elements\Entry;
 use craft\events\PluginEvent;
 use craft\services\Plugins;
 use Developion\Core\events\DevelopionPluginEvent;
+use ReflectionClass;
 use yii\base\Event;
 
 trait IsDevelopionPlugin
@@ -53,4 +55,18 @@ trait IsDevelopionPlugin
 	}
 
 	abstract protected function _events();
+
+	public function getRouteByEntryType(Entry $entry)
+	{
+		$class_name = get_class($this);
+		$reflection_class = new ReflectionClass($class_name);
+		$namespace = $reflection_class->getNamespaceName();
+		if (class_exists($namespace . "\controllers\\{$entry->type->name}Controller")) {
+			return "{$this->id}/{$entry->type->handle}";
+		}
+		if (class_exists($namespace . "\controllers\\PageController")) {
+			return "{$this->id}/page";
+		}
+		return false;
+	}
 }
