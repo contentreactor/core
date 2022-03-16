@@ -5,10 +5,11 @@ namespace Developion\Core\controllers;
 use Craft;
 use craft\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 class SettingsController extends Controller
 {
-	public function actionSaveSettings()
+	public function actionSaveSettings(): null|Response
 	{
 		$this->requirePostRequest();
 		$pluginHandle = $this->request->getRequiredBodyParam('pluginHandle');

@@ -17,11 +17,11 @@ use yii\base\Event;
 
 class Core extends Plugin
 {
-	public static $plugin;
+	public static Core $plugin;
 
 	public $schemaVersion = '0.5.0';
 
-	public function init()
+	public function init(): void
 	{
 		parent::init();
 		self::$plugin = $this;
@@ -36,7 +36,7 @@ class Core extends Plugin
 		$this->_twigExtensions();
 	}
 
-	protected function _config()
+	protected function _config(): void
 	{
 		Craft::$app->getI18n()->translations['core'] = [
 			'class' => PhpMessageSource::class,
@@ -46,7 +46,7 @@ class Core extends Plugin
 		];
 	}
 
-	protected function _events()
+	protected function _events(): void
 	{
 		Event::on(
 			View::class,
@@ -80,11 +80,11 @@ class Core extends Plugin
 		);
 	}
 
-	protected function _consoleEvents()
+	protected function _consoleEvents(): void
 	{
 	}
 
-	protected function _twigExtensions()
+	protected function _twigExtensions(): void
 	{
 		Craft::$app->view->registerTwigExtension(new Extension);
 	}

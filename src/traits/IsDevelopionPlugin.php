@@ -54,7 +54,7 @@ trait IsDevelopionPlugin
 		}
 	}
 
-	abstract protected function _events();
+	abstract protected function _events(): void;
 
 	public function getRouteByEntryType(Entry $entry)
 	{

@@ -53,7 +53,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
 		];
 	}
 
-	public function ddFunction(...$vars)
+	public function ddFunction(mixed ...$vars): void
 	{
 		foreach ($vars as $v) {
 			VarDumper::dump($v);
@@ -81,6 +81,8 @@ class Extension extends AbstractExtension implements GlobalsInterface
 				]
 			],
 		], $config);
+		$method = 'GET';
+		$options = [];
 		extract($config);
 
 		$client = new Client([

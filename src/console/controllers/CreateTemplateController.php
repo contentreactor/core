@@ -2,12 +2,9 @@
 
 namespace Developion\Core\console\controllers;
 
-use Developion\Core\Core;
-use Craft;
 use craft\console\Controller;
 use craft\helpers\FileHelper;
 use craft\helpers\StringHelper;
-use craft\services\Path;
 use yii\console\ExitCode;
 
 class CreateTemplateController extends Controller
@@ -36,13 +33,13 @@ class CreateTemplateController extends Controller
      * The first line of this method docblock is displayed as the description
      * of the Console Command in ./craft help
      *
-     * @return mixed
+     * @return int
      */
-    public function actionIndex(string $fileName)
+    public function actionIndex(string $fileName): int
     {
         if ($this->type == 'index' || empty($this->type)) {
             echo "Select a type of component";
-            return;
+            return ExitCode::NOINPUT;
         }
 
         $messages = [];
@@ -84,12 +81,12 @@ class CreateTemplateController extends Controller
         return ExitCode::OK;
     }
 
-    public function actionBlock(string $fileName)
+    public function actionBlock(string $fileName): void
     {
         $this->actionIndex($fileName);
     }
 
-    public function actionComponent(string $fileName)
+    public function actionComponent(string $fileName): void
     {
         $this->actionIndex($fileName);
     }

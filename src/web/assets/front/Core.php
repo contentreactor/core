@@ -6,7 +6,7 @@ use craft\web\AssetBundle;
 
 class Core extends AssetBundle
 {
-    public function init()
+    public function init(): void
     {
         $this->sourcePath = __DIR__ . '/dist';
 
