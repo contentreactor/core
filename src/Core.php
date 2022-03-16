@@ -5,13 +5,10 @@ namespace Developion\Core;
 use Craft;
 use craft\base\Plugin;
 use craft\events\PluginEvent;
-use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterTemplateRootsEvent;
 use craft\i18n\PhpMessageSource;
-use craft\services\Fields;
 use craft\services\Plugins;
 use craft\web\View;
-use Developion\Core\fields\InceptionMatrix;
 use Developion\Core\web\twig\Extension;
 use yii\base\Event;
 
@@ -53,14 +50,6 @@ class Core extends Plugin
 			View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS,
 			function (RegisterTemplateRootsEvent $event) {
 				$event->roots['developion-core'] = __DIR__ . '/templates';
-			}
-		);
-
-		Event::on(
-			Fields::class,
-			Fields::EVENT_REGISTER_FIELD_TYPES,
-			function (RegisterComponentTypesEvent $event) {
-				$event->types[] = InceptionMatrix::class;
 			}
 		);
 
