@@ -43,9 +43,6 @@ class SettingsController extends Controller
 		return $this->redirectToPostedUrl();
 	}
 
-	/**
-	 * @return void
-	 */
 	public function actionSave(): Response|null
 	{
 		$this->requirePostRequest();

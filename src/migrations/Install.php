@@ -26,10 +26,7 @@ class Install extends Migration
 		// return true;
 	}
 
-	/**
-	 * Creates the tables.
-	 */
-	public function createTables()
+	public function createTables(): void
 	{
 		$this->createTable(self::PLUGINS, [
 			'plugin' => $this->string()->notNull(),
@@ -43,7 +40,7 @@ class Install extends Migration
 		]);
 	}
 
-	public function addForeignKeys()
+	public function addForeignKeys(): void
 	{
 		$this->addForeignKey(null, self::PLUGINS, ['siteId'], Table::SITES, ['id'], 'CASCADE', 'CASCADE');
 	}
