@@ -5,9 +5,11 @@ namespace Developion\Core\web\twig;
 use Craft;
 use craft\elements\Entry;
 use craft\helpers\UrlHelper;
+use Developion\Core\web\twig\Node\Expression\ConstOperator;
 use Developion\Core\web\twig\variables\DevelopionVariable;
 use GuzzleHttp\Client;
 use Symfony\Component\VarDumper\VarDumper;
+use Twig\ExpressionParser;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
@@ -50,6 +52,21 @@ class Extension extends AbstractExtension implements GlobalsInterface
 			new TwigFilter('readTime', [$this, 'readTimeFilter']),
 			new TwigFilter('splice', [$this, 'spliceFilter']),
 			new TwigFilter('uncamel', [$this, 'uncamelFilter']),
+		];
+	}
+
+	/** @inheritDoc */
+	public function getOperators()
+	{
+		return [
+			[],
+			[
+				'::' => [
+					'precedence' => 500,
+					'class' => ConstOperator::class,
+					'associativity' => ExpressionParser::OPERATOR_LEFT
+				]
+			]
 		];
 	}
 
