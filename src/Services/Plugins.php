@@ -63,7 +63,12 @@ class Plugins extends Component
 
 	public function getPluginSettings(PluginInterface $plugin): Model
 	{
-		$settings = Core::getInstance()->db->getPluginSettings($plugin);
+		if (array_key_exists('plugin', Craft::$app->getUrlManager()->getRouteParams())) {
+			$plugin = Craft::$app->getUrlManager()->getRouteParams()['plugin'];
+			$settings = $plugin->getSettings();
+		} else {
+			$settings = Core::getInstance()->db->getPluginSettings($plugin);
+		}
 		$plugin->getSettings()->setAttributes($settings, false);
 		
 		return $plugin->getSettings();

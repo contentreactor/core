@@ -3,6 +3,7 @@
 namespace Developion\Core\controllers;
 
 use Craft;
+use craft\base\Model;
 use craft\web\Controller;
 use Developion\Core\Core;
 use yii\web\NotFoundHttpException;
@@ -53,6 +54,9 @@ class SettingsController extends Controller
 		if ($plugin === null) {
 			throw new NotFoundHttpException('Plugin not found');
 		}
+
+		$scenario = $this->request->getBodyParam('scenario', Model::SCENARIO_DEFAULT);
+		$plugin->getSettings()->setScenario($scenario);
 
 		if (!Core::getInstance()->plugins->savePluginSettings($plugin, $settings)) {
 			$this->setFailFlash(Craft::t('app', 'Couldn’t save plugin settings.'));
