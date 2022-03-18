@@ -10,6 +10,10 @@ use yii\web\Response;
 
 class SettingsController extends Controller
 {
+	/**
+	 * @deprecated
+	 * @return null|Response
+	 */
 	public function actionSaveSettings(): null|Response
 	{
 		$this->requirePostRequest();
