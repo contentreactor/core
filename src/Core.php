@@ -6,12 +6,25 @@ use Craft;
 use craft\base\Plugin;
 use craft\events\PluginEvent;
 use craft\events\RegisterTemplateRootsEvent;
+use craft\events\RegisterUrlRulesEvent;
 use craft\i18n\PhpMessageSource;
-use craft\services\Plugins;
+use craft\services\Plugins as CraftPlugins;
+use craft\web\UrlManager;
 use craft\web\View;
+use Developion\Core\Services\DB;
+use Developion\Core\Services\Plugins;
 use Developion\Core\web\twig\Extension;
 use yii\base\Event;
 
+/**
+ * Class Core
+ *
+ * @package developion/core
+ *
+ * @property Core $plugin
+ * @property Plugins $plugins
+ * @property DB $db
+ */
 class Core extends Plugin
 {
 	public static Core $plugin;
@@ -41,6 +54,10 @@ class Core extends Plugin
 			'allowOverrides' => true,
 			'forceTranslation' => true,
 		];
+		$this->setComponents([
+			'plugins' => Plugins::class,
+			'db' => DB::class,
+		]);
 	}
 
 	protected function _events(): void
@@ -54,8 +71,16 @@ class Core extends Plugin
 		);
 
 		Event::on(
-			Plugins::class,
-			Plugins::EVENT_BEFORE_UNINSTALL_PLUGIN,
+			UrlManager::class,
+			UrlManager::EVENT_REGISTER_CP_URL_RULES,
+			function (RegisterUrlRulesEvent $event) {
+				$event->rules["{$this->id}/settings/save"] = "{$this->id}/settings/save";
+			}
+		);
+
+		Event::on(
+			CraftPlugins::class,
+			CraftPlugins::EVENT_BEFORE_UNINSTALL_PLUGIN,
 			function (PluginEvent $event) {
 				$developionPlugins = array_filter(array_keys(Craft::$app->getPlugins()->getAllPlugins()), function ($pluginHandle) {
 					return $pluginHandle != 'developion-core' && str_contains($pluginHandle, 'developion');
