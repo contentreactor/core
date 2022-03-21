@@ -29,12 +29,16 @@ class Core extends Plugin
 {
 	public static Core $plugin;
 
+	/** @inheritDoc */
+	public $hasCpSettings = true;
+
 	public $schemaVersion = '0.5.0';
 
 	public function init(): void
 	{
 		parent::init();
 		self::$plugin = $this;
+		$this->name = 'Core';
 
 		$request = Craft::$app->getRequest();
 		if ($request->getIsConsoleRequest()) {
