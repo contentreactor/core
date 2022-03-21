@@ -12,8 +12,8 @@ class DB
 	public function savePluginSettings(PluginInterface $plugin, array $settings): bool
 	{
 		$currentSite = Craft::$app->getSites()->getCurrentSite();
-		// $transaction = Craft::$app->getDb()->beginTransaction();
-		// try {
+		$transaction = Craft::$app->getDb()->beginTransaction();
+		try {
 			foreach ($settings as $settingKey => $settingValue) {
 				$setting = Setting::findOne([
 					'plugin' => $plugin->id,
@@ -34,11 +34,11 @@ class DB
 				$setting->value = serialize($settingValue);
 				$setting->save();
 			}
-			// $transaction->commit();
-		// } catch (\Throwable $th) {
-		// 	$transaction->rollBack();
-		// 	return false;
-		// }
+			$transaction->commit();
+		} catch (\Throwable $th) {
+			$transaction->rollBack();
+			return false;
+		}
 		return true;
 	}
 
@@ -59,14 +59,17 @@ class DB
 		return $settings;
 	}
 
-	// public function getPluginSetting(PluginInterface $plugin, string $key): array
-	// {
-	// 	$currentSite = Craft::$app->getSites()->getCurrentSite();
-	// 	$setting = Setting::findOne([
-	// 		'plugin' => $plugin->id,
-	// 		'siteId' => $currentSite->id,
-	// 		'key' => $key
-	// 	]);
-	// 	return $setting;
-	// }
+	public function getPluginSetting(PluginInterface $plugin, string $key): mixed
+	{
+		$currentSite = Craft::$app->getSites()->getCurrentSite();
+		$setting = Setting::find()
+			->select(['key', 'value'])
+			->where([
+				'plugin' => $plugin->id,
+				'siteId' => $currentSite->id,
+				'key' => $plugin->id . '_' . $key,
+			])
+			->one();
+		return unserialize($setting->value);
+	}
 }
