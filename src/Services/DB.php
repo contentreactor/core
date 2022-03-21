@@ -12,29 +12,33 @@ class DB
 	public function savePluginSettings(PluginInterface $plugin, array $settings): bool
 	{
 		$currentSite = Craft::$app->getSites()->getCurrentSite();
-		$transaction = Craft::$app->getDb()->beginTransaction();
-		try {
+		// $transaction = Craft::$app->getDb()->beginTransaction();
+		// try {
 			foreach ($settings as $settingKey => $settingValue) {
 				$setting = Setting::findOne([
 					'plugin' => $plugin->id,
 					'siteId' => $currentSite->id,
-					'key' => $settingKey
+					'key' => $plugin->id . '_' . $settingKey
 				]);
 				if (!$setting) {
 					$setting = new Setting([
 						'plugin' => $plugin->id,
 						'siteId' => $currentSite->id,
-						'key' => $settingKey
+						'key' => $plugin->id . '_' . $settingKey
 					]);
 				}
-				$setting->value = $settingValue;
+				if (gettype($plugin->getSettings()->$settingKey) == 'array' && empty($settingValue)) {
+					$settingValue = [];
+				}
+				settype($settingValue, gettype($plugin->getSettings()->$settingKey));
+				$setting->value = serialize($settingValue);
 				$setting->save();
 			}
-			$transaction->commit();
-		} catch (\Throwable $th) {
-			$transaction->rollBack();
-			return false;
-		}
+			// $transaction->commit();
+		// } catch (\Throwable $th) {
+		// 	$transaction->rollBack();
+		// 	return false;
+		// }
 		return true;
 	}
 
@@ -42,13 +46,27 @@ class DB
 	{
 		$currentSite = Craft::$app->getSites()->getCurrentSite();
 		$settings = ArrayHelper::map(
-			Setting::findAll([
-				'plugin' => $plugin->id,
-				'siteId' => $currentSite->id,
-			]),
-			fn (Setting $setting) => $setting->key,
-			fn (Setting $setting) => $setting->value
+			Setting::find()
+				->select(['key', 'value'])
+				->where([
+					'plugin' => $plugin->id,
+					'siteId' => $currentSite->id,
+				])
+				->all(),
+			fn (Setting $setting) => substr($setting->key, strlen($plugin->id . '_')),
+			fn (Setting $setting) => unserialize($setting->value)
 		);
 		return $settings;
 	}
+
+	// public function getPluginSetting(PluginInterface $plugin, string $key): array
+	// {
+	// 	$currentSite = Craft::$app->getSites()->getCurrentSite();
+	// 	$setting = Setting::findOne([
+	// 		'plugin' => $plugin->id,
+	// 		'siteId' => $currentSite->id,
+	// 		'key' => $key
+	// 	]);
+	// 	return $setting;
+	// }
 }
