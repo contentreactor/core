@@ -6,7 +6,9 @@ use Craft;
 use craft\elements\Entry;
 use craft\events\PluginEvent;
 use craft\services\Plugins;
+use Developion\Core\Core;
 use Developion\Core\events\DevelopionPluginEvent;
+use Developion\Core\Records\Setting;
 use ReflectionClass;
 use yii\base\Event;
 
@@ -33,6 +35,19 @@ trait IsDevelopionPlugin
 			function (PluginEvent $event) {
 				if ($event->plugin === $this) {
 					Craft::$app->getPlugins()->installPlugin('developion-core');
+					Core::getInstance()->plugins->savePluginSettings($this, $this->getSettings()->getAttributes());
+				}
+			}
+		);
+
+		Event::on(
+			Plugins::class,
+			Plugins::EVENT_BEFORE_UNINSTALL_PLUGIN,
+			function (PluginEvent $event) {
+				if ($event->plugin === $this) {
+					Setting::deleteAll([
+						'plugin' => $this->id,
+					]);
 				}
 			}
 		);
@@ -48,7 +63,7 @@ trait IsDevelopionPlugin
 			DevelopionPluginEvent::EVENT_AT_PLUGIN_INIT,
 			$event
 		);
-		
+
 		foreach ($event->callbacks as $callback) {
 			if (is_callable($callback)) $callback();
 		}
