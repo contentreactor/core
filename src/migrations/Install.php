@@ -17,13 +17,14 @@ class Install extends Migration
 	public function safeUp()
 	{
 		$this->createTables();
+		$this->addIndexes();
 		$this->addForeignKeys();
 	}
 
 	/** @inheritDoc */
 	public function safeDown()
 	{
-		// return true;
+		$this->dropTables();
 	}
 
 	public function createTables(): void
@@ -36,12 +37,21 @@ class Install extends Migration
 			'dateCreated' => $this->dateTime()->notNull(),
 			'dateUpdated' => $this->dateTime()->notNull(),
 			'uid' => $this->uid(),
-			'PRIMARY KEY([[key]])',
 		]);
+	}
+
+	public function addIndexes(): void
+	{
+		$this->createIndex(null, self::PLUGINS, ['siteId', 'key'], true);
 	}
 
 	public function addForeignKeys(): void
 	{
 		$this->addForeignKey(null, self::PLUGINS, ['siteId'], Table::SITES, ['id'], 'CASCADE', 'CASCADE');
+	}
+
+	public function dropTables(): void
+	{
+		$this->dropTableIfExists(self::PLUGINS);
 	}
 }
