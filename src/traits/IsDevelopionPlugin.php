@@ -35,7 +35,9 @@ trait IsDevelopionPlugin
 			function (PluginEvent $event) {
 				if ($event->plugin === $this) {
 					Craft::$app->getPlugins()->installPlugin('developion-core');
-					Core::getInstance()->plugins->savePluginSettings($this, $this->getSettings()->getAttributes());
+					if (null !== $this->getSettings()) {
+						Core::getInstance()->plugins->savePluginSettings($this, $this->getSettings()->getAttributes());
+					}
 				}
 			}
 		);
