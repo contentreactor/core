@@ -7,10 +7,12 @@ use craft\base\Plugin;
 use craft\events\PluginEvent;
 use craft\events\RegisterTemplateRootsEvent;
 use craft\events\RegisterUrlRulesEvent;
+use craft\helpers\UrlHelper;
 use craft\i18n\PhpMessageSource;
 use craft\services\Plugins as CraftPlugins;
 use craft\web\UrlManager;
 use craft\web\View;
+use Developion\Core\Models\Settings;
 use Developion\Core\Services\DB;
 use Developion\Core\Services\Plugins;
 use Developion\Core\web\twig\Extension;
@@ -79,6 +81,7 @@ class Core extends Plugin
 			UrlManager::EVENT_REGISTER_CP_URL_RULES,
 			function (RegisterUrlRulesEvent $event) {
 				$event->rules["{$this->id}/settings/save"] = "{$this->id}/settings/save";
+				$event->rules["{$this->id}/settings"] = "{$this->id}/settings";
 			}
 		);
 
@@ -106,4 +109,17 @@ class Core extends Plugin
 	{
 		Craft::$app->view->registerTwigExtension(new Extension);
 	}
+
+	/**
+	 * @return Settings
+	 */
+	protected function createSettingsModel(): Settings
+	{
+		return new Settings();
+	}
+
+    public function getSettingsResponse()
+    {
+        Craft::$app->getResponse()->redirect(UrlHelper::cpUrl("{$this->id}/settings"));
+    }
 }
