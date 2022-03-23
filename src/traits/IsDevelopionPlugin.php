@@ -35,9 +35,13 @@ trait IsDevelopionPlugin
 			function (PluginEvent $event) {
 				if ($event->plugin === $this) {
 					Craft::$app->getPlugins()->installPlugin('developion-core');
+					$core = Core::getInstance();
+					$developionPlugins = $core->db->getPluginSetting($core, 'developionPlugins');
 					if (null !== $this->getSettings()) {
-						Core::getInstance()->plugins->savePluginSettings($this, $this->getSettings()->getAttributes());
+						$developionPlugins[] = $this->id;
+						$core->plugins->savePluginSettings($this, $this->getSettings()->getAttributes());
 					}
+					$core->db->setPluginSetting($core, 'developionPlugins', $developionPlugins);
 				}
 			}
 		);
@@ -50,6 +54,10 @@ trait IsDevelopionPlugin
 					Setting::deleteAll([
 						'plugin' => $this->id,
 					]);
+					$core = Core::getInstance();
+					$developionPlugins = $core->db->getPluginSetting($core, 'developionPlugins');
+					if (null !== $this->getSettings()) unset($developionPlugins[$this->id]);
+					$core->db->setPluginSetting($core, 'developionPlugins', $developionPlugins);
 				}
 			}
 		);
