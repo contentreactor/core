@@ -70,6 +70,41 @@ class DB
 				'key' => $plugin->id . '_' . $key,
 			])
 			->one();
+		if ($setting === null) {			
+			settype($setting, gettype($plugin->getSettings()->$key));
+			return $setting;
+		}
 		return unserialize($setting->value);
+	}
+
+	public function setPluginSetting(PluginInterface $plugin, string $key, mixed $value): mixed
+	{
+		$currentSite = Craft::$app->getSites()->getCurrentSite();
+		$transaction = Craft::$app->getDb()->beginTransaction();
+		try {
+			$setting = Setting::findOne([
+				'plugin' => $plugin->id,
+				'siteId' => $currentSite->id,
+				'key' => $plugin->id . '_' . $key
+			]);
+			if (!$setting) {
+				$setting = new Setting([
+					'plugin' => $plugin->id,
+					'siteId' => $currentSite->id,
+					'key' => $plugin->id . '_' . $key
+				]);
+			}
+			if (gettype($plugin->getSettings()->$key) == 'array' && empty($value)) {
+				$value = [];
+			}
+			settype($value, gettype($plugin->getSettings()->$key));
+			$setting->value = serialize($value);
+			$setting->save();
+			$transaction->commit();
+		} catch (\Throwable $th) {
+			$transaction->rollBack();
+			return false;
+		}
+		return true;
 	}
 }
