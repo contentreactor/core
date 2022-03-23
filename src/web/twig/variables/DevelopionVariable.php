@@ -3,9 +3,15 @@
 namespace Developion\Core\web\twig\variables;
 
 use craft\helpers\Html;
+use Developion\Core\Core;
 use yii\di\ServiceLocator;
 use yii\widgets\ActiveForm;
 
+// TODO: remove
+/**
+ * Class DevelopionVariable
+ * @deprecated
+ */
 class DevelopionVariable extends ServiceLocator
 {
 	public function __construct($config = [])
@@ -15,8 +21,13 @@ class DevelopionVariable extends ServiceLocator
 			'html' => Html::class
 		];
 
-        $config['components'] = $components;
+		$config['components'] = $components;
 
 		parent::__construct($config);
+	}
+
+	public function getPluginName()
+	{
+		return Core::getInstance()->name;
 	}
 }
