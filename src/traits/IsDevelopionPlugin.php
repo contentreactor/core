@@ -23,8 +23,6 @@ trait IsDevelopionPlugin
 
 		$this->_dependencyEvents();
 		$this->_events();
-
-		$this->_trigger();
 	}
 
 	private function _dependencyEvents()
@@ -59,6 +57,14 @@ trait IsDevelopionPlugin
 					if (null !== $this->getSettings()) unset($developionPlugins[$this->id]);
 					$core->db->setPluginSetting($core, 'developionPlugins', $developionPlugins);
 				}
+			}
+		);
+
+		Event::on(
+			Plugins::class,
+			Plugins::EVENT_AFTER_LOAD_PLUGINS,
+			function () {
+				$this->_trigger();
 			}
 		);
 	}

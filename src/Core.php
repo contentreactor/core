@@ -61,8 +61,8 @@ class Core extends Plugin
 			'forceTranslation' => true,
 		];
 		$this->setComponents([
-			'plugins' => Plugins::class,
 			'db' => DB::class,
+			'plugins' => Plugins::class,
 		]);
 	}
 
