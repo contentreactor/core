@@ -4,12 +4,31 @@ namespace Developion\Core\Services;
 
 use Craft;
 use craft\base\PluginInterface;
+use craft\elements\Entry;
 use craft\helpers\ArrayHelper;
+use craft\web\UrlManager;
 use Developion\Core\Records\Setting;
 
 class DB
 {
-	public function savePluginSettings(PluginInterface $plugin, array $settings): bool
+	public function getPluginSettings(PluginInterface $plugin): array
+	{
+		$currentSite = Craft::$app->getSites()->getCurrentSite();
+		$settings = ArrayHelper::map(
+			Setting::find()
+				->select(['key', 'value'])
+				->where([
+					'plugin' => $plugin->id,
+					'siteId' => $currentSite->id,
+				])
+				->all(),
+			fn (Setting $setting) => substr($setting->key, strlen($plugin->id . '_')),
+			fn (Setting $setting) => unserialize($setting->value)
+		);
+		return $settings;
+	}
+
+	public function setPluginSettings(PluginInterface $plugin, array $settings): bool
 	{
 		$currentSite = Craft::$app->getSites()->getCurrentSite();
 		$transaction = Craft::$app->getDb()->beginTransaction();
@@ -40,23 +59,6 @@ class DB
 			return false;
 		}
 		return true;
-	}
-
-	public function getPluginSettings(PluginInterface $plugin): array
-	{
-		$currentSite = Craft::$app->getSites()->getCurrentSite();
-		$settings = ArrayHelper::map(
-			Setting::find()
-				->select(['key', 'value'])
-				->where([
-					'plugin' => $plugin->id,
-					'siteId' => $currentSite->id,
-				])
-				->all(),
-			fn (Setting $setting) => substr($setting->key, strlen($plugin->id . '_')),
-			fn (Setting $setting) => unserialize($setting->value)
-		);
-		return $settings;
 	}
 
 	public function getPluginSetting(PluginInterface $plugin, string $key): mixed
@@ -106,5 +108,37 @@ class DB
 			return false;
 		}
 		return true;
+	}
+
+	public function getSlug(string $entryType, string $section = 'page'): string
+	{
+		/** @var PDO|false $connection */
+		$connection = Craft::$app->getDb()->pdo;
+		if (!$connection) return '';
+
+		$query = "SELECT es.slug FROM (SELECT e.id AS elementsId, es.id AS elementsSitesId, c.id AS contentId FROM elements e INNER JOIN entries en ON en.id = e.id INNER JOIN elements_sites es ON es.elementId = e.id INNER JOIN content c ON c.elementId = e.id WHERE (en.typeId in(SELECT id FROM entrytypes WHERE handle=:type)) AND (en.sectionId in(SELECT id FROM sections WHERE handle=:section)) AND (e.archived=FALSE) AND (((e.enabled=TRUE) AND (es.enabled=TRUE))) AND (e.dateDeleted IS NULL) AND (e.draftId IS NULL) AND (e.revisionId IS NULL) ORDER BY en.postDate DESC LIMIT 1) subquery INNER JOIN elements_sites es ON es.id = subquery.elementsSitesId";
+		$sql = $connection->prepare($query);
+		$sql->execute([
+			'type' => $entryType,
+			'section' => $section
+		]);
+		$result = $sql->fetch($connection::FETCH_NUM);
+		return $result[0];
+	}
+
+	public function matchEntry(array $config): Entry|null
+	{
+		/** @var UrlManager $urlManager*/
+		$urlManager = Craft::$app->getUrlManager();
+		$entry = $urlManager->getMatchedElement();
+		if (!$entry) {
+			$entryQuery = Entry::find();
+			foreach ($config as $paramName => $paramValue) {
+				$entryQuery = $entryQuery->$paramName($paramValue);
+			}
+			$entry = $entryQuery->one();
+			$urlManager->setMatchedElement($entry);
+		}
+		return $entry;
 	}
 }
