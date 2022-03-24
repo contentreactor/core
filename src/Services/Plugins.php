@@ -46,7 +46,7 @@ class Plugins extends Component
 			return false;
 		}
 
-		if (!Core::getInstance()->db->savePluginSettings($plugin, $settings)) {
+		if (!Core::getInstance()->db->setPluginSettings($plugin, $settings)) {
 			return false;
 		}
 
