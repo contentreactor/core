@@ -7,10 +7,8 @@ use Developion\Core\Core;
 use yii\di\ServiceLocator;
 use yii\widgets\ActiveForm;
 
-// TODO: remove
 /**
  * Class DevelopionVariable
- * @deprecated
  */
 class DevelopionVariable extends ServiceLocator
 {
@@ -18,7 +16,7 @@ class DevelopionVariable extends ServiceLocator
 	{
 		$components = [
 			'form' => ActiveForm::class,
-			'html' => Html::class
+			'html' => Html::class,
 		];
 
 		$config['components'] = $components;
@@ -29,5 +27,10 @@ class DevelopionVariable extends ServiceLocator
 	public function getPluginName()
 	{
 		return Core::getInstance()->name;
+	}
+
+	public function getSettings()
+	{
+		
 	}
 }
