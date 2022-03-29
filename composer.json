@@ -4,7 +4,7 @@
 	"type": "craft-plugin",
 	"version": "0.5.0",
 	"license": "MIT",
-	"keywords": [
+    "keywords": [
 		"craft",
 		"cms",
 		"craftcms",
