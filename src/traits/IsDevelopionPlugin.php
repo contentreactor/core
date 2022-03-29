@@ -23,6 +23,7 @@ trait IsDevelopionPlugin
 
 		$this->_dependencyEvents();
 		$this->_events();
+		$this->twigExtensions();
 	}
 
 	private function _dependencyEvents()
@@ -99,5 +100,9 @@ trait IsDevelopionPlugin
 			return "{$this->id}/page";
 		}
 		return false;
+	}
+
+	public function twigExtensions(): void
+	{
 	}
 }
