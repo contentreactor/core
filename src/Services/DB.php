@@ -72,7 +72,7 @@ class DB
 				'key' => $plugin->id . '_' . $key,
 			])
 			->one();
-		if ($setting === null) {			
+		if ($setting === null) {
 			settype($setting, gettype($plugin->getSettings()->$key));
 			return $setting;
 		}
