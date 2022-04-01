@@ -11,21 +11,40 @@ use Developion\Core\Records\Setting;
 
 class DB
 {
-	public function getPluginSettings(PluginInterface $plugin): array
+	public function getPluginSettings(PluginInterface $plugin, array $keys = []): array
 	{
 		$currentSite = Craft::$app->getSites()->getCurrentSite();
-		$settings = ArrayHelper::map(
-			Setting::find()
-				->select(['key', 'value'])
-				->where([
-					'plugin' => $plugin->id,
-					'siteId' => $currentSite->id,
-				])
-				->all(),
-			fn (Setting $setting) => substr($setting->key, strlen($plugin->id . '_')),
+		$prefix = $plugin->id . '_';
+
+		$path = Craft::$app->getPath()->getStoragePath() . "/{$plugin->getHandle()}-site-{$currentSite->id}.php";
+		if (file_exists($path)) {
+			$settings = require $path;
+			if (!empty($settings)) {
+				if (empty($keys)) return $settings;
+				return array_filter(
+					$settings,
+					fn($key) => in_array($key, $keys),
+					ARRAY_FILTER_USE_KEY
+				);
+			}
+		}
+
+		$settings = Setting::find();
+		foreach ($keys as $key) {
+			$settings = $settings->orWhere("`key` = :key$key", ["key$key" => $prefix . $key]);
+		}
+		$settings = $settings->select(['key', 'value'])
+			->andWhere([
+				'plugin' => $plugin->id,
+				'siteId' => $currentSite->id,
+			]);
+		$settings = $settings->all();
+
+		return ArrayHelper::map(
+			$settings,
+			fn (Setting $setting) => substr($setting->key, strlen($prefix)),
 			fn (Setting $setting) => unserialize($setting->value)
 		);
-		return $settings;
 	}
 
 	public function setPluginSettings(PluginInterface $plugin, array $settings): bool
@@ -59,6 +78,15 @@ class DB
 			return false;
 		}
 		return true;
+	}
+
+	public function getPluginSettingsRaw(PluginInterface $plugin): array
+	{
+		return Setting::find()
+			->where([
+				'plugin' => $plugin->id,
+			])
+			->all();
 	}
 
 	public function getPluginSetting(PluginInterface $plugin, string $key): mixed

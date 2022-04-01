@@ -7,12 +7,14 @@ use craft\base\Plugin;
 use craft\events\PluginEvent;
 use craft\events\RegisterTemplateRootsEvent;
 use craft\events\RegisterUrlRulesEvent;
+use craft\helpers\ArrayHelper;
 use craft\helpers\UrlHelper;
 use craft\i18n\PhpMessageSource;
 use craft\services\Plugins as CraftPlugins;
 use craft\web\UrlManager;
 use craft\web\View;
 use Developion\Core\Models\Settings;
+use Developion\Core\Records\Setting;
 use Developion\Core\Services\DB;
 use Developion\Core\Services\Plugins;
 use Developion\Core\web\twig\Extension;
@@ -75,7 +77,6 @@ class Core extends Plugin
 				$event->roots['developion-core'] = __DIR__ . '/templates';
 			}
 		);
-
 		Event::on(
 			UrlManager::class,
 			UrlManager::EVENT_REGISTER_CP_URL_RULES,
@@ -84,7 +85,6 @@ class Core extends Plugin
 				$event->rules["{$this->id}/settings"] = "{$this->id}/settings";
 			}
 		);
-
 		Event::on(
 			CraftPlugins::class,
 			CraftPlugins::EVENT_BEFORE_UNINSTALL_PLUGIN,
@@ -97,6 +97,35 @@ class Core extends Plugin
 						Craft::$app->getPlugins()->uninstallPlugin($developionPlugin);
 					}
 				}
+			}
+		);
+		Event::on(
+			Plugins::class,
+			Plugins::EVENT_BEFORE_SAVE_PLUGIN_SETTINGS,
+			function(PluginEvent $event) {
+				if (stripos($event->plugin->getHandle(), 'developion') === false) return;
+				$currentSite = Craft::$app->getSites()->getCurrentSite();
+				$path = Craft::$app->getPath()->getStoragePath() . "/{$event->plugin->getHandle()}-site-{$currentSite->id}.php";
+				if (!file_exists($path)) {
+					file_put_contents($path, "<?php\n\nreturn [];\n");
+				}
+			}
+		);
+		Event::on(
+			Plugins::class,
+			Plugins::EVENT_AFTER_SAVE_PLUGIN_SETTINGS,
+			function(PluginEvent $event) {
+				if (stripos($event->plugin->getHandle(), 'developion') === false) return;
+				$currentSite = Craft::$app->getSites()->getCurrentSite();
+				$prefix = $event->plugin->id . '_';
+				$path = Craft::$app->getPath()->getStoragePath() . "/{$event->plugin->getHandle()}-site-{$currentSite->id}.php";
+				$settings = $this->db->getPluginSettingsRaw($event->plugin);
+				$settings = ArrayHelper::map(
+					$settings,
+					fn (Setting $setting) => substr($setting->key, strlen($prefix)),
+					fn (Setting $setting) => unserialize($setting->value)
+				);
+				file_put_contents($path, "<?php\n\nreturn " . var_export($settings, true) . ";\n");
 			}
 		);
 	}
