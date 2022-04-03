@@ -96,9 +96,6 @@ trait IsDevelopionPlugin
 		if (class_exists($namespace . "\controllers\\{$entry->type->name}Controller")) {
 			return "{$this->id}/{$entry->type->handle}";
 		}
-		if (class_exists($namespace . "\controllers\\PageController")) {
-			return "{$this->id}/page";
-		}
 		return false;
 	}
 
