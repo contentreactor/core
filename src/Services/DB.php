@@ -38,13 +38,17 @@ class DB
 				'plugin' => $plugin->id,
 				'siteId' => $currentSite->id,
 			]);
-		$settings = $settings->all();
-
-		return ArrayHelper::map(
-			$settings,
+		$settings = ArrayHelper::map(
+			$settings->all(),
 			fn (Setting $setting) => substr($setting->key, strlen($prefix)),
 			fn (Setting $setting) => unserialize($setting->value)
 		);
+		
+		if (empty($settings)) {
+			$settings = (array) $plugin->getSettings();
+		}
+
+		return $settings;
 	}
 
 	public function setPluginSettings(PluginInterface $plugin, array $settings): bool
