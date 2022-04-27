@@ -136,7 +136,7 @@ class Core extends Plugin
 
 	protected function _twigExtensions(): void
 	{
-		Craft::$app->view->registerTwigExtension(new Extension);
+		Craft::$app->getView()->registerTwigExtension(new Extension);
 	}
 
 	/**

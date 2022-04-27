@@ -1,6 +1,6 @@
 <?php
 
-namespace Developion\Core\web\twig\Node\Expression;
+namespace Developion\Core\web\twig\node\expression;
 
 use Exception;
 use Twig\Compiler;
