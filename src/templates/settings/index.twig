@@ -1,0 +1,36 @@
+{% extends 'developion-core/_layouts' %}
+{% import '_includes/forms' as forms %}
+
+{% block sidebar %}
+	<nav class="developion-settings-tabs" data-vui-tabs>
+		<ul>
+			{% for id, item in navItems %}
+				{% if item.heading is defined %}
+					<li class="heading"><span>{{ item.heading }}</span></li>
+				{% else %}
+					<li>
+						<a id="tab-{{ loop.index }}" href="#tab-{{ id }}" class="tab {% if id == selectedItem %}sel{% endif %}">
+							{{ item.title }}
+						</a>
+					</li>
+				{% endif %}
+			{% endfor %}
+		</ul>
+	</nav>
+{% endblock %}
+
+{% block blockContent %}
+
+{% for id, item in navItems %}
+	{% if item.title is defined %}
+		<div id="tab-{{ id }}" {% if not loop.first %}class="hidden"{% endif %}>
+			<h2>{{ item.title }}</h2>
+			{% include id ~ '/settings/_pane/' ignore missing with {
+				handle: id,
+				settings: item.settings
+			} %}
+		</div>
+	{% endif %}
+{% endfor %}
+
+{% endblock %}

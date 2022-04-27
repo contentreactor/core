@@ -5,13 +5,17 @@ namespace Developion\Core\web\twig;
 use Craft;
 use craft\elements\Entry;
 use craft\helpers\UrlHelper;
+use Developion\Core\web\twig\Node\Expression\ConstOperator;
+use Developion\Core\web\twig\variables\DevelopionVariable;
 use GuzzleHttp\Client;
 use Symfony\Component\VarDumper\VarDumper;
+use Twig\ExpressionParser;
 use Twig\Extension\AbstractExtension;
+use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
-class Extension extends AbstractExtension
+class Extension extends AbstractExtension implements GlobalsInterface
 {
 	/**
 	 * Return our Twig Extension name
@@ -51,7 +55,22 @@ class Extension extends AbstractExtension
 		];
 	}
 
-	public function ddFunction(...$vars)
+	/** @inheritDoc */
+	public function getOperators()
+	{
+		return [
+			[],
+			[
+				'::' => [
+					'precedence' => 500,
+					'class' => ConstOperator::class,
+					'associativity' => ExpressionParser::OPERATOR_LEFT
+				]
+			]
+		];
+	}
+
+	public function ddFunction(mixed ...$vars): void
 	{
 		foreach ($vars as $v) {
 			VarDumper::dump($v);
@@ -79,6 +98,8 @@ class Extension extends AbstractExtension
 				]
 			],
 		], $config);
+		$method = 'GET';
+		$options = [];
 		extract($config);
 
 		$client = new Client([
@@ -142,5 +163,12 @@ class Extension extends AbstractExtension
 		$string = implode(' ', $data);
 
 		return ucwords($string);
+	}
+
+	public function getGlobals(): array
+	{
+		return [
+			'developion' => new DevelopionVariable(),
+		];
 	}
 }
