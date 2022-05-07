@@ -33,10 +33,9 @@ class Core extends Plugin
 {
 	public static Core $plugin;
 
-	/** @inheritDoc */
-	public $hasCpSettings = true;
+	public bool $hasCpSettings = true;
 
-	public $schemaVersion = '0.5.0';
+	public string $schemaVersion = '1.0.0';
 
 	public function init(): void
 	{
@@ -147,7 +146,7 @@ class Core extends Plugin
 		return new Settings();
 	}
 
-    public function getSettingsResponse()
+    public function getSettingsResponse(): mixed
     {
         Craft::$app->getResponse()->redirect(UrlHelper::cpUrl("{$this->id}/settings"));
     }
