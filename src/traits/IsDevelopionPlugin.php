@@ -40,7 +40,7 @@ trait IsDevelopionPlugin
 						$developionPlugins[] = $this->id;
 						$core->plugins->savePluginSettings($this, $this->getSettings()->getAttributes());
 					}
-					$core->db->setPluginSetting($core, 'developionPlugins', $developionPlugins);
+					$core->db->setPluginSetting($core, 'developionPlugins', array_unique($developionPlugins));
 				}
 			}
 		);
