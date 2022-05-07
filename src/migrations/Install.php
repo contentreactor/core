@@ -2,18 +2,13 @@
 
 namespace Developion\Core\migrations;
 
-use Craft;
 use craft\db\Migration;
 use craft\db\Table;
 
-/**
- * Install migration.
- */
 class Install extends Migration
 {
 	const PLUGINS = '{{%developion_plugins}}';
 
-	/** @inheritDoc */
 	public function safeUp()
 	{
 		$this->createTables();
@@ -21,7 +16,6 @@ class Install extends Migration
 		$this->addForeignKeys();
 	}
 
-	/** @inheritDoc */
 	public function safeDown()
 	{
 		$this->dropTables();
