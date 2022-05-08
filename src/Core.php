@@ -138,9 +138,6 @@ class Core extends Plugin
 		Craft::$app->getView()->registerTwigExtension(new Extension);
 	}
 
-	/**
-	 * @return Settings
-	 */
 	protected function createSettingsModel(): Settings
 	{
 		return new Settings();
@@ -148,6 +145,6 @@ class Core extends Plugin
 
     public function getSettingsResponse(): mixed
     {
-        Craft::$app->getResponse()->redirect(UrlHelper::cpUrl("{$this->id}/settings"));
+        return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl("{$this->id}/settings"));
     }
 }
