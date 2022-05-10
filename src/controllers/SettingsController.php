@@ -8,13 +8,13 @@ use craft\helpers\ArrayHelper;
 use craft\helpers\Cp;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
+use craft\web\Response;
 use Developion\Core\Core;
 use yii\web\NotFoundHttpException;
-use yii\web\Response;
 
 class SettingsController extends Controller
 {
-	public function actionIndex()
+	public function actionIndex(): Response
 	{
 		$core = Core::getInstance();
 		$developionPlugins = $core->db->getPluginSetting($core, 'developionPlugins');
@@ -33,9 +33,16 @@ class SettingsController extends Controller
 			['label' => Craft::t('app', 'Settings'), 'url' => UrlHelper::cpUrl('settings')],
 			['label' => 'Developion', 'url' => UrlHelper::cpUrl('developion-core/settings')]
 		];
+
+		if (empty($developionPlugins)) {
+			return $this->renderTemplate('developion-core/settings/empty', [
+				'crumbs' => $crumbs,
+			]);
+		}
+
 		$selectedItem = reset($developionPlugins);
 
-		$this->renderTemplate('developion-core/settings', [
+		return $this->renderTemplate('developion-core/settings', [
 			'navItems' => $navItems,
 			'selectedItem' => $selectedItem,
 			'crumbs' => $crumbs,
