@@ -33,7 +33,7 @@ class SettingsController extends Controller
 			['label' => Craft::t('app', 'Settings'), 'url' => UrlHelper::cpUrl('settings')],
 			['label' => 'Developion', 'url' => UrlHelper::cpUrl('developion-core/settings')]
 		];
-		$selectedItem = $developionPlugins[0];
+		$selectedItem = reset($developionPlugins);
 
 		$this->renderTemplate('developion-core/settings', [
 			'navItems' => $navItems,
