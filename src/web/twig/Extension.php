@@ -17,21 +17,11 @@ use Twig\TwigFunction;
 
 class Extension extends AbstractExtension implements GlobalsInterface
 {
-	/**
-	 * Return our Twig Extension name
-	 *
-	 * @return string
-	 */
 	public function getName(): string
 	{
 		return 'Core';
 	}
 
-	/**
-	 * Return our Twig functions
-	 *
-	 * @return array
-	 */
 	public function getFunctions(): array
 	{
 		return [
@@ -41,22 +31,17 @@ class Extension extends AbstractExtension implements GlobalsInterface
 		];
 	}
 
-	/**
-	 * Return our Twig filters
-	 *
-	 * @return array
-	 */
 	public function getFilters(): array
 	{
 		return [
 			new TwigFilter('readTime', [$this, 'readTimeFilter']),
 			new TwigFilter('splice', [$this, 'spliceFilter']),
 			new TwigFilter('uncamel', [$this, 'uncamelFilter']),
+			new TwigFilter('first', [$this, 'firstFilter']),
 		];
 	}
 
-	/** @inheritDoc */
-	public function getOperators()
+	public function getOperators(): array
 	{
 		return [
 			[],
@@ -79,15 +64,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
 		exit(1);
 	}
 
-	/**
-	 * Twig abstraction for Guzzlehttp.
-	 *
-	 * @param string $baseUrl
-	 * @param string $endpoint
-	 * @param array $config
-	 * @return array
-	 */
-	public function fetchFunction($baseUrl, $endpoint, $config = [])
+	public function fetchFunction(string $baseUrl, string $endpoint, array $config = []): array
 	{
 		$config = array_merge([
 			'method' => 'GET',
@@ -120,12 +97,11 @@ class Extension extends AbstractExtension implements GlobalsInterface
 		return $response;
 	}
 
-	/**
-	 * Estimate reading time required for a markup text.
-	 *
-	 * @param Entry $entry
-	 * @return string
-	 */
+	public function firstFilter(array $array): mixed
+	{
+		return reset($array);
+	}
+
 	public function readTimeFilter(Entry $entry): string
 	{
 		$content = $entry->blogContent->all();
@@ -142,16 +118,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
 		return "$est $readingTime";
 	}
 
-	/**
-	 * Twig abstraction for array_splice.
-	 *
-	 * @param array $array
-	 * @param integer $offset
-	 * @param int $length
-	 * @param array $replacement
-	 * @return array
-	 */
-	public function spliceFilter(array $array, int $offset, $length = null, $replacement = [])
+	public function spliceFilter(array $array, int $offset, ?int $length = null, array $replacement = []): array
 	{
 		array_splice($array, $offset, $length, $replacement);
 		return $array;
