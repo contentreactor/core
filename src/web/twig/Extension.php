@@ -52,6 +52,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
 			new TwigFilter('readTime', [$this, 'readTimeFilter']),
 			new TwigFilter('splice', [$this, 'spliceFilter']),
 			new TwigFilter('uncamel', [$this, 'uncamelFilter']),
+			new TwigFilter('first', [$this, 'firstFilter']),
 		];
 	}
 
@@ -163,6 +164,11 @@ class Extension extends AbstractExtension implements GlobalsInterface
 		$string = implode(' ', $data);
 
 		return ucwords($string);
+	}
+
+	public function firstFilter(array $array): mixed
+	{
+		return reset($array);
 	}
 
 	public function getGlobals(): array
