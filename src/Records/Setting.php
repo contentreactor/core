@@ -17,19 +17,12 @@ use yii\db\ActiveQueryInterface;
  */
 class Setting extends ActiveRecord
 {
-	/**
-	 * @inheritdoc
-	 * @return string
-	 */
 	public static function tableName(): string
 	{
 		return Install::PLUGINS;
 	}
 
-	/**
-	 * @inheritdoc
-	 */
-	public function rules()
+	public function rules(): array
 	{
 		return [
 			[['plugin', 'key', 'siteId'], 'required'],
@@ -39,11 +32,6 @@ class Setting extends ActiveRecord
 		];
 	}
 
-	/**
-	 * Returns the associated site.
-	 *
-	 * @return ActiveQueryInterface The relational query object.
-	 */
 	public function getSite(): ActiveQueryInterface
 	{
 		return $this->hasOne(Site::class, ['id' => 'siteId']);

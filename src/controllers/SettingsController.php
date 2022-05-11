@@ -5,7 +5,6 @@ namespace Developion\Core\controllers;
 use Craft;
 use craft\base\Model;
 use craft\helpers\ArrayHelper;
-use craft\helpers\Cp;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
 use craft\web\Response;

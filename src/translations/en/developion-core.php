@@ -1,7 +1,7 @@
 <?php
 
 return [
-    "Email"     => "Email",
-    "Vienna"    => "Vienna",
-    "Belgrade"  => "Belgrade",
+	"Email"		=> "Email",
+	"Vienna"	=> "Vienna",
+	"Belgrade"	=> "Belgrade",
 ];

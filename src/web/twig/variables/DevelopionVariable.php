@@ -7,9 +7,6 @@ use Developion\Core\Core;
 use yii\di\ServiceLocator;
 use yii\widgets\ActiveForm;
 
-/**
- * Class DevelopionVariable
- */
 class DevelopionVariable extends ServiceLocator
 {
 	public function __construct($config = [])
@@ -27,10 +24,5 @@ class DevelopionVariable extends ServiceLocator
 	public function getPluginName()
 	{
 		return Core::getInstance()->name;
-	}
-
-	public function getSettings()
-	{
-		
 	}
 }

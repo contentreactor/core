@@ -11,23 +11,10 @@ use yii\base\Component;
 
 class Plugins extends Component
 {
-	/**
-	 * @event PluginEvent The event that is triggered before a plugin's settings are saved
-	 */
 	const EVENT_BEFORE_SAVE_PLUGIN_SETTINGS = 'beforeSavePluginSettings';
 
-	/**
-	 * @event PluginEvent The event that is triggered after a plugin's settings are saved
-	 */
 	const EVENT_AFTER_SAVE_PLUGIN_SETTINGS = 'afterSavePluginSettings';
 
-	/**
-	 * Saves a plugin's settings.
-	 *
-	 * @param PluginInterface $plugin The plugin
-	 * @param array $settings The plugin’s new settings
-	 * @return bool Whether the plugin’s settings were saved successfully
-	 */
 	public function savePluginSettings(PluginInterface $plugin, array $settings): bool
 	{
 		$plugin->getSettings()->setAttributes($this->castRequestToModel($settings, $plugin), false);
