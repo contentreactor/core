@@ -12,6 +12,7 @@ class ComposerController extends Controller
 {
 	public function actionIndex(): int
 	{
+		$transaction = Craft::$app->getDb()->beginTransaction();
 		try {
 			$core = Core::getInstance();
 			$projectConfig = Craft::$app->getProjectConfig();
@@ -33,7 +34,9 @@ class ComposerController extends Controller
 			}
 
 			$core->db->setPluginSetting($core, 'developionPlugins', array_unique(array_keys($developionPlugins)));
+			$transaction->commit();
 		} catch (\Throwable $th) {
+			$transaction->rollBack();
 			$this->stdout("Error\n");
 			Craft::error($th->getTrace(), $core->id);
 			return ExitCode::UNSPECIFIED_ERROR;
