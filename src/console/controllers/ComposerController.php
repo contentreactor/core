@@ -14,10 +14,24 @@ class ComposerController extends Controller
 	{
 		try {
 			$core = Core::getInstance();
-			$developionPlugins = array_filter(
-				Craft::$app->getPlugins()->getAllPlugins(),
-				fn (CraftPlugin $plugin) => $plugin->getSettings() && ($plugin !== $core) && str_contains($plugin->id, 'developion')
+			$projectConfig = Craft::$app->getProjectConfig();
+			$allPluginsConfig = array_filter(
+				array_keys($projectConfig->get('plugins')),
+				fn ($handle) => str_contains($handle, 'developion'),
 			);
+			$developionPlugins = [];
+
+			foreach ($allPluginsConfig as $pluginHandle) {
+				$plugin = Craft::$app->getPlugins()->getPlugin($pluginHandle);
+				if (!$plugin) {
+					$projectConfig->remove("plugins.$pluginHandle");
+					continue;
+				}
+				if ($plugin->getSettings() && $plugin !== $core) {
+					$developionPlugins[] = $plugin;
+				}
+			}
+
 			$core->db->setPluginSetting($core, 'developionPlugins', array_unique(array_keys($developionPlugins)));
 		} catch (\Throwable $th) {
 			$this->stdout("Error\n");
