@@ -18,6 +18,7 @@ use Developion\Core\Records\Setting;
 use Developion\Core\Services\DB;
 use Developion\Core\Services\Plugins;
 use Developion\Core\web\twig\Extension;
+use Illuminate\Support\Collection;
 use yii\base\Event;
 
 /**
@@ -51,6 +52,7 @@ class Core extends Plugin
 		$this->_config();
 		$this->_events();
 		$this->_twigExtensions();
+		$this->_environment();
 	}
 
 	protected function _config(): void
@@ -101,7 +103,7 @@ class Core extends Plugin
 		Event::on(
 			Plugins::class,
 			Plugins::EVENT_BEFORE_SAVE_PLUGIN_SETTINGS,
-			function(PluginEvent $event) {
+			function (PluginEvent $event) {
 				if (stripos($event->plugin->getHandle(), 'developion') === false) return;
 				$currentSite = Craft::$app->getSites()->getCurrentSite();
 				$path = Craft::$app->getPath()->getStoragePath() . "/{$event->plugin->getHandle()}-site-{$currentSite->id}.php";
@@ -113,7 +115,7 @@ class Core extends Plugin
 		Event::on(
 			Plugins::class,
 			Plugins::EVENT_AFTER_SAVE_PLUGIN_SETTINGS,
-			function(PluginEvent $event) {
+			function (PluginEvent $event) {
 				if (stripos($event->plugin->getHandle(), 'developion') === false) return;
 				$currentSite = Craft::$app->getSites()->getCurrentSite();
 				$prefix = $event->plugin->id . '_';
@@ -143,8 +145,17 @@ class Core extends Plugin
 		return new Settings();
 	}
 
-    public function getSettingsResponse(): mixed
-    {
-        return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl("{$this->id}/settings"));
-    }
+	public function getSettingsResponse(): mixed
+	{
+		return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl("{$this->id}/settings"));
+	}
+	
+	private function _environment(): void
+	{
+		if (version_compare(Craft::$app->getVersion(), '4.1.0', '<')) {
+			Collection::macro('one', function() {
+				return $this->first(...func_get_args());
+			});
+		}
+	}
 }
