@@ -8,6 +8,7 @@ use craft\helpers\UrlHelper;
 use Developion\Core\web\twig\node\expression\ConstOperator;
 use Developion\Core\web\twig\variables\DevelopionVariable;
 use GuzzleHttp\Client;
+use Illuminate\Support\Collection;
 use Symfony\Component\VarDumper\VarDumper;
 use Twig\ExpressionParser;
 use Twig\Extension\AbstractExtension;
@@ -38,6 +39,14 @@ class Extension extends AbstractExtension implements GlobalsInterface
 			new TwigFilter('splice', [$this, 'spliceFilter']),
 			new TwigFilter('uncamel', [$this, 'uncamelFilter']),
 			new TwigFilter('first', [$this, 'firstFilter']),
+
+			// type casts
+			new TwigFilter('array', fn (mixed $var): array => (array) $var),
+			new TwigFilter('toArray', fn (Collection $array): array => $array->all()),
+			new TwigFilter('int', fn (mixed $var): int => (int) $var),
+			new TwigFilter('float', fn (mixed $var): float => (float) $var),
+			new TwigFilter('string', fn (mixed $var): string => (string) $var),
+			new TwigFilter('bool', fn (mixed $var): bool => (bool) $var),
 		];
 	}
 
