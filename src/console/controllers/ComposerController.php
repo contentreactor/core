@@ -32,8 +32,9 @@ class ComposerController extends Controller
 					$developionPlugins[] = $plugin;
 				}
 			}
+			$developionPlugins = array_unique(array_map(fn ($plugin) => $plugin->id, $developionPlugins));
 
-			$core->db->setPluginSetting($core, 'developionPlugins', array_unique(array_keys($developionPlugins)));
+			$core->db->setPluginSetting($core, 'developionPlugins', $developionPlugins);
 			$transaction->commit();
 		} catch (\Throwable $th) {
 			$transaction->rollBack();
