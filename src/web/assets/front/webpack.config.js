@@ -1,25 +1,16 @@
 const path = require('path')
+const exec = require('child_process').exec
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const sass = require('node-sass')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const glob = require('glob')
-const tailwindcss = require('tailwindcss')
 const { readdir } = require('fs').promises
-const { webpack } = require('webpack')
-// const mode = 'production'
-const mode = 'development'
-
-function basename(path) {
-	let separator = '/'
-	if (path.includes('\\')) separator = '\\'
-	return path.split(separator).reverse()[0].split('.')[0];
-}
+// const prod = true
+const mode = typeof prod !== 'undefined' ? 'production' : 'development'
 
 const configPromise = new Promise((resolve, reject) => {
-
 	async function* getFiles(dir) {
 		const dirents = await readdir(dir, {
 			withFileTypes: true,
@@ -36,7 +27,7 @@ const configPromise = new Promise((resolve, reject) => {
 	async function files() {
 		const arr = {}
 		for await (const x of getFiles('./src')) {
-			arr[basename(x).split('.')[0]] = "." + x.replace(/\\/g, '/').split('front').reverse()[0]
+			arr[path.basename(x, '.js')] = x.replace(/\\/g, '/').split('front').reverse()[0]
 		}
 		return await arr
 	}
@@ -44,18 +35,23 @@ const configPromise = new Promise((resolve, reject) => {
 	resolve({
 		mode: mode,
 		stats: {
-			children: true
+			children: true,
 		},
 		entry: files,
 		output: {
-			filename: '[name].js',
-			path: path.resolve(__dirname, 'dist'),
-			clean: true
+			filename: 'js/[name].js',
+			path: path.resolve(__dirname, 'dist')
 		},
 		plugins: [
 			new CleanWebpackPlugin({
+				root: process.cwd(),
+				verbose: true,
+				dry: false,
 				cleanStaleWebpackAssets: false,
-				cleanOnceBeforeBuildPatterns: ['**/*'],
+				cleanOnceBeforeBuildPatterns: [
+					'**/*',
+					'!.gitignore',
+				],
 			}),
 			new MiniCssExtractPlugin({
 				filename: '[name].css',
@@ -67,31 +63,11 @@ const configPromise = new Promise((resolve, reject) => {
 			new CopyWebpackPlugin({
 				patterns: [
 					{
-						from: 'src/scss/builder/blocks/',
-						to: 'dist/builder/blocks/[name].css'
-					},
-					{
-						from: 'src/scss/builder/components/',
-						to: 'dist/builder/components/[name].css'
-					},
-					{
-						from: 'src/app.css',
-						to: 'dist/app.css'
+						from: 'src/fonts/**/*',
+						to: 'fonts/[name][ext]',
+						noErrorOnMissing: true
 					}
-				].map(pattern => {
-					return {
-						from: path.resolve(__dirname, pattern.from),
-						to: path.resolve(__dirname, pattern.to),
-						transform(content, path) {
-							const result = sass.renderSync({
-								file: path,
-								outputStyle: mode == 'production' ? 'compressed' : 'expanded'
-							})
-
-							return result.css.toString()
-						}
-					}
-				})
+				]
 			}),
 		],
 		resolve: {
@@ -110,7 +86,12 @@ const configPromise = new Promise((resolve, reject) => {
 				},
 				{
 					test: /\.(css|scss)$/,
-					use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader', 'postcss-loader'],
+					use: [
+						MiniCssExtractPlugin.loader,
+						'css-loader',
+						'sass-loader',
+						// 'postcss-loader',
+					],
 				},
 				{
 					test: /\.svg$/,
@@ -143,9 +124,7 @@ const configPromise = new Promise((resolve, reject) => {
 			],
 		},
 		optimization: {
-			minimizer: [
-				new CssMinimizerPlugin(),
-			],
+			minimizer: [new CssMinimizerPlugin()],
 		},
 	})
 })
