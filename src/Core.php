@@ -5,14 +5,17 @@ namespace Developion\Core;
 use Craft;
 use craft\base\Plugin;
 use craft\events\PluginEvent;
+use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterTemplateRootsEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\helpers\ArrayHelper;
 use craft\helpers\UrlHelper;
 use craft\i18n\PhpMessageSource;
+use craft\services\Fields as FieldsService;
 use craft\services\Plugins as CraftPlugins;
 use craft\web\UrlManager;
 use craft\web\View;
+use Developion\Core\fields\Button as ButtonField;
 use Developion\Core\Models\Settings;
 use Developion\Core\Records\Setting;
 use Developion\Core\Services\DB;
@@ -129,6 +132,13 @@ class Core extends Plugin
 				file_put_contents($path, "<?php\n\nreturn " . var_export($settings, true) . ";\n");
 			}
 		);
+		Event::on(
+			FieldsService::class,
+			FieldsService::EVENT_REGISTER_FIELD_TYPES,
+			static function (RegisterComponentTypesEvent $event) {
+				$event->types[] = ButtonField::class;
+			}
+		);
 	}
 
 	protected function _consoleEvents(): void
@@ -149,11 +159,11 @@ class Core extends Plugin
 	{
 		return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl("{$this->id}/settings"));
 	}
-	
+
 	private function _environment(): void
 	{
 		if (version_compare(Craft::$app->getVersion(), '4.1.0', '<')) {
-			Collection::macro('one', function() {
+			Collection::macro('one', function () {
 				return $this->first(...func_get_args());
 			});
 		}

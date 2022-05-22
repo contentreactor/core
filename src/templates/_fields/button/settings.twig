@@ -1,0 +1,52 @@
+{% import '_includes/forms' as forms %}
+
+<div class="flex-fields fields">
+	{{ forms.checkboxSelectField({
+		label: field.getAttributeLabel('allowedLinkTypes'),
+		instructions: field.getAttributeHint('allowedLinkTypes'),
+		id: 'allowedLinkTypes',
+		name: 'allowedLinkTypes',
+		options: field.getAvailableLinkTypes(),
+		values: field.allowedLinkTypes == ['*'] ? '*' : field.allowedLinkTypes,
+		showAllOption: true,
+		warning: false,
+		errors: field.getErrors("allowedLinkTypes"),
+		fieldClass: 'width-100',
+	}) }}
+	{{ forms.field({
+		label: field.getAttributeLabel('defaultTextColor'),
+		id: 'defaultTextColor',
+		name: 'defaultTextColor',
+		value: field.defaultTextColor,
+		fieldset: false,
+		errors: field.getErrors('defaultTextColor'),
+		fieldClass: 'width-25',
+	}, 'template:_includes/forms/color') }}
+	{{ forms.field({
+		label: field.getAttributeLabel('defaultTextHoverColor'),
+		id: 'defaultTextHoverColor',
+		name: 'defaultTextHoverColor',
+		value: field.defaultTextHoverColor,
+		fieldset: false,
+		errors: field.getErrors('defaultTextHoverColor'),
+		fieldClass: 'width-25',
+	}, 'template:_includes/forms/color') }}
+	{{ forms.field({
+		label: field.getAttributeLabel('defaultBackgroundColor'),
+		id: 'defaultBackgroundColor',
+		name: 'defaultBackgroundColor',
+		value: field.defaultBackgroundColor,
+		fieldset: false,
+		errors: field.getErrors('defaultBackgroundColor'),
+		fieldClass: 'width-25',
+	}, 'template:_includes/forms/color') }}
+	{{ forms.field({
+		label: field.getAttributeLabel('defaultBackgroundHoverColor'),
+		id: 'defaultBackgroundHoverColor',
+		name: 'defaultBackgroundHoverColor',
+		value: field.defaultBackgroundHoverColor,
+		fieldset: false,
+		errors: field.getErrors('defaultBackgroundHoverColor'),
+		fieldClass: 'width-25',
+	}, 'template:_includes/forms/color') }}
+</div>
