@@ -157,5 +157,14 @@ class Core extends Plugin
 				return $this->first(...func_get_args());
 			});
 		}
+
+		Collection::macro('filterMap', function(bool $condition, ?callable $callback) {
+			$return = [];
+			foreach ($this as $key => $value) {
+				if (!$condition) continue;
+				$return[$key] = $value;
+			}
+			return $return;
+		});
 	}
 }
