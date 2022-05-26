@@ -16,6 +16,7 @@ use craft\services\Plugins as CraftPlugins;
 use craft\web\UrlManager;
 use craft\web\View;
 use Developion\Core\fields\Button as ButtonField;
+use Developion\Core\fields\Link as LinkField;
 use Developion\Core\Models\Settings;
 use Developion\Core\Records\Setting;
 use Developion\Core\Services\DB;
@@ -137,6 +138,7 @@ class Core extends Plugin
 			FieldsService::EVENT_REGISTER_FIELD_TYPES,
 			static function (RegisterComponentTypesEvent $event) {
 				$event->types[] = ButtonField::class;
+				$event->types[] = LinkField::class;
 			}
 		);
 	}

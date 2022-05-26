@@ -1,0 +1,27 @@
+{% import '_includes/forms' as forms %}
+
+<div class="flex-fields fields">
+	{{ forms.lightswitchField({
+		label: field.getAttributeLabel('textNotOptional'),
+		instructions: field.getAttributeHint('textNotOptional'),
+		attribute: 'textNotOptional',
+		id: 'textNotOptional',
+		name: 'textNotOptional',
+		on: 'textNotOptional' in field|keys and field.textNotOptional is defined ? field.textNotOptional : false,
+		fieldClass: 'width-25',
+		first: true,
+	}) }}
+	{{ forms.checkboxSelectField({
+		label: field.getAttributeLabel('allowedLinkTypes'),
+		instructions: field.getAttributeHint('allowedLinkTypes'),
+		attribute: 'allowedLinkTypes',
+		id: 'allowedLinkTypes',
+		name: 'allowedLinkTypes',
+		options: field.getAvailableLinkTypes(),
+		values: field.allowedLinkTypes == ['*'] ? '*' : field.allowedLinkTypes,
+		showAllOption: true,
+		warning: false,
+		errors: field.getErrors("allowedLinkTypes"),
+		fieldClass: 'width-25',
+	}) }}
+</div>
