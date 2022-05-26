@@ -27,6 +27,8 @@ class Button extends Field implements EagerLoadingFieldInterface
 
 	public array $allowedLinkTypes = [];
 
+	public bool $textOptional = false;
+
 	public static function isRequirable(): bool
 	{
 		return false;
@@ -115,11 +117,11 @@ class Button extends Field implements EagerLoadingFieldInterface
 			);
 		}
 
-		if (gettype($value['asset']) == 'string') {
+		if (array_key_exists('asset', $value) && gettype($value['asset']) == 'string') {
 			$value['asset'] = json_decode($value['asset']);
 		}
 
-		if (gettype($value['entry']) == 'string') {
+		if (array_key_exists('entry', $value) && gettype($value['entry']) == 'string') {
 			$value['entry'] = json_decode($value['entry']);
 		}
 
@@ -149,7 +151,7 @@ class Button extends Field implements EagerLoadingFieldInterface
 	public function validateFieldStructure(ElementInterface $element): void
 	{
 		$value = $element->getFieldValue($this->handle);
-		
+
 		if (empty($value['text'])) {
 			$element->addError("$this->handle", Craft::t('developion-core', 'The button text field can\'t be empty.'));
 		}
