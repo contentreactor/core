@@ -150,6 +150,7 @@ class Button extends Field implements EagerLoadingFieldInterface
 
 	public function validateFieldStructure(ElementInterface $element): void
 	{
+		/** @var Element $element */
 		$value = $element->getFieldValue($this->handle);
 
 		if (empty($value['text'])) {
