@@ -12,8 +12,9 @@ use Developion\Core\events\DefineDefaultColorsEvent;
 use JetBrains\PhpStorm\ArrayShape;
 use yii\base\Event;
 use yii\db\Schema;
+use craft\base\Element;
 
-class Button extends Field implements EagerLoadingFieldInterface
+class Button extends Field
 {
 	const EVENT_DEFINE_DEFAULT_COLORS = 'defineDefaultColors';
 
@@ -178,13 +179,6 @@ class Button extends Field implements EagerLoadingFieldInterface
 				$element->addError($this->handle, Craft::t('developion-core', 'Phone can\'t be empty if the link type is Phone.'));
 			}
 		}
-	}
-
-	public function getEagerLoadingMap(array $sourceElements): array|null|false
-	{
-		dd($sourceElements);
-		/** @noinspection PhpUnreachableStatementInspection */
-		return [];
 	}
 
 	public function beforeSave(bool $isNew): bool

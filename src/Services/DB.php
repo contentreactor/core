@@ -96,6 +96,7 @@ class DB
 	public function getPluginSetting(PluginInterface $plugin, string $key): mixed
 	{
 		$currentSite = Craft::$app->getSites()->getCurrentSite();
+		/** @var ?Setting $setting */
 		$setting = Setting::find()
 			->select(['key', 'value'])
 			->where([
@@ -144,7 +145,7 @@ class DB
 
 	public function getSlug(string $entryType, string $section = 'page'): string
 	{
-		/** @var PDO|false $connection */
+		/** @var \PDO|false $connection */
 		$connection = Craft::$app->getDb()->pdo;
 		if (!$connection) return '';
 
