@@ -1,5 +1,6 @@
 {% import '_includes/forms.twig' as forms %}
 {% namespace field.handle %}
+	<hr>
 	<div class="flex-fields button-wrapper">
 		{{ forms.textField({
 			label: field.attributeLabel('text'),
@@ -11,6 +12,7 @@
 			required: field.textNotOptional,
 			fieldClass: 'width-50',
 			first: true,
+			errors: field.getErrors('text'),
 		}) }}
 		{{ forms.lightswitchField({
 			label: field.getAttributeLabel('target'),
@@ -36,7 +38,6 @@
 			toggle: true,
 			targetPrefix: 'link-type-',
 		}) }}
-		{% if 'entry' in value|keys %}
 		{% tag 'div' with {
 			id: 'link-type-entry',
 			class: 'width-50 ' ~ (value.linkType != 'entry' ? 'hidden' : null),
@@ -48,14 +49,14 @@
 				id: 'entry',
 				name: 'entry',
 				elementType: 'craft\\elements\\Entry',
-				elements: value.entry|length ? craft.entries.id(value.entry).all() : [],
+				elements: [value.entry.one()],
+				allowSelfRelations: false,
 				required: true,
 				limit: 1,
 				fieldClass: 'width-50',
+				errors: field.getErrors('entry'),
 			}) }}
 		{% endtag %}
-		{% endif %}
-		{% if 'asset' in value|keys %}
 		{% tag 'div' with {
 			id: 'link-type-asset',
 			class: 'width-50 ' ~ (value.linkType != 'asset' ? 'hidden' : null),
@@ -67,14 +68,13 @@
 				id: 'asset',
 				name: 'asset',
 				elementType: 'craft\\elements\\Asset',
-				elements: value.asset|length ? craft.assets.id(value.asset).all() : [],
+				elements: [value.asset.one()],
 				required: true,
 				limit: 1,
 				fieldClass: 'width-50',
+				errors: field.getErrors('asset'),
 			}) }}
 		{% endtag %}
-		{% endif %}
-		{% if 'url' in value|keys %}
 		{% tag 'div' with {
 			id: 'link-type-url',
 			class: 'width-50 ' ~ (value.linkType != 'url' ? 'hidden' : null),
@@ -86,13 +86,12 @@
 				inputmode: 'url',
 				id: 'url',
 				name: 'url',
-				value: 'url' in value|keys ? value.url : '',
+				value: value.url,
 				required: true,
 				fieldClass: 'width-50',
+				errors: field.getErrors('url'),
 			}) }}
 		{% endtag %}
-		{% endif %}
-		{% if 'phone' in value|keys %}
 		{% tag 'div' with {
 			id: 'link-type-phone',
 			class: 'width-50 ' ~ (value.linkType != 'phone' ? 'hidden' : null),
@@ -105,12 +104,11 @@
 				type: 'tel',
 				id: 'phone',
 				name: 'phone',
-				value: 'phone' in value|keys ? value.phone : '',
+				value: value.phone,
 				required: true,
+				errors: field.getErrors('phone'),
 			}) }}
 		{% endtag %}
-		{% endif %}
-		{% if 'email' in value|keys %}
 		{% tag 'div' with {
 			id: 'link-type-email',
 			class: 'width-50 ' ~ (value.linkType != 'email' ? 'hidden' : null),
@@ -122,12 +120,11 @@
 				inputmode: 'email',
 				id: 'email',
 				name: 'email',
-				value: 'email' in value|keys ? value.email : '',
+				value: value.email,
 				required: true,
 				fieldClass: 'width-50',
 			}) }}
 		{% endtag %}
-		{% endif %}
 	</div>
 	<hr>
 {% endnamespace %}
