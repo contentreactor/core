@@ -19,8 +19,8 @@ class LinkField extends DataTransferObject
 	public function getUrl(...$args): string
 	{
 		switch ($this->linkType) {
-			case 'entry': return $this->entry->one()?->url;
-			case 'asset': return $this->asset->one()?->getUrl();
+			case 'entry': return $this->entry->one() ? $this->entry->one()->url : '';
+			case 'asset': return $this->asset->one() ? $this->asset->one()->getUrl() : '';
 			case 'phone': return "tel:{$this->phone}";
 			case 'email': return "mailto:{$this->email}";
 			case 'url': return $this->url;

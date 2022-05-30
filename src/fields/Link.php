@@ -16,7 +16,7 @@ class Link extends Field
 {
 	public array $allowedLinkTypes = [];
 
-	public bool $textNotOptional = false;
+	public bool $textNotOptional = true;
 
 	private string $_errorMessage = 'The field couldn\'t be saved.';
 
@@ -61,27 +61,36 @@ class Link extends Field
 		if ($value instanceof LinkField) {
 			return $value;
 		}
-
+		
 		if (is_string($value) && !empty($value)) {
 			$value = Json::decodeIfJson($value);
 		}
-
+		
 		if (!is_array($value)) {
 			$value = $this->_default();
 		}
-
+		
 		if (empty($value['linkType'])) {
 			$value['linkType'] = $this->getAllowedLinkTypes()[0]['value'];
 		}
-
+		
 		$selectedValue = $value[$value['linkType']];
 		foreach ($this->getAllowedLinkTypes() as $type) {
 			$value[$type['value']] = $this->_default()[$type['value']];
 		}
 		$value[$value['linkType']] = is_string($value[$value['linkType']]) ? $selectedValue : (array)$selectedValue;
 
-		$value['entry'] = Entry::find()->id(reset($value['entry']));
-		$value['asset'] = Asset::find()->id(reset($value['asset']));
+		$entryQuery = Entry::find();
+		if (in_array('entry', array_column($this->getAllowedLinkTypes(), 'value'))) {
+			if ($value['linkType'] == 'entry') $entryQuery = $entryQuery->id(reset($value['entry']));
+		}
+		$value['entry'] = $entryQuery;
+
+		$assetQuery = Asset::find();
+		if (in_array('asset', array_column($this->getAllowedLinkTypes(), 'value'))) {
+			if ($value['linkType'] == 'entry') $assetQuery = $assetQuery->id(reset($value['asset']));
+		}
+		$value['asset'] = $assetQuery;
 
 		return new LinkField($value);
 	}
