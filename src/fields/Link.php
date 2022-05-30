@@ -69,25 +69,26 @@ class Link extends Field
 		if (!is_array($value)) {
 			$value = $this->_default();
 		}
+
+		$allowedLinkTypes = array_column($this->getAllowedLinkTypes(), 'value');
 		
 		if (empty($value['linkType'])) {
-			$value['linkType'] = $this->getAllowedLinkTypes()[0]['value'];
+			$value['linkType'] = reset($allowedLinkTypes);
 		}
 		
 		$selectedValue = $value[$value['linkType']];
-		foreach ($this->getAllowedLinkTypes() as $type) {
-			$value[$type['value']] = $this->_default()[$type['value']];
+		foreach ($allowedLinkTypes as $type) {
+			$value[$type] = $this->_default()[$type];
 		}
 		$value[$value['linkType']] = is_string($value[$value['linkType']]) ? $selectedValue : (array)$selectedValue;
 
 		$entryQuery = Entry::find();
-		if (in_array('entry', array_column($this->getAllowedLinkTypes(), 'value'))) {
+		if (in_array('entry', array_column($allowedLinkTypes, 'value'))) {
 			if ($value['linkType'] == 'entry') $entryQuery = $entryQuery->id(reset($value['entry']));
 		}
 		$value['entry'] = $entryQuery;
-
 		$assetQuery = Asset::find();
-		if (in_array('asset', array_column($this->getAllowedLinkTypes(), 'value'))) {
+		if (in_array('asset', array_column($allowedLinkTypes, 'value'))) {
 			if ($value['linkType'] == 'entry') $assetQuery = $assetQuery->id(reset($value['asset']));
 		}
 		$value['asset'] = $assetQuery;
