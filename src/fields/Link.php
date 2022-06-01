@@ -5,8 +5,6 @@ namespace Developion\Core\fields;
 use Craft;
 use craft\base\ElementInterface;
 use craft\base\Field;
-use craft\elements\Asset;
-use craft\elements\Entry;
 use craft\helpers\Json;
 use craft\validators\ArrayValidator;
 use Developion\Core\Entity\LinkField;
@@ -38,7 +36,7 @@ class Link extends Field
 		$rules = parent::defineRules();
 		$rules[] = [
 			['allowedLinkTypes'],
-			ArrayValidator::class ,
+			ArrayValidator::class,
 			'min' => 1,
 			'tooFew' => Craft::t('developion-core', 'You must select at least {min, number} of the {attribute}.'),
 			'skipOnEmpty' => false
@@ -61,37 +59,25 @@ class Link extends Field
 		if ($value instanceof LinkField) {
 			return $value;
 		}
-		
+
 		if (is_string($value) && !empty($value)) {
 			$value = Json::decodeIfJson($value);
 		}
-		
+
 		if (!is_array($value)) {
 			$value = $this->_default();
 		}
 
 		$allowedLinkTypes = array_column($this->getAllowedLinkTypes(), 'value');
-		
 		if (empty($value['linkType'])) {
 			$value['linkType'] = reset($allowedLinkTypes);
 		}
-		
+
 		$selectedValue = $value[$value['linkType']];
 		foreach ($allowedLinkTypes as $type) {
 			$value[$type] = $this->_default()[$type];
 		}
-		$value[$value['linkType']] = is_string($value[$value['linkType']]) ? $selectedValue : (array)$selectedValue;
-
-		$entryQuery = Entry::find();
-		if (in_array('entry', array_column($allowedLinkTypes, 'value'))) {
-			if ($value['linkType'] == 'entry') $entryQuery = $entryQuery->id(reset($value['entry']));
-		}
-		$value['entry'] = $entryQuery;
-		$assetQuery = Asset::find();
-		if (in_array('asset', array_column($allowedLinkTypes, 'value'))) {
-			if ($value['linkType'] == 'entry') $assetQuery = $assetQuery->id(reset($value['asset']));
-		}
-		$value['asset'] = $assetQuery;
+		$value[$value['linkType']] = empty($selectedValue) ? null : (is_array($selectedValue) ? reset($selectedValue) : $selectedValue);
 
 		return new LinkField($value);
 	}
@@ -109,6 +95,7 @@ class Link extends Field
 		return Craft::$app->getView()->renderTemplate('developion-core/_fields/link/input', [
 			'value' => $value,
 			'field' => $this,
+			'ownerId' => $this->_getCanonicalParent($element)?->id,
 		]);
 	}
 
@@ -132,10 +119,10 @@ class Link extends Field
 		if (empty($value->text) && $this->textNotOptional) {
 			$this->addError('text', $this->_getErrors('text'));
 		}
-		if ($value->linkType == 'entry' && !$value->entry->one()) {
+		if ($value->linkType == 'entry' && empty($value->entry)) {
 			$this->addError('entry', $this->_getErrors('entry'));
 		}
-		if ($value->linkType == 'asset' && !$value->asset->one()) {
+		if ($value->linkType == 'asset' && empty($value->asset)) {
 			$this->addError('asset', $this->_getErrors('asset'));
 		}
 		if ($value->linkType == 'url' && empty($value->url)) {
@@ -171,7 +158,10 @@ class Link extends Field
 			return $this->getAvailableLinkTypes();
 		}
 
-		return array_filter($this->getAvailableLinkTypes(), fn($type) => in_array($type['value'], $this->allowedLinkTypes));
+		return array_filter(
+			$this->getAvailableLinkTypes(),
+			fn ($type) => in_array($type['value'], $this->allowedLinkTypes)
+		);
 	}
 
 	private function _getErrors(string $attribute): string
@@ -197,11 +187,18 @@ class Link extends Field
 			'text' => '',
 			'target' => false,
 			'linkType' => '',
-			'entry' => [0],
-			'asset' => [0],
+			'entry' => null,
+			'asset' => null,
 			'url' => '',
 			'phone' => '',
 			'email' => '',
 		];
+	}
+
+	private function _getCanonicalParent($element): ?ElementInterface
+	{
+		if (!$element) return null;
+		if ($element->owner) return $element->owner;
+		return $this->_getCanonicalParent($element->owner);
 	}
 }

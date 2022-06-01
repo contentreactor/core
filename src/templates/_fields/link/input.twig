@@ -1,7 +1,7 @@
 {% import '_includes/forms.twig' as forms %}
+{% set allowedTypes = field.getAllowedLinkTypes()|map(v => v.value) %}
 {% namespace field.handle %}
-	<hr>
-	<div class="flex-fields button-wrapper">
+	<div class="flex-fields">
 		{{ forms.textField({
 			label: field.attributeLabel('text'),
 			instructions: field.attributeHint('text'),
@@ -38,99 +38,105 @@
 			toggle: true,
 			targetPrefix: 'link-type-',
 		}) }}
-		{% tag 'div' with {
-			id: 'link-type-entry',
-			class: 'width-50 ' ~ (value.linkType != 'entry' ? 'hidden' : null),
-		} %}
-			{{ forms.elementSelectField({
-				label: field.getAttributeLabel('entry'),
-				instructions: field.getAttributeHint('entry'),
-				attribute: 'entry',
-				id: 'entry',
-				name: 'entry',
-				elementType: 'craft\\elements\\Entry',
-				elements: [value.entry.one()],
-				allowSelfRelations: false,
-				required: true,
-				limit: 1,
-				fieldClass: 'width-50',
-				errors: field.getErrors('entry'),
-			}) }}
-		{% endtag %}
-		{% tag 'div' with {
-			id: 'link-type-asset',
-			class: 'width-50 ' ~ (value.linkType != 'asset' ? 'hidden' : null),
-		} %}
-			{{ forms.elementSelectField({
-				label: field.getAttributeLabel('asset'),
-				instructions: field.getAttributeHint('asset'),
-				attribute: 'asset',
-				id: 'asset',
-				name: 'asset',
-				elementType: 'craft\\elements\\Asset',
-				elements: [value.asset.one()],
-				required: true,
-				limit: 1,
-				fieldClass: 'width-50',
-				errors: field.getErrors('asset'),
-			}) }}
-		{% endtag %}
-		{% tag 'div' with {
-			id: 'link-type-url',
-			class: 'width-50 ' ~ (value.linkType != 'url' ? 'hidden' : null),
-		} %}
-			{{ forms.textField({
-				label: field.getAttributeLabel('url'),
-				instructions: field.getAttributeHint('url'),
-				attribute: 'url',
-				inputmode: 'url',
-				id: 'url',
-				name: 'url',
-				value: value.url,
-				required: true,
-				fieldClass: 'width-50',
-				errors: field.getErrors('url'),
-			}) }}
-		{% endtag %}
-		{% tag 'div' with {
-			id: 'link-type-phone',
-			class: 'width-50 ' ~ (value.linkType != 'phone' ? 'hidden' : null),
-		} %}
-			{{ forms.textField({
-				label: field.getAttributeLabel('phone'),
-				instructions: field.getAttributeHint('phone'),
-				attribute: 'phone',
-				inputmode: 'tel',
-				type: 'tel',
-				id: 'phone',
-				name: 'phone',
-				value: value.phone,
-				required: true,
-				errors: field.getErrors('phone'),
-			}) }}
-		{% endtag %}
-		{% tag 'div' with {
-			id: 'link-type-email',
-			class: 'width-50 ' ~ (value.linkType != 'email' ? 'hidden' : null),
-		} %}
-			{{ forms.textField({
-				label: field.getAttributeLabel('email'),
-				instructions: field.getAttributeHint('email'),
-				attribute: 'email',
-				inputmode: 'email',
-				id: 'email',
-				name: 'email',
-				value: value.email,
-				required: true,
-				fieldClass: 'width-50',
-			}) }}
-		{% endtag %}
+		{% if 'entry' in allowedTypes %}
+			{% tag 'div' with {
+				id: 'link-type-entry',
+				class: 'width-50 ' ~ (value.linkType != 'entry' ? 'hidden' : null),
+			} %}
+				{{ forms.elementSelectField({
+					label: field.getAttributeLabel('entry'),
+					instructions: field.getAttributeHint('entry'),
+					attribute: 'entry',
+					id: 'entry',
+					name: 'entry',
+					elementType: 'craft\\elements\\Entry',
+					elements: value.entry ? [craft.entries.id(value.entry).one()] : [],
+					allowSelfRelations: false,
+					sourceElementId: ownerId,
+					required: true,
+					limit: 1,
+					fieldClass: 'width-50',
+					errors: field.getErrors('entry'),
+				}) }}
+			{% endtag %}
+		{% endif %}
+		{% if 'asset' in allowedTypes %}
+			{% tag 'div' with {
+				id: 'link-type-asset',
+				class: 'width-50 ' ~ (value.linkType != 'asset' ? 'hidden' : null),
+			} %}
+				{{ forms.elementSelectField({
+					label: field.getAttributeLabel('asset'),
+					instructions: field.getAttributeHint('asset'),
+					attribute: 'asset',
+					id: 'asset',
+					name: 'asset',
+					elementType: 'craft\\elements\\Asset',
+					elements: value.asset ? [craft.assets.id(value.asset).one()] : [],
+					allowSelfRelations: false,
+					sourceElementId: ownerId,
+					required: true,
+					limit: 1,
+					fieldClass: 'width-50',
+					errors: field.getErrors('asset'),
+				}) }}
+			{% endtag %}
+		{% endif %}
+		{% if 'url' in allowedTypes %}
+			{% tag 'div' with {
+				id: 'link-type-url',
+				class: 'width-50 ' ~ (value.linkType != 'url' ? 'hidden' : null),
+			} %}
+				{{ forms.textField({
+					label: field.getAttributeLabel('url'),
+					instructions: field.getAttributeHint('url'),
+					attribute: 'url',
+					inputmode: 'url',
+					id: 'url',
+					name: 'url',
+					value: value.url,
+					required: true,
+					fieldClass: 'width-50',
+					errors: field.getErrors('url'),
+				}) }}
+			{% endtag %}
+		{% endif %}
+		{% if 'phone' in allowedTypes %}
+			{% tag 'div' with {
+				id: 'link-type-phone',
+				class: 'width-50 ' ~ (value.linkType != 'phone' ? 'hidden' : null),
+			} %}
+				{{ forms.textField({
+					label: field.getAttributeLabel('phone'),
+					instructions: field.getAttributeHint('phone'),
+					attribute: 'phone',
+					inputmode: 'tel',
+					type: 'tel',
+					id: 'phone',
+					name: 'phone',
+					value: value.phone,
+					required: true,
+					errors: field.getErrors('phone'),
+				}) }}
+			{% endtag %}
+		{% endif %}
+		{% if 'email' in allowedTypes %}
+			{% tag 'div' with {
+				id: 'link-type-email',
+				class: 'width-50 ' ~ (value.linkType != 'email' ? 'hidden' : null),
+			} %}
+				{{ forms.textField({
+					label: field.getAttributeLabel('email'),
+					instructions: field.getAttributeHint('email'),
+					attribute: 'email',
+					inputmode: 'email',
+					id: 'email',
+					name: 'email',
+					value: value.email,
+					required: true,
+					fieldClass: 'width-50',
+				}) }}
+			{% endtag %}
+		{% endif %}
 	</div>
-	<hr>
 {% endnamespace %}
-
-{% css %}
-	.button-wrapper > *:before {
-		display: none;
-	}
-{% endcss %}

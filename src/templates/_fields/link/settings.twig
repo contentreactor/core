@@ -7,8 +7,7 @@
 		attribute: 'textNotOptional',
 		id: 'textNotOptional',
 		name: 'textNotOptional',
-		on: 'textNotOptional' in field|keys and field.textNotOptional is defined ? field.textNotOptional : false,
-		fieldClass: 'width-25',
+		on: field.textNotOptional,
 		first: true,
 	}) }}
 	{{ forms.checkboxSelectField({
@@ -22,6 +21,5 @@
 		showAllOption: true,
 		warning: false,
 		errors: field.getErrors("allowedLinkTypes"),
-		fieldClass: 'width-25',
 	}) }}
 </div>

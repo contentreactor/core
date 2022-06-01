@@ -2,7 +2,8 @@
 
 namespace Developion\Core\Entity;
 
-use craft\elements\db\ElementQuery;
+use craft\elements\Asset;
+use craft\elements\Entry;
 use Spatie\DataTransferObject\DataTransferObject;
 
 class LinkField extends DataTransferObject
@@ -10,31 +11,31 @@ class LinkField extends DataTransferObject
 	public ?string $text;
 	public ?string $linkType;
 	public ?bool $target;
-	public ElementQuery $entry;
-	public ElementQuery $asset;
+	public ?int $entry;
+	public ?int $asset;
 	public ?string $url;
 	public ?string $phone;
 	public ?string $email;
 
-	public function getUrl(...$args): string
+	public function getUrl(): string
 	{
-		switch ($this->linkType) {
-			case 'entry': return $this->entry->one() ? $this->entry->one()->url : '';
-			case 'asset': return $this->asset->one() ? $this->asset->one()->getUrl() : '';
-			case 'phone': return "tel:{$this->phone}";
-			case 'email': return "mailto:{$this->email}";
-			case 'url': return $this->url;
-		}
-		return '';
+		return match ($this->linkType) {
+			'entry' => !empty($this->entry) ? Entry::find()->id($this->entry)->one()->url : '',
+			'asset' => !empty($this->asset) ? Asset::find()->id($this->asset)->one()->getUrl() : '',
+			'phone' => "tel:{$this->phone}",
+			'email' => "mailto:{$this->email}",
+			'url' => $this->url,
+			default => '',
+		};
 	}
 
 	public function toArray(): array
 	{
-		$array = parent::toArray();
+		$value = parent::toArray();
 
-		$array['entry'] = $array['entry']->one()?->id;
-		$array['asset'] = $array['asset']->one()?->id;
+		$value['entry'] = !empty($value['entry']) ? Entry::find()->id($value['entry'])?->one()?->id : null;
+		$value['asset'] = !empty($value['asset']) ? Asset::find()->id($value['asset'])?->one()?->id : null;
 
-		return $array;
+		return $value;
 	}
 }
