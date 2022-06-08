@@ -3,8 +3,10 @@
 namespace Developion\Core\web\twig;
 
 use Craft;
+use craft\elements\Asset;
 use craft\elements\Entry;
 use craft\helpers\UrlHelper;
+use Developion\Core\Entity\ImageConfig;
 use Developion\Core\web\twig\node\expression\ConstOperator;
 use Developion\Core\web\twig\variables\DevelopionVariable;
 use GuzzleHttp\Client;
@@ -29,6 +31,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
 			new TwigFunction('baseUrl', [UrlHelper::class, 'rootRelativeUrl']),
 			new TwigFunction('dd', [$this, 'ddFunction']),
 			new TwigFunction('fetch', [$this, 'fetchFunction']),
+			new TwigFunction('image', [$this, 'imageFunction']),
 		];
 	}
 
@@ -104,6 +107,11 @@ class Extension extends AbstractExtension implements GlobalsInterface
 		}
 
 		return $response;
+	}
+
+	public function imageFunction(Asset $asset, ImageConfig $config): string
+	{
+		return '';
 	}
 
 	public function firstFilter(array $array): mixed
