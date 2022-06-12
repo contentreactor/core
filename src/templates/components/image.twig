@@ -1,0 +1,15 @@
+{% apply spaceless %}
+    <picture>
+        {% for extension, type in types %}
+            {% set transform = {format: extension, quality: 100, position: asset.getFocalPoint(true)} %}
+            {# {% do dd(asset.getUrl(transform|merge({width: sizes[0].width, height: sizes[0].height}))) %} #}
+            {% set srcset = sizes|map(size => asset.getUrl(transform|merge({width: size.width, height: size.height}))) %}
+            {# {% for image in srcset %} #}
+                <source srcset="{{ srcset|join(', ') }}" sizes="100vw" type="{{ type }}" />
+            {# {% endfor %} #}
+            {# <source {% if 'media' in param|keys %} media="{{ param.media }}" {% endif %} srcset="{{ thumbs['jpeg'][paramKey] }}" type="image/jpeg" /> #}
+        {% endfor %}
+        {# <img src="{{ thumbs['webp'][0] }}" width="{{ sizes[0] }}" height="{{ sizes[1] }}" alt="{{ alt }}" /> #}
+        {{ asset.getImg() }}
+    </picture>
+{% endapply %}
