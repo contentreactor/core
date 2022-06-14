@@ -20,7 +20,7 @@
 			attribute: 'target',
 			id: 'target',
 			name: 'target',
-			on: 'target' in value|keys and value.target is defined ? value.target : false,
+			on: value.target ?? false,
 			onLabel: 'Open in a new tab'|t('developion-core'),
 			offLabel: 'Open in the current tab'|t('developion-core'),
 			fieldClass: 'width-50',
