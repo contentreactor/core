@@ -3,12 +3,8 @@
 namespace Developion\Core\web\twig;
 
 use Craft;
-use craft\elements\Asset;
 use craft\elements\Entry;
-use craft\helpers\Template;
 use craft\helpers\UrlHelper;
-use Developion\Core\Entity\ImageConfig;
-use Developion\Core\Models\ImageSizes;
 use Developion\Core\web\twig\node\expression\ConstOperator;
 use Developion\Core\web\twig\variables\DevelopionVariable;
 use GuzzleHttp\Client;
@@ -43,7 +39,6 @@ class Extension extends AbstractExtension implements GlobalsInterface
 			new TwigFilter('splice', [$this, 'spliceFilter']),
 			new TwigFilter('uncamel', [$this, 'uncamelFilter']),
 			new TwigFilter('first', [$this, 'firstFilter']),
-			new TwigFilter('image', [$this, 'imageFilter'], ['is_safe' => ['html']]),
 
 			// type casts
 			new TwigFilter('array', fn (mixed $var): array => (array) $var),
@@ -114,46 +109,6 @@ class Extension extends AbstractExtension implements GlobalsInterface
 	public function firstFilter(array $array): mixed
 	{
 		return reset($array);
-	}
-
-	public function imageFilter(?Asset $asset, array $attributes = [], $sizes = []): string
-	{
-		if (!$asset || $asset->kind != Asset::KIND_IMAGE) {
-			return '';
-		}
-
-		$imageSizes = new ImageSizes($sizes);
-		$sizes = [];
-		foreach ($imageSizes as $width => $height) {
-			$width = (int) substr($width, 1);
-			if ($width < $asset->getWidth() && $height !== 'disable') {
-				$sizes[] = [
-					'width' => $width,
-					'height' => $height ?? $asset->getHeight() * $width / $asset->getWidth(),
-				];
-			}
-		}
-
-		$types = [
-			$asset->getExtension() => $asset->getMimeType(),
-		];
-
-		// make sure there's support for webp
-		if (!array_key_exists('webp', $types)) {
-			$types = array_merge(['webp' => 'image/webp'], $types);
-		}
-
-		// if there is only webp, make sure we have a jpeg fallback
-		if (['webp'] === array_keys($types)) {
-			$types['jpg'] = 'image/jpeg';
-		}
-
-		return Template::raw(Craft::$app->getView()->renderTemplate('developion-core/components/image', [
-			'asset' => $asset,
-			'attributes' => $attributes,
-			'sizes' => $sizes,
-			'types' => $types,
-		]));
 	}
 
 	public function readTimeFilter(Entry $entry): string
