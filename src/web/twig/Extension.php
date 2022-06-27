@@ -111,9 +111,9 @@ class Extension extends AbstractExtension implements GlobalsInterface
 		return reset($array);
 	}
 
-	public function readTimeFilter(Entry $entry): string
+	public function readTimeFilter(Entry $entry, string $fieldHandle = 'blogContent', bool $onlyNumber = false): string
 	{
-		$content = $entry->blogContent->all();
+		$content = $entry->$fieldHandle->all();
 		$content = array_filter($content, function ($element) {
 			return $element->text != null;
 		});
@@ -124,7 +124,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
 		$word = str_word_count(strip_tags($content));
 		$est = round($word / 200);
 		$readingTime = Craft::t('core', 'minutes of reading time');
-		return "$est $readingTime";
+		return $est . ($onlyNumber ? "" : " $readingTime");
 	}
 
 	public function spliceFilter(array $array, int $offset, ?int $length = null, array $replacement = []): array
