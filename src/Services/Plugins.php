@@ -53,13 +53,13 @@ class Plugins extends Component
 		if (array_key_exists('plugin', Craft::$app->getUrlManager()->getRouteParams())) {
 			/** @var PluginInterface $plugin */
 			$plugin = Craft::$app->getUrlManager()->getRouteParams()['plugin'];
-			$settings = $plugin->getSettings();
-		} else {
-			$settings = Core::getInstance()->db->getPluginSettings($plugin);
 		}
-		$plugin->getSettings()->setAttributes($settings, false);
 
-		return $plugin->getSettings();
+		$settings = $plugin->getSettings();
+		$values = Core::getInstance()->db->getPluginSettings($plugin);
+		$settings->setAttributes($values, false);
+
+		return $settings;
 	}
 
 	private function castRequestToModel(array $settings, PluginInterface $plugin): array
