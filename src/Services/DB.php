@@ -160,7 +160,7 @@ class DB
 			'section' => $section
 		]);
 		$result = $sql->fetch($connection::FETCH_NUM);
-		static::$slugs[$section][$entryType] = $result[0];
+		static::$slugs[$section][$entryType] = $result ? reset($result) : '';
 		return static::$slugs[$section][$entryType];
 	}
 
