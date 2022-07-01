@@ -11,6 +11,8 @@ use Developion\Core\Records\Setting;
 
 class DB
 {
+	public static array $slugs = [];
+
 	public function getPluginSettings(PluginInterface $plugin, array $keys = []): array
 	{
 		$currentSite = Craft::$app->getSites()->getCurrentSite();
@@ -43,7 +45,7 @@ class DB
 			fn (Setting $setting) => substr($setting->key, strlen($prefix)),
 			fn (Setting $setting) => unserialize($setting->value)
 		);
-		
+
 		if (empty($settings)) {
 			$settings = (array) $plugin->getSettings();
 		}
@@ -144,6 +146,9 @@ class DB
 
 	public function getSlug(string $entryType, string $section = 'page'): string
 	{
+		if (array_key_exists($section, static::$slugs) && is_array(static::$slugs[$section]) && array_key_exists($entryType, static::$slugs[$section])) {
+			return static::$slugs[$section][$entryType];
+		}
 		/** @var PDO|false $connection */
 		$connection = Craft::$app->getDb()->pdo;
 		if (!$connection) return '';
@@ -155,7 +160,8 @@ class DB
 			'section' => $section
 		]);
 		$result = $sql->fetch($connection::FETCH_NUM);
-		return $result[0];
+		static::$slugs[$section][$entryType] = $result[0];
+		return static::$slugs[$section][$entryType];
 	}
 
 	public function matchEntry(array $config): Entry|null
