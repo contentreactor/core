@@ -89,10 +89,10 @@ class Core extends Plugin
 			CraftPlugins::class,
 			CraftPlugins::EVENT_BEFORE_UNINSTALL_PLUGIN,
 			function (PluginEvent $event) {
-				$developionPlugins = array_filter(array_keys(Craft::$app->getPlugins()->getAllPlugins()), function ($pluginHandle) {
-					return $pluginHandle != 'developion-core' && str_contains($pluginHandle, 'developion');
-				});
 				if ($event->plugin === $this) {
+					$developionPlugins = array_filter(array_keys(Craft::$app->getPlugins()->getAllPlugins()), function ($pluginHandle) {
+						return $pluginHandle != 'developion-core' && str_contains($pluginHandle, 'developion');
+					});
 					foreach ($developionPlugins as $developionPlugin) {
 						Craft::$app->getPlugins()->uninstallPlugin($developionPlugin);
 					}
