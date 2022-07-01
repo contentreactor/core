@@ -1,6 +1,8 @@
 {% extends '_layouts/cp' %}
-
-{% do view.registerAssetBundle("verbb\\navigation\\assetbundles\\NavigationAsset") %}
+{% set navigation = craft.app.plugins.getPlugin('navigation') %}
+{% if navigation and navigation.isEnabled() %}
+	{% do view.registerAssetBundle("verbb\\navigation\\assetbundles\\NavigationAsset") %}
+{% endif %}
 
 {% if title is not defined %}
 	{% set title = developion.getPluginName() %}
