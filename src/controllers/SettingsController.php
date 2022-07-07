@@ -5,7 +5,6 @@ namespace Developion\Core\controllers;
 use Craft;
 use craft\base\Model;
 use craft\helpers\ArrayHelper;
-use craft\helpers\Cp;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
 use Developion\Core\Core;
@@ -18,6 +17,10 @@ class SettingsController extends Controller
 	{
 		$core = Core::getInstance();
 		$developionPlugins = $core->db->getPluginSetting($core, 'developionPlugins');
+		if (empty($developionPlugins)) {
+			$this->setFailFlash(Craft::t('developion-core', 'No configurable Developion plugins installed.'));
+			return $this->redirect(UrlHelper::cpUrl('settings'));
+		}
 		$navItems = ArrayHelper::map(
 			$developionPlugins,
 			fn ($plugin) => $plugin,
