@@ -80,6 +80,7 @@ class DB
 			}
 			$transaction->commit();
 		} catch (\Throwable $th) {
+			Craft::debug($th->getTrace(), 'developion-core');
 			$transaction->rollBack();
 			return false;
 		}
@@ -139,6 +140,7 @@ class DB
 			$setting->save();
 			$transaction->commit();
 		} catch (\Throwable $th) {
+			Craft::debug($th->getTrace(), 'developion-core');
 			$transaction->rollBack();
 			return false;
 		}
