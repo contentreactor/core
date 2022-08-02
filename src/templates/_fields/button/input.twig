@@ -1,8 +1,7 @@
 {% import '_includes/forms.twig' as forms %}
-{# {% do dd(field.getErrors()) %} #}
 {% namespace field.handle %}
     <div class="flex-fields button-wrapper">
-		
+
         {{ forms.textField({
             label: field.attributeLabel('text'),
             instructions: field.attributeHint('text'),
