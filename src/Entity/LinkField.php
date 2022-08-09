@@ -19,14 +19,16 @@ class LinkField extends DataTransferObject
 
 	public function getUrl(): string
 	{
-		return match ($this->linkType) {
-			'entry' => !empty($this->entry) ? Entry::find()->id($this->entry)->one()->url : '',
-			'asset' => !empty($this->asset) ? Asset::find()->id($this->asset)->one()->getUrl() : '',
+		$return = match ($this->linkType) {
+			'entry' => !empty($this->entry) ? Entry::find()->id($this->entry)->one()?->url : '',
+			'asset' => !empty($this->asset) ? Asset::find()->id($this->asset)->one()?->getUrl() : '',
 			'phone' => "tel:{$this->phone}",
 			'email' => "mailto:{$this->email}",
 			'url' => $this->url,
 			default => '',
 		};
+
+		return $return ?? '';
 	}
 
 	public function toArray(): array
