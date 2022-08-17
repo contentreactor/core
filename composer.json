@@ -1,24 +1,24 @@
 {
-	"name": "developion/core",
-	"description": "Developion Template plugin for site.",
+	"name": "contentreactor/core",
+	"description": "Contentreactor Template plugin for site.",
 	"type": "craft-plugin",
-	"version": "1.0.0",
+	"version": "2.0.0",
 	"license": "MIT",
     "keywords": [
 		"craft",
 		"cms",
 		"craftcms",
 		"craft-plugin",
-		"developion"
+		"contentreactor"
 	],
 	"authors": [
 		{
-			"name": "Developion",
-			"homepage": "https://www.developion.com/"
+			"name": "Contentreactor",
+			"homepage": "https://www.contentreactor.com/"
 		},
 		{
-			"name": "Developion Support",
-			"email": "support@developion.com"
+			"name": "Contentreactor Support",
+			"email": "support@contentreactor.com"
 		}
 	],
 	"minimum-stability": "dev",
@@ -32,14 +32,14 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Developion\\Core\\": "src/"
+			"Contentreactor\\Core\\": "src/"
 		}
 	},
 	"extra": {
-		"name": "Developion Core",
-		"handle": "developion-core",
-		"developer": "Developion",
-		"developerUrl": "https://www.developion.com/",
-		"class": "Developion\\Core\\Core"
+		"name": "Contentreactor Core",
+		"handle": "contentreactor-core",
+		"developer": "Contentreactor",
+		"developerUrl": "https://www.contentreactor.com/",
+		"class": "Contentreactor\\Core\\Core"
 	}
 }

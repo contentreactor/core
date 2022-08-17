@@ -1,7 +1,7 @@
 <?php
 
-namespace Developion\Core\base;
+namespace Contentreactor\Core\base;
 
-interface DevelopionPlugin
+interface ContentreactorPlugin
 {
 }

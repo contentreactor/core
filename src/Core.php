@@ -1,6 +1,6 @@
 <?php
 
-namespace Developion\Core;
+namespace Contentreactor\Core;
 
 use Craft;
 use craft\base\Plugin;
@@ -15,20 +15,20 @@ use craft\services\Fields as FieldsService;
 use craft\services\Plugins as CraftPlugins;
 use craft\web\UrlManager;
 use craft\web\View;
-use Developion\Core\fields\Button as ButtonField;
-use Developion\Core\fields\Link as LinkField;
-use Developion\Core\Models\Settings;
-use Developion\Core\Records\Setting;
-use Developion\Core\Services\DB;
-use Developion\Core\Services\Plugins;
-use Developion\Core\web\twig\Extension;
+use Contentreactor\Core\fields\Button as ButtonField;
+use Contentreactor\Core\fields\Link as LinkField;
+use Contentreactor\Core\Models\Settings;
+use Contentreactor\Core\Records\Setting;
+use Contentreactor\Core\Services\DB;
+use Contentreactor\Core\Services\Plugins;
+use Contentreactor\Core\web\twig\Extension;
 use Illuminate\Support\Collection;
 use yii\base\Event;
 
 /**
  * Class Core
  *
- * @package developion/core
+ * @package contentreactor/core
  *
  * @property Core $plugin
  * @property Plugins $plugins
@@ -79,7 +79,7 @@ class Core extends Plugin
 			View::class,
 			View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS,
 			function (RegisterTemplateRootsEvent $event) {
-				$event->roots['developion-core'] = __DIR__ . '/templates';
+				$event->roots['contentreactor-core'] = __DIR__ . '/templates';
 			}
 		);
 		Event::on(
@@ -95,11 +95,11 @@ class Core extends Plugin
 			CraftPlugins::EVENT_BEFORE_UNINSTALL_PLUGIN,
 			function (PluginEvent $event) {
 				if ($event->plugin === $this) {
-					$developionPlugins = array_filter(array_keys(Craft::$app->getPlugins()->getAllPlugins()), function ($pluginHandle) {
-						return $pluginHandle != 'developion-core' && str_contains($pluginHandle, 'developion');
+					$contentreactorPlugins = array_filter(array_keys(Craft::$app->getPlugins()->getAllPlugins()), function ($pluginHandle) {
+						return $pluginHandle != 'contentreactor-core' && str_contains($pluginHandle, 'contentreactor');
 					});
-					foreach ($developionPlugins as $developionPlugin) {
-						Craft::$app->getPlugins()->uninstallPlugin($developionPlugin);
+					foreach ($contentreactorPlugins as $contentreactorPlugin) {
+						Craft::$app->getPlugins()->uninstallPlugin($contentreactorPlugin);
 					}
 				}
 			}
@@ -108,7 +108,7 @@ class Core extends Plugin
 			Plugins::class,
 			Plugins::EVENT_BEFORE_SAVE_PLUGIN_SETTINGS,
 			function (PluginEvent $event) {
-				if (stripos($event->plugin->getHandle(), 'developion') === false) return;
+				if (stripos($event->plugin->getHandle(), 'contentreactor') === false) return;
 				$currentSite = Craft::$app->getSites()->getCurrentSite();
 				$path = Craft::$app->getPath()->getStoragePath() . "/{$event->plugin->getHandle()}-site-{$currentSite->id}.php";
 				if (!file_exists($path)) {
@@ -120,7 +120,7 @@ class Core extends Plugin
 			Plugins::class,
 			Plugins::EVENT_AFTER_SAVE_PLUGIN_SETTINGS,
 			function (PluginEvent $event) {
-				if (stripos($event->plugin->getHandle(), 'developion') === false) return;
+				if (stripos($event->plugin->getHandle(), 'contentreactor') === false) return;
 				$currentSite = Craft::$app->getSites()->getCurrentSite();
 				$prefix = $event->plugin->id . '_';
 				$path = Craft::$app->getPath()->getStoragePath() . "/{$event->plugin->getHandle()}-site-{$currentSite->id}.php";

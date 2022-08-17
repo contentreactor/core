@@ -1,11 +1,11 @@
 <?php
 
-namespace Developion\Core\console\controllers;
+namespace Contentreactor\Core\console\controllers;
 
 use Craft;
 use craft\base\Plugin as CraftPlugin;
 use craft\console\Controller;
-use Developion\Core\Core;
+use Contentreactor\Core\Core;
 use yii\console\ExitCode;
 
 class ComposerController extends Controller
@@ -18,9 +18,9 @@ class ComposerController extends Controller
 			$projectConfig = Craft::$app->getProjectConfig();
 			$allPluginsConfig = array_filter(
 				array_keys($projectConfig->get('plugins')),
-				fn ($handle) => str_contains($handle, 'developion'),
+				fn ($handle) => str_contains($handle, 'contentreactor'),
 			);
-			$developionPlugins = [];
+			$contentreactorPlugins = [];
 
 			foreach ($allPluginsConfig as $pluginHandle) {
 				$plugin = Craft::$app->getPlugins()->getPlugin($pluginHandle);
@@ -29,12 +29,12 @@ class ComposerController extends Controller
 					continue;
 				}
 				if ($plugin->getSettings() && $plugin !== $core) {
-					$developionPlugins[] = $plugin;
+					$contentreactorPlugins[] = $plugin;
 				}
 			}
-			$developionPlugins = array_unique(array_map(fn ($plugin) => $plugin->id, $developionPlugins));
+			$contentreactorPlugins = array_unique(array_map(fn ($plugin) => $plugin->id, $contentreactorPlugins));
 
-			$core->db->setPluginSetting($core, 'developionPlugins', $developionPlugins);
+			$core->db->setPluginSetting($core, 'contentreactorPlugins', $contentreactorPlugins);
 			$transaction->commit();
 		} catch (\Throwable $th) {
 			$transaction->rollBack();
@@ -42,7 +42,7 @@ class ComposerController extends Controller
 			Craft::error($th->getTrace(), $core->id);
 			return ExitCode::UNSPECIFIED_ERROR;
 		}
-		$this->stdout("Developion plugins index flushed.\n");
+		$this->stdout("Contentreactor plugins index flushed.\n");
 		return ExitCode::OK;
 	}
 }

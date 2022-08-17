@@ -1,6 +1,6 @@
 <?php
 
-namespace Developion\Core\fields;
+namespace Contentreactor\Core\fields;
 
 use Craft;
 use craft\base\EagerLoadingFieldInterface;
@@ -8,7 +8,7 @@ use craft\base\ElementInterface;
 use craft\base\Field;
 use craft\helpers\ArrayHelper;
 use craft\validators\ArrayValidator;
-use Developion\Core\events\DefineDefaultColorsEvent;
+use Contentreactor\Core\events\DefineDefaultColorsEvent;
 use JetBrains\PhpStorm\ArrayShape;
 use yii\base\Event;
 use yii\db\Schema;
@@ -37,7 +37,7 @@ class Button extends Field
 
 	public static function displayName(): string
 	{
-		return Craft::t('developion-core', 'Button');
+		return Craft::t('contentreactor-core', 'Button');
 	}
 
 	#[ArrayShape([
@@ -50,11 +50,11 @@ class Button extends Field
 	public function attributeLabels(): array
 	{
 		return [
-			'allowedLinkTypes' => Craft::t('developion-core', 'Allowed Link Types'),
-			'defaultTextColor' => Craft::t('developion-core', 'Default Text Color'),
-			'defaultTextHoverColor' => Craft::t('developion-core', 'Default Text Hover Color'),
-			'defaultBackgroundColor' => Craft::t('developion-core', 'Default Background Color'),
-			'defaultBackgroundHoverColor' => Craft::t('developion-core', 'Default Background Hover Color'),
+			'allowedLinkTypes' => Craft::t('contentreactor-core', 'Allowed Link Types'),
+			'defaultTextColor' => Craft::t('contentreactor-core', 'Default Text Color'),
+			'defaultTextHoverColor' => Craft::t('contentreactor-core', 'Default Text Hover Color'),
+			'defaultBackgroundColor' => Craft::t('contentreactor-core', 'Default Background Color'),
+			'defaultBackgroundHoverColor' => Craft::t('contentreactor-core', 'Default Background Hover Color'),
 		];
 	}
 
@@ -65,7 +65,7 @@ class Button extends Field
 			['allowedLinkTypes'],
 			ArrayValidator::class,
 			'min' => 1,
-			'tooFew' => Craft::t('developion-core', 'You must select at least {min, number} of the {attribute}.'),
+			'tooFew' => Craft::t('contentreactor-core', 'You must select at least {min, number} of the {attribute}.'),
 			'skipOnEmpty' => false
 		];
 		return $rules;
@@ -131,7 +131,7 @@ class Button extends Field
 
 	protected function inputHtml(mixed $value, ElementInterface $element = null): string
 	{
-		return Craft::$app->getView()->renderTemplate("developion-core/_fields/button/input", [
+		return Craft::$app->getView()->renderTemplate("contentreactor-core/_fields/button/input", [
 			'value' => $value,
 			'field' => $this,
 		]);
@@ -139,7 +139,7 @@ class Button extends Field
 
 	public function getSettingsHtml(): ?string
 	{
-		return Craft::$app->getView()->renderTemplate("developion-core/_fields/button/settings", [
+		return Craft::$app->getView()->renderTemplate("contentreactor-core/_fields/button/settings", [
 			'field' => $this,
 		]);
 	}
@@ -155,28 +155,28 @@ class Button extends Field
 		$value = $element->getFieldValue($this->handle);
 
 		if (empty($value['text'])) {
-			$element->addError("$this->handle", Craft::t('developion-core', 'The button text field can\'t be empty.'));
+			$element->addError("$this->handle", Craft::t('contentreactor-core', 'The button text field can\'t be empty.'));
 		}
 
 		if (empty($value['tag'])) {
-			$element->addError($this->handle, Craft::t('developion-core', 'The button tag must be selected.'));
+			$element->addError($this->handle, Craft::t('contentreactor-core', 'The button tag must be selected.'));
 		}
 
 		if ($value['linkType'] !== '-') {
 			if ($value['linkType'] == 'entry' && empty($value['entry'])) {
-				$element->addError($this->handle, Craft::t('developion-core', 'Entry can\'t be empty if the link type is Entry.'));
+				$element->addError($this->handle, Craft::t('contentreactor-core', 'Entry can\'t be empty if the link type is Entry.'));
 			}
 			if ($value['linkType'] == 'asset' && empty($value['asset'])) {
-				$element->addError($this->handle, Craft::t('developion-core', 'Asset can\'t be empty if the link type is Asset.'));
+				$element->addError($this->handle, Craft::t('contentreactor-core', 'Asset can\'t be empty if the link type is Asset.'));
 			}
 			if ($value['linkType'] == 'url' && empty($value['url'])) {
-				$element->addError($this->handle, Craft::t('developion-core', 'Url can\'t be empty if the link type is Url.'));
+				$element->addError($this->handle, Craft::t('contentreactor-core', 'Url can\'t be empty if the link type is Url.'));
 			}
 			if ($value['linkType'] == 'email' && empty($value['email'])) {
-				$element->addError($this->handle, Craft::t('developion-core', 'Email can\'t be empty if the link type is Email.'));
+				$element->addError($this->handle, Craft::t('contentreactor-core', 'Email can\'t be empty if the link type is Email.'));
 			}
 			if ($value['linkType'] == 'phone' && empty($value['phone'])) {
-				$element->addError($this->handle, Craft::t('developion-core', 'Phone can\'t be empty if the link type is Phone.'));
+				$element->addError($this->handle, Craft::t('contentreactor-core', 'Phone can\'t be empty if the link type is Phone.'));
 			}
 		}
 	}

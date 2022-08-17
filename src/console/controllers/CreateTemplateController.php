@@ -1,6 +1,6 @@
 <?php
 
-namespace Developion\Core\console\controllers;
+namespace Contentreactor\Core\console\controllers;
 
 use craft\console\Controller;
 use craft\helpers\FileHelper;
@@ -28,7 +28,7 @@ class CreateTemplateController extends Controller
 	}
 
 	/**
-	 * Handle developion-core/create-template console commands
+	 * Handle contentreactor-core/create-template console commands
 	 *
 	 * The first line of this method docblock is displayed as the description
 	 * of the Console Command in ./craft help
@@ -53,12 +53,12 @@ class CreateTemplateController extends Controller
 
 		if (!file_exists($twigPath)) {
 			$twigContent = "\n\n";
-			$twigContent .= "{% css view.assetManager.getPublishedUrl('@Developion/Developion/web/assets/front/dist', false, 'builder/{$this->type}s/$assetFileName.css')|replace('/\.css\?(.*)/', '.css') %}";
+			$twigContent .= "{% css view.assetManager.getPublishedUrl('@Contentreactor/Contentreactor/web/assets/front/dist', false, 'builder/{$this->type}s/$assetFileName.css')|replace('/\.css\?(.*)/', '.css') %}";
 
 			if ($this->js) {
 				if (!file_exists($jsPath)) {
 					FileHelper::writeToFile($jsPath, '');
-					$twigContent .= "\n{% js  view.assetManager.getPublishedUrl('@Developion/Developion/web/assets/front/dist', false, '$assetFileName.js')|replace('/\.js\?(.*)/', '.js') %}";
+					$twigContent .= "\n{% js  view.assetManager.getPublishedUrl('@Contentreactor/Contentreactor/web/assets/front/dist', false, '$assetFileName.js')|replace('/\.js\?(.*)/', '.js') %}";
 				} else {
 					$messages[] = " - Script file $assetFileName.js already exists.";
 				}

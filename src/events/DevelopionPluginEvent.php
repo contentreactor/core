@@ -1,10 +1,10 @@
 <?php
 
-namespace Developion\Core\events;
+namespace Contentreactor\Core\events;
 
 use yii\base\Event;
 
-class DevelopionPluginEvent extends Event
+class ContentreactorPluginEvent extends Event
 {
 	const EVENT_AT_PLUGIN_INIT = 'atPluginInit';
 

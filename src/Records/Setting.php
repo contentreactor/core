@@ -1,10 +1,10 @@
 <?php
 
-namespace Developion\Core\Records;
+namespace Contentreactor\Core\Records;
 
 use craft\db\ActiveRecord;
 use craft\records\Site;
-use Developion\Core\migrations\Install;
+use Contentreactor\Core\migrations\Install;
 use yii\db\ActiveQueryInterface;
 
 /**

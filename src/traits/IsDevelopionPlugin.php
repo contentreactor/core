@@ -1,18 +1,18 @@
 <?php
 
-namespace Developion\Core\traits;
+namespace Contentreactor\Core\traits;
 
 use Craft;
 use craft\elements\Entry;
 use craft\events\PluginEvent;
 use craft\services\Plugins;
-use Developion\Core\Core;
-use Developion\Core\events\DevelopionPluginEvent;
-use Developion\Core\Records\Setting;
+use Contentreactor\Core\Core;
+use Contentreactor\Core\events\ContentreactorPluginEvent;
+use Contentreactor\Core\Records\Setting;
 use ReflectionClass;
 use yii\base\Event;
 
-trait IsDevelopionPlugin
+trait IsContentreactorPlugin
 {
 	public static $plugin;
 
@@ -33,14 +33,14 @@ trait IsDevelopionPlugin
 			Plugins::EVENT_BEFORE_INSTALL_PLUGIN,
 			function (PluginEvent $event) {
 				if ($event->plugin === $this) {
-					Craft::$app->getPlugins()->installPlugin('developion-core');
+					Craft::$app->getPlugins()->installPlugin('contentreactor-core');
 					$core = Core::getInstance();
-					$developionPlugins = $core->db->getPluginSetting($core, 'developionPlugins');
+					$contentreactorPlugins = $core->db->getPluginSetting($core, 'contentreactorPlugins');
 					if (null !== $this->getSettings()) {
-						$developionPlugins[] = $this->id;
+						$contentreactorPlugins[] = $this->id;
 						$core->plugins->savePluginSettings($this, $this->getSettings()->getAttributes());
 					}
-					$core->db->setPluginSetting($core, 'developionPlugins', array_unique($developionPlugins));
+					$core->db->setPluginSetting($core, 'contentreactorPlugins', array_unique($contentreactorPlugins));
 				}
 			}
 		);
@@ -54,9 +54,9 @@ trait IsDevelopionPlugin
 						'plugin' => $this->id,
 					]);
 					$core = Core::getInstance();
-					$developionPlugins = $core->db->getPluginSetting($core, 'developionPlugins');
-					if (null !== $this->getSettings()) unset($developionPlugins[$this->id]);
-					$core->db->setPluginSetting($core, 'developionPlugins', $developionPlugins);
+					$contentreactorPlugins = $core->db->getPluginSetting($core, 'contentreactorPlugins');
+					if (null !== $this->getSettings()) unset($contentreactorPlugins[$this->id]);
+					$core->db->setPluginSetting($core, 'contentreactorPlugins', $contentreactorPlugins);
 				}
 			}
 		);
@@ -72,12 +72,12 @@ trait IsDevelopionPlugin
 
 	private function _trigger()
 	{
-		$event = new DevelopionPluginEvent([
+		$event = new ContentreactorPluginEvent([
 			'callbacks' => [],
 		]);
 		Event::trigger(
-			DevelopionPluginEvent::class,
-			DevelopionPluginEvent::EVENT_AT_PLUGIN_INIT,
+			ContentreactorPluginEvent::class,
+			ContentreactorPluginEvent::EVENT_AT_PLUGIN_INIT,
 			$event
 		);
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace Developion\Core\Entity;
+namespace Contentreactor\Core\Entity;
 
 use craft\base\Model;
-use Developion\Core\Entity\Casters\Attributes as AttributeCaster;
+use Contentreactor\Core\Entity\Casters\Attributes as AttributeCaster;
 use Spatie\DataTransferObject\Attributes\CastWith;
 
 class ImageConfig extends Model

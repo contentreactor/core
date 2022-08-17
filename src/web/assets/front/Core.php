@@ -1,6 +1,6 @@
 <?php
 
-namespace Developion\Core\web\assets\front;
+namespace Contentreactor\Core\web\assets\front;
 
 use craft\web\AssetBundle;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Developion\Core\web\assets\cp;
+namespace Contentreactor\Core\web\assets\cp;
 
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;

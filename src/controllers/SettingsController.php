@@ -1,6 +1,6 @@
 <?php
 
-namespace Developion\Core\controllers;
+namespace Contentreactor\Core\controllers;
 
 use Craft;
 use craft\base\Model;
@@ -8,7 +8,7 @@ use craft\helpers\ArrayHelper;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
 use craft\web\Response;
-use Developion\Core\Core;
+use Contentreactor\Core\Core;
 use yii\web\NotFoundHttpException;
 
 class SettingsController extends Controller
@@ -16,32 +16,32 @@ class SettingsController extends Controller
 	public function actionIndex(): Response
 	{
 		$core = Core::getInstance();
-		$developionPlugins = $core->db->getPluginSetting($core, 'developionPlugins');
+		$contentreactorPlugins = $core->db->getPluginSetting($core, 'contentreactorPlugins');
 		$navItems = ArrayHelper::map(
-			$developionPlugins,
+			$contentreactorPlugins,
 			fn ($plugin) => $plugin,
 			function ($pluginHandle) {
 				$plugin = Craft::$app->getPlugins()->getPlugin($pluginHandle);
 				return [
-					'title' => substr($plugin->name, strlen('Developion ')),
+					'title' => substr($plugin->name, strlen('Contentreactor ')),
 					'settings' => Core::getInstance()->plugins->getPluginSettings($plugin),
 				];
 			}
 		);
 		$crumbs = [
 			['label' => Craft::t('app', 'Settings'), 'url' => UrlHelper::cpUrl('settings')],
-			['label' => 'Developion', 'url' => UrlHelper::cpUrl('developion-core/settings')]
+			['label' => 'Contentreactor', 'url' => UrlHelper::cpUrl('contentreactor-core/settings')]
 		];
 
-		if (empty($developionPlugins)) {
-			return $this->renderTemplate('developion-core/settings/empty', [
+		if (empty($contentreactorPlugins)) {
+			return $this->renderTemplate('contentreactor-core/settings/empty', [
 				'crumbs' => $crumbs,
 			]);
 		}
 
-		$selectedItem = reset($developionPlugins);
+		$selectedItem = reset($contentreactorPlugins);
 
-		return $this->renderTemplate('developion-core/settings', [
+		return $this->renderTemplate('contentreactor-core/settings', [
 			'navItems' => $navItems,
 			'selectedItem' => $selectedItem,
 			'crumbs' => $crumbs,

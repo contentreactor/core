@@ -1,13 +1,13 @@
 <?php
 
-namespace Developion\Core\Services;
+namespace Contentreactor\Core\Services;
 
 use Craft;
 use craft\base\PluginInterface;
 use craft\elements\Entry;
 use craft\helpers\ArrayHelper;
 use craft\web\UrlManager;
-use Developion\Core\Records\Setting;
+use Contentreactor\Core\Records\Setting;
 
 class DB
 {
@@ -80,7 +80,7 @@ class DB
 			}
 			$transaction->commit();
 		} catch (\Throwable $th) {
-			Craft::debug($th->getTrace(), 'developion-core');
+			Craft::debug($th->getTrace(), 'contentreactor-core');
 			$transaction->rollBack();
 			return false;
 		}
@@ -140,7 +140,7 @@ class DB
 			$setting->save();
 			$transaction->commit();
 		} catch (\Throwable $th) {
-			Craft::debug($th->getTrace(), 'developion-core');
+			Craft::debug($th->getTrace(), 'contentreactor-core');
 			$transaction->rollBack();
 			return false;
 		}

@@ -1,13 +1,13 @@
 <?php
 
-namespace Developion\Core\fields;
+namespace Contentreactor\Core\fields;
 
 use Craft;
 use craft\base\ElementInterface;
 use craft\base\Field;
 use craft\helpers\Json;
 use craft\validators\ArrayValidator;
-use Developion\Core\Entity\LinkField;
+use Contentreactor\Core\Entity\LinkField;
 use yii\db\Schema;
 
 class Link extends Field
@@ -20,14 +20,14 @@ class Link extends Field
 
 	public static function displayName(): string
 	{
-		return Craft::t('developion-core', 'Link');
+		return Craft::t('contentreactor-core', 'Link');
 	}
 
 	public function attributeLabels(): array
 	{
 		return [
-			'allowedLinkTypes' => Craft::t('developion-core', 'Allowed Link Types'),
-			'textNotOptional' => Craft::t('developion-core', 'Is link text mandatory?'),
+			'allowedLinkTypes' => Craft::t('contentreactor-core', 'Allowed Link Types'),
+			'textNotOptional' => Craft::t('contentreactor-core', 'Is link text mandatory?'),
 		];
 	}
 
@@ -38,7 +38,7 @@ class Link extends Field
 			['allowedLinkTypes'],
 			ArrayValidator::class,
 			'min' => 1,
-			'tooFew' => Craft::t('developion-core', 'You must select at least {min, number} of the {attribute}.'),
+			'tooFew' => Craft::t('contentreactor-core', 'You must select at least {min, number} of the {attribute}.'),
 			'skipOnEmpty' => false
 		];
 		return $rules;
@@ -92,7 +92,7 @@ class Link extends Field
 
 	protected function inputHtml(mixed $value, ElementInterface $element = null): string
 	{
-		return Craft::$app->getView()->renderTemplate('developion-core/_fields/link/input', [
+		return Craft::$app->getView()->renderTemplate('contentreactor-core/_fields/link/input', [
 			'value' => $value,
 			'field' => $this,
 			'ownerId' => $this->_getCanonicalParent($element)?->id,
@@ -101,7 +101,7 @@ class Link extends Field
 
 	public function getSettingsHtml(): ?string
 	{
-		return Craft::$app->getView()->renderTemplate('developion-core/_fields/link/settings', [
+		return Craft::$app->getView()->renderTemplate('contentreactor-core/_fields/link/settings', [
 			'field' => $this,
 		]);
 	}
@@ -167,12 +167,12 @@ class Link extends Field
 	private function _getErrors(string $attribute): string
 	{
 		$errors = [
-			'text' => Craft::t('developion-core', 'The link text field can\'t be empty.'),
-			'entry' => Craft::t('developion-core', 'Entry can\'t be empty if the link type is Entry.'),
-			'asset' => Craft::t('developion-core', 'Asset can\'t be empty if the link type is Asset.'),
-			'url' => Craft::t('developion-core', 'Url can\'t be empty if the link type is Url.'),
-			'email' => Craft::t('developion-core', 'Email can\'t be empty if the link type is Email.'),
-			'phone' => Craft::t('developion-core', 'Phone can\'t be empty if the link type is Phone.'),
+			'text' => Craft::t('contentreactor-core', 'The link text field can\'t be empty.'),
+			'entry' => Craft::t('contentreactor-core', 'Entry can\'t be empty if the link type is Entry.'),
+			'asset' => Craft::t('contentreactor-core', 'Asset can\'t be empty if the link type is Asset.'),
+			'url' => Craft::t('contentreactor-core', 'Url can\'t be empty if the link type is Url.'),
+			'email' => Craft::t('contentreactor-core', 'Email can\'t be empty if the link type is Email.'),
+			'phone' => Craft::t('contentreactor-core', 'Phone can\'t be empty if the link type is Phone.'),
 		];
 
 		if (!array_key_exists($attribute, $errors))

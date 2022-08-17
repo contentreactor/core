@@ -1,13 +1,13 @@
 <?php
 
-namespace Developion\Core\migrations;
+namespace Contentreactor\Core\migrations;
 
 use craft\db\Migration;
 use craft\db\Table;
 
 class Install extends Migration
 {
-	const PLUGINS = '{{%developion_plugins}}';
+	const PLUGINS = '{{%contentreactor_plugins}}';
 
 	public function safeUp()
 	{

@@ -1,12 +1,12 @@
 {% extends '_layouts/cp' %}
 {% set navigation = craft.app.plugins.getPlugin('navigation') %}
-{% do view.registerAssetBundle("Developion\\Core\\web\\assets\\cp\\Core") %}
+{% do view.registerAssetBundle("Contentreactor\\Core\\web\\assets\\cp\\Core") %}
 {% if navigation %}
 	{% do view.registerAssetBundle("verbb\\navigation\\assetbundles\\NavigationAsset") %}
 {% endif %}
 
 {% if title is not defined %}
-	{% set title = developion.getPluginName() %}
+	{% set title = contentreactor.getPluginName() %}
 {% endif %}
 
 {% set content %}

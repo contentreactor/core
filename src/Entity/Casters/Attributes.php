@@ -1,8 +1,8 @@
 <?php
 
-namespace Developion\Core\Entity\Casters;
+namespace Contentreactor\Core\Entity\Casters;
 
-use Developion\Core\Entity\Attribute;
+use Contentreactor\Core\Entity\Attribute;
 use Exception;
 use Spatie\DataTransferObject\Caster;
 

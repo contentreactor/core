@@ -6,7 +6,7 @@ q('#form-test').addEventListener('submit', e => {
     body.append(token.getAttribute('name'), token.value)
     body.append(q('#test').id,q('#test').value)
 
-    fetch('actions/developion-core/test/index', {
+    fetch('actions/contentreactor-core/test/index', {
         method: 'POST',
         mode: 'cors',
         cache: 'no-cache',

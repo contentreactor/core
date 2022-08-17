@@ -1,13 +1,13 @@
 <?php
 
-namespace Developion\Core\web\twig\variables;
+namespace Contentreactor\Core\web\twig\variables;
 
 use craft\helpers\Html;
-use Developion\Core\Core;
+use Contentreactor\Core\Core;
 use yii\di\ServiceLocator;
 use yii\widgets\ActiveForm;
 
-class DevelopionVariable extends ServiceLocator
+class ContentreactorVariable extends ServiceLocator
 {
 	public function __construct($config = [])
 	{
