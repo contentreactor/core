@@ -1,6 +1,6 @@
 <?php
 
-namespace Contentreactor\Core\controllers;
+namespace ContentReactor\Core\controllers;
 
 use Craft;
 use craft\base\Model;
@@ -8,7 +8,7 @@ use craft\helpers\ArrayHelper;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
 use craft\web\Response;
-use Contentreactor\Core\Core;
+use ContentReactor\Core\Core;
 use yii\web\NotFoundHttpException;
 
 class SettingsController extends Controller
@@ -23,14 +23,14 @@ class SettingsController extends Controller
 			function ($pluginHandle) {
 				$plugin = Craft::$app->getPlugins()->getPlugin($pluginHandle);
 				return [
-					'title' => substr($plugin->name, strlen('Contentreactor ')),
+					'title' => substr($plugin->name, strlen('ContentReactor ')),
 					'settings' => Core::getInstance()->plugins->getPluginSettings($plugin),
 				];
 			}
 		);
 		$crumbs = [
 			['label' => Craft::t('app', 'Settings'), 'url' => UrlHelper::cpUrl('settings')],
-			['label' => 'Contentreactor', 'url' => UrlHelper::cpUrl('contentreactor-core/settings')]
+			['label' => 'ContentReactor', 'url' => UrlHelper::cpUrl('contentreactor-core/settings')]
 		];
 
 		if (empty($contentreactorPlugins)) {

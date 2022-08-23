@@ -1,8 +1,8 @@
 {
 	"name": "contentreactor/core",
-	"description": "Contentreactor Template plugin for site.",
+	"description": "ContentReactor Template plugin for site.",
 	"type": "craft-plugin",
-	"version": "2.0.2",
+	"version": "2.1.0",
 	"license": "MIT",
     "keywords": [
 		"craft",
@@ -13,11 +13,11 @@
 	],
 	"authors": [
 		{
-			"name": "Contentreactor",
+			"name": "ContentReactor",
 			"homepage": "https://www.contentreactor.com/"
 		},
 		{
-			"name": "Contentreactor Support",
+			"name": "ContentReactor Support",
 			"email": "support@contentreactor.com"
 		}
 	],
@@ -32,14 +32,14 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Contentreactor\\Core\\": "src/"
+			"ContentReactor\\Core\\": "src/"
 		}
 	},
 	"extra": {
-		"name": "Contentreactor Core",
+		"name": "ContentReactor Core",
 		"handle": "contentreactor-core",
-		"developer": "Contentreactor",
+		"developer": "ContentReactor",
 		"developerUrl": "https://www.contentreactor.com/",
-		"class": "Contentreactor\\Core\\Core"
+		"class": "ContentReactor\\Core\\Core"
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Contentreactor\Core\events;
+namespace ContentReactor\Core\events;
 
 use yii\base\Event;
 

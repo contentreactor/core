@@ -1,12 +1,12 @@
 <?php
 
-namespace Contentreactor\Core\Services;
+namespace ContentReactor\Core\Services;
 
 use Craft;
 use craft\base\Model;
 use craft\base\PluginInterface;
 use craft\events\PluginEvent;
-use Contentreactor\Core\Core;
+use ContentReactor\Core\Core;
 use yii\base\Component;
 
 class Plugins extends Component

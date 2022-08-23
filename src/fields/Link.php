@@ -1,13 +1,13 @@
 <?php
 
-namespace Contentreactor\Core\fields;
+namespace ContentReactor\Core\fields;
 
 use Craft;
 use craft\base\ElementInterface;
 use craft\base\Field;
 use craft\helpers\Json;
 use craft\validators\ArrayValidator;
-use Contentreactor\Core\Entity\LinkField;
+use ContentReactor\Core\Entity\LinkField;
 use yii\db\Schema;
 
 class Link extends Field

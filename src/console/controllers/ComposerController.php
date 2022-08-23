@@ -1,11 +1,11 @@
 <?php
 
-namespace Contentreactor\Core\console\controllers;
+namespace ContentReactor\Core\console\controllers;
 
 use Craft;
 use craft\base\Plugin as CraftPlugin;
 use craft\console\Controller;
-use Contentreactor\Core\Core;
+use ContentReactor\Core\Core;
 use yii\console\ExitCode;
 
 class ComposerController extends Controller
@@ -42,7 +42,7 @@ class ComposerController extends Controller
 			Craft::error($th->getTrace(), $core->id);
 			return ExitCode::UNSPECIFIED_ERROR;
 		}
-		$this->stdout("Contentreactor plugins index flushed.\n");
+		$this->stdout("ContentReactor plugins index flushed.\n");
 		return ExitCode::OK;
 	}
 }

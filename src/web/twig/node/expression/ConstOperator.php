@@ -1,6 +1,6 @@
 <?php
 
-namespace Contentreactor\Core\web\twig\node\expression;
+namespace ContentReactor\Core\web\twig\node\expression;
 
 use Exception;
 use Twig\Compiler;

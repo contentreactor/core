@@ -1,12 +1,12 @@
 <?php
 
-namespace Contentreactor\Core\web\twig;
+namespace ContentReactor\Core\web\twig;
 
 use Craft;
 use craft\elements\Entry;
 use craft\helpers\UrlHelper;
-use Contentreactor\Core\web\twig\node\expression\ConstOperator;
-use Contentreactor\Core\web\twig\variables\ContentreactorVariable;
+use ContentReactor\Core\web\twig\node\expression\ConstOperator;
+use ContentReactor\Core\web\twig\variables\ContentReactorVariable;
 use GuzzleHttp\Client;
 use Illuminate\Support\Collection;
 use Symfony\Component\VarDumper\VarDumper;
@@ -144,7 +144,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
 	public function getGlobals(): array
 	{
 		return [
-			'contentreactor' => new ContentreactorVariable(),
+			'contentreactor' => new ContentReactorVariable(),
 		];
 	}
 }

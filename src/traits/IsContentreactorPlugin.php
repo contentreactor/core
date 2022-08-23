@@ -1,18 +1,18 @@
 <?php
 
-namespace Contentreactor\Core\traits;
+namespace ContentReactor\Core\traits;
 
 use Craft;
 use craft\elements\Entry;
 use craft\events\PluginEvent;
 use craft\services\Plugins;
-use Contentreactor\Core\Core;
-use Contentreactor\Core\events\ContentreactorPluginEvent;
-use Contentreactor\Core\Records\Setting;
+use ContentReactor\Core\Core;
+use ContentReactor\Core\events\ContentReactorPluginEvent;
+use ContentReactor\Core\Records\Setting;
 use ReflectionClass;
 use yii\base\Event;
 
-trait IsContentreactorPlugin
+trait IsContentReactorPlugin
 {
 	public static $plugin;
 
@@ -72,12 +72,12 @@ trait IsContentreactorPlugin
 
 	private function _trigger()
 	{
-		$event = new ContentreactorPluginEvent([
+		$event = new ContentReactorPluginEvent([
 			'callbacks' => [],
 		]);
 		Event::trigger(
-			ContentreactorPluginEvent::class,
-			ContentreactorPluginEvent::EVENT_AT_PLUGIN_INIT,
+			ContentReactorPluginEvent::class,
+			ContentReactorPluginEvent::EVENT_AT_PLUGIN_INIT,
 			$event
 		);
 

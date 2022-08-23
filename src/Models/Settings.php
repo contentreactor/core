@@ -1,6 +1,6 @@
 <?php
 
-namespace Contentreactor\Core\Models;
+namespace ContentReactor\Core\Models;
 
 use craft\base\Model;
 

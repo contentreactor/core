@@ -1,6 +1,6 @@
 <?php
 
-namespace Contentreactor\Core;
+namespace ContentReactor\Core;
 
 use Craft;
 use craft\base\Plugin;
@@ -15,13 +15,13 @@ use craft\services\Fields as FieldsService;
 use craft\services\Plugins as CraftPlugins;
 use craft\web\UrlManager;
 use craft\web\View;
-use Contentreactor\Core\fields\Button as ButtonField;
-use Contentreactor\Core\fields\Link as LinkField;
-use Contentreactor\Core\Models\Settings;
-use Contentreactor\Core\Records\Setting;
-use Contentreactor\Core\Services\DB;
-use Contentreactor\Core\Services\Plugins;
-use Contentreactor\Core\web\twig\Extension;
+use ContentReactor\Core\fields\Button as ButtonField;
+use ContentReactor\Core\fields\Link as LinkField;
+use ContentReactor\Core\Models\Settings;
+use ContentReactor\Core\Records\Setting;
+use ContentReactor\Core\Services\DB;
+use ContentReactor\Core\Services\Plugins;
+use ContentReactor\Core\web\twig\Extension;
 use Illuminate\Support\Collection;
 use yii\base\Event;
 

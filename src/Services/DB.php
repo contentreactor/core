@@ -1,13 +1,13 @@
 <?php
 
-namespace Contentreactor\Core\Services;
+namespace ContentReactor\Core\Services;
 
 use Craft;
 use craft\base\PluginInterface;
 use craft\elements\Entry;
 use craft\helpers\ArrayHelper;
 use craft\web\UrlManager;
-use Contentreactor\Core\Records\Setting;
+use ContentReactor\Core\Records\Setting;
 
 class DB
 {

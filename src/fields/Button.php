@@ -1,6 +1,6 @@
 <?php
 
-namespace Contentreactor\Core\fields;
+namespace ContentReactor\Core\fields;
 
 use Craft;
 use craft\base\EagerLoadingFieldInterface;
@@ -8,7 +8,7 @@ use craft\base\ElementInterface;
 use craft\base\Field;
 use craft\helpers\ArrayHelper;
 use craft\validators\ArrayValidator;
-use Contentreactor\Core\events\DefineDefaultColorsEvent;
+use ContentReactor\Core\events\DefineDefaultColorsEvent;
 use JetBrains\PhpStorm\ArrayShape;
 use yii\base\Event;
 use yii\db\Schema;

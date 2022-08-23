@@ -1,6 +1,6 @@
 <?php
 
-namespace Contentreactor\Core\migrations;
+namespace ContentReactor\Core\migrations;
 
 use craft\db\Migration;
 use craft\db\Table;
