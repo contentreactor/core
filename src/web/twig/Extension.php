@@ -143,8 +143,6 @@ class Extension extends AbstractExtension implements GlobalsInterface
 
 	public function getGlobals(): array
 	{
-		return [
-			'contentreactor' => new ContentReactorVariable(),
-		];
+		return [];
 	}
 }
