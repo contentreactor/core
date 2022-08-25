@@ -82,6 +82,7 @@ class Core extends Plugin
 				$event->roots['contentreactor-core'] = __DIR__ . '/templates';
 			}
 		);
+
 		Event::on(
 			UrlManager::class,
 			UrlManager::EVENT_REGISTER_CP_URL_RULES,
@@ -90,6 +91,15 @@ class Core extends Plugin
 				$event->rules["{$this->id}/settings"] = "{$this->id}/settings";
 			}
 		);
+
+		Event::on(
+			UrlManager::class,
+			UrlManager::EVENT_REGISTER_SITE_URL_RULES,
+			function (RegisterUrlRulesEvent $event) {
+				$event->rules['POST cache/clear'] = "{$this->id}/cache";
+			}
+		);
+
 		Event::on(
 			CraftPlugins::class,
 			CraftPlugins::EVENT_BEFORE_UNINSTALL_PLUGIN,
@@ -104,6 +114,7 @@ class Core extends Plugin
 				}
 			}
 		);
+
 		Event::on(
 			Plugins::class,
 			Plugins::EVENT_BEFORE_SAVE_PLUGIN_SETTINGS,
@@ -116,6 +127,7 @@ class Core extends Plugin
 				}
 			}
 		);
+
 		Event::on(
 			Plugins::class,
 			Plugins::EVENT_AFTER_SAVE_PLUGIN_SETTINGS,
@@ -133,6 +145,7 @@ class Core extends Plugin
 				file_put_contents($path, "<?php\n\nreturn " . var_export($settings, true) . ";\n");
 			}
 		);
+
 		Event::on(
 			FieldsService::class,
 			FieldsService::EVENT_REGISTER_FIELD_TYPES,
@@ -170,7 +183,7 @@ class Core extends Plugin
 			});
 		}
 
-		Collection::macro('filterMap', function(bool $condition, ?callable $callback) {
+		Collection::macro('filterMap', function (bool $condition, ?callable $callback) {
 			$return = [];
 			foreach ($this as $key => $value) {
 				if (!$condition) continue;

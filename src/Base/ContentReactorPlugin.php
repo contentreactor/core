@@ -1,6 +1,6 @@
 <?php
 
-namespace ContentReactor\Core\base;
+namespace ContentReactor\Core\Base;
 
 interface ContentReactorPlugin
 {
