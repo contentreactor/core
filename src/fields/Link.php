@@ -8,6 +8,7 @@ use craft\base\Field;
 use craft\helpers\Json;
 use craft\validators\ArrayValidator;
 use ContentReactor\Core\Entity\LinkField;
+use craft\base\Element;
 use yii\db\Schema;
 
 class Link extends Field
@@ -108,7 +109,13 @@ class Link extends Field
 
 	public function getElementValidationRules(): array
 	{
-		return ['validateFieldStructure'];
+		return [
+			[
+				'validateFieldStructure',
+				'on' => [Element::SCENARIO_LIVE],
+				'skipOnEmpty' => false,
+			],
+		];
 	}
 
 	public function validateFieldStructure(ElementInterface $element): void
