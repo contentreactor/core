@@ -8,7 +8,9 @@ use craft\base\Field;
 use craft\helpers\Json;
 use craft\validators\ArrayValidator;
 use ContentReactor\Core\Entity\LinkField;
+use ContentReactor\Core\events\LinkTabsEvent;
 use craft\base\Element;
+use yii\base\Event;
 use yii\db\Schema;
 
 class Link extends Field
@@ -93,9 +95,24 @@ class Link extends Field
 
 	protected function inputHtml(mixed $value, ElementInterface $element = null): string
 	{
+		$tabs = [];
+		if ($this->hasEventHandlers(LinkTabsEvent::EVENT_LINK_TABS)) {
+			$event = new LinkTabsEvent([
+				'linkField' => $value,
+				'tabs' => $tabs,
+			]);
+			Event::trigger(
+				LinkTabsEvent::class,
+				LinkTabsEvent::EVENT_LINK_TABS,
+				$event,
+			);
+			$tabs = $event->tabs;
+		}
+
 		return Craft::$app->getView()->renderTemplate('contentreactor-core/_fields/link/input', [
 			'value' => $value,
 			'field' => $this,
+			'tabs' => $tabs,
 			'ownerId' => $this->_getCanonicalParent($element)?->id,
 		]);
 	}

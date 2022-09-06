@@ -1,142 +1,227 @@
 {% import '_includes/forms.twig' as forms %}
-{% set allowedTypes = field.getAllowedLinkTypes()|map(v => v.value) %}
+<div class="link-field-inner">
 {% namespace field.handle %}
-	<div class="flex-fields">
-		{{ forms.textField({
-			label: field.attributeLabel('text'),
-			instructions: field.attributeHint('text'),
-			attribute: 'text',
-			id: 'text',
-			name: 'text',
-			value: value.text,
-			required: field.textNotOptional,
-			fieldClass: 'width-50',
-			first: true,
-			errors: field.getErrors('text'),
-		}) }}
-		{{ forms.lightswitchField({
-			label: field.getAttributeLabel('target'),
-			instructions: field.getAttributeHint('target'),
-			attribute: 'target',
-			id: 'target',
-			name: 'target',
-			on: value.target ?? false,
-			onLabel: 'Open in a new tab'|t('contentreactor-core'),
-			offLabel: 'Open in the current tab'|t('contentreactor-core'),
-			fieldClass: 'width-50',
-		}) }}
-		{{ forms.selectizeField({
-			label: field.getAttributeLabel('linkType'),
-			instructions: field.getAttributeHint('linkType'),
-			attribute: 'linkType',
-			id: 'linkType',
-			name: 'linkType',
-			options: field.getAllowedLinkTypes(),
-			value: value.linkType,
-			fieldClass: 'width-50',
-			class: 'fullwidth',
-			toggle: true,
-			targetPrefix: 'link-type-',
-		}) }}
-		{% if 'entry' in allowedTypes %}
-			{% tag 'div' with {
-				id: 'link-type-entry',
-				class: 'width-50 ' ~ (value.linkType != 'entry' ? 'hidden' : null),
-			} %}
-				{{ forms.elementSelectField({
-					label: field.getAttributeLabel('entry'),
-					instructions: field.getAttributeHint('entry'),
-					attribute: 'entry',
-					id: 'entry',
-					name: 'entry',
-					elementType: 'craft\\elements\\Entry',
-					elements: value.entry ? [craft.entries.id(value.entry).one()] : [],
-					allowSelfRelations: false,
-					sourceElementId: ownerId,
-					required: true,
-					limit: 1,
-					fieldClass: 'width-50',
-					errors: field.getErrors('entry'),
-				}) }}
-			{% endtag %}
-		{% endif %}
-		{% if 'asset' in allowedTypes %}
-			{% tag 'div' with {
-				id: 'link-type-asset',
-				class: 'width-50 ' ~ (value.linkType != 'asset' ? 'hidden' : null),
-			} %}
-				{{ forms.elementSelectField({
-					label: field.getAttributeLabel('asset'),
-					instructions: field.getAttributeHint('asset'),
-					attribute: 'asset',
-					id: 'asset',
-					name: 'asset',
-					elementType: 'craft\\elements\\Asset',
-					elements: value.asset ? [craft.assets.id(value.asset).one()] : [],
-					allowSelfRelations: false,
-					sourceElementId: ownerId,
-					required: true,
-					limit: 1,
-					fieldClass: 'width-50',
-					errors: field.getErrors('asset'),
-				}) }}
-			{% endtag %}
-		{% endif %}
-		{% if 'url' in allowedTypes %}
-			{% tag 'div' with {
-				id: 'link-type-url',
-				class: 'width-50 ' ~ (value.linkType != 'url' ? 'hidden' : null),
-			} %}
-				{{ forms.textField({
-					label: field.getAttributeLabel('url'),
-					instructions: field.getAttributeHint('url'),
-					attribute: 'url',
-					inputmode: 'url',
-					id: 'url',
-					name: 'url',
-					value: value.url,
-					required: true,
-					fieldClass: 'width-50',
-					errors: field.getErrors('url'),
-				}) }}
-			{% endtag %}
-		{% endif %}
-		{% if 'phone' in allowedTypes %}
-			{% tag 'div' with {
-				id: 'link-type-phone',
-				class: 'width-50 ' ~ (value.linkType != 'phone' ? 'hidden' : null),
-			} %}
-				{{ forms.textField({
-					label: field.getAttributeLabel('phone'),
-					instructions: field.getAttributeHint('phone'),
-					attribute: 'phone',
-					inputmode: 'tel',
-					type: 'tel',
-					id: 'phone',
-					name: 'phone',
-					value: value.phone,
-					required: true,
-					errors: field.getErrors('phone'),
-				}) }}
-			{% endtag %}
-		{% endif %}
-		{% if 'email' in allowedTypes %}
-			{% tag 'div' with {
-				id: 'link-type-email',
-				class: 'width-50 ' ~ (value.linkType != 'email' ? 'hidden' : null),
-			} %}
-				{{ forms.textField({
-					label: field.getAttributeLabel('email'),
-					instructions: field.getAttributeHint('email'),
-					attribute: 'email',
-					inputmode: 'email',
-					id: 'email',
-					name: 'email',
-					value: value.email,
-					required: true,
-					fieldClass: 'width-50',
-				}) }}
-			{% endtag %}
-		{% endif %}
-	</div>
+	{% if tabs|length > 0 %}
+		<div class="field-tab-wrapper">
+			<div class="field-tab active" data-tab="link-field">{{ 'Link Field' }}</div>
+			{% for pluginHandle, tab in tabs %}
+			<div class="field-tab" data-tab="{{ (tab::TAB_LABEL)|kebab }}">{{ tab::TAB_LABEL }}</div>
+			{% endfor %}
+		</div>
+	{% endif %}
+	{% set allowedTypes = field.getAllowedLinkTypes()|map(v => v.value) %}
+		<div class="flex-fields" id="field-tab-link-field">
+			{{ forms.textField({
+				label: field.attributeLabel('text'),
+				instructions: field.attributeHint('text'),
+				attribute: 'text',
+				id: 'text',
+				name: 'text',
+				value: value.text,
+				required: field.textNotOptional,
+				fieldClass: 'width-50',
+				first: true,
+				errors: field.getErrors('text'),
+			}) }}
+			{{ forms.lightswitchField({
+				label: field.getAttributeLabel('target'),
+				instructions: field.getAttributeHint('target'),
+				attribute: 'target',
+				id: 'target',
+				name: 'target',
+				on: value.target ?? false,
+				onLabel: 'Open in a new tab'|t('contentreactor-core'),
+				offLabel: 'Open in the current tab'|t('contentreactor-core'),
+				fieldClass: 'width-50',
+			}) }}
+			{{ forms.selectizeField({
+				label: field.getAttributeLabel('linkType'),
+				instructions: field.getAttributeHint('linkType'),
+				attribute: 'linkType',
+				id: 'linkType',
+				name: 'linkType',
+				options: field.getAllowedLinkTypes(),
+				value: value.linkType,
+				fieldClass: 'width-50',
+				class: 'fullwidth',
+				toggle: true,
+				targetPrefix: 'link-type-',
+			}) }}
+			{% if 'entry' in allowedTypes %}
+				{% tag 'div' with {
+					id: 'link-type-entry',
+					class: 'width-50 ' ~ (value.linkType != 'entry' ? 'hidden' : null),
+				} %}
+					{{ forms.elementSelectField({
+						label: field.getAttributeLabel('entry'),
+						instructions: field.getAttributeHint('entry'),
+						attribute: 'entry',
+						id: 'entry',
+						name: 'entry',
+						elementType: 'craft\\elements\\Entry',
+						elements: value.entry ? [craft.entries.id(value.entry).one()] : [],
+						allowSelfRelations: false,
+						sourceElementId: ownerId,
+						required: true,
+						limit: 1,
+						fieldClass: 'width-50',
+						errors: field.getErrors('entry'),
+					}) }}
+				{% endtag %}
+			{% endif %}
+			{% if 'asset' in allowedTypes %}
+				{% tag 'div' with {
+					id: 'link-type-asset',
+					class: 'width-50 ' ~ (value.linkType != 'asset' ? 'hidden' : null),
+				} %}
+					{{ forms.elementSelectField({
+						label: field.getAttributeLabel('asset'),
+						instructions: field.getAttributeHint('asset'),
+						attribute: 'asset',
+						id: 'asset',
+						name: 'asset',
+						elementType: 'craft\\elements\\Asset',
+						elements: value.asset ? [craft.assets.id(value.asset).one()] : [],
+						allowSelfRelations: false,
+						sourceElementId: ownerId,
+						required: true,
+						limit: 1,
+						fieldClass: 'width-50',
+						errors: field.getErrors('asset'),
+					}) }}
+				{% endtag %}
+			{% endif %}
+			{% if 'url' in allowedTypes %}
+				{% tag 'div' with {
+					id: 'link-type-url',
+					class: 'width-50 ' ~ (value.linkType != 'url' ? 'hidden' : null),
+				} %}
+					{{ forms.textField({
+						label: field.getAttributeLabel('url'),
+						instructions: field.getAttributeHint('url'),
+						attribute: 'url',
+						inputmode: 'url',
+						id: 'url',
+						name: 'url',
+						value: value.url,
+						required: true,
+						fieldClass: 'width-50',
+						errors: field.getErrors('url'),
+					}) }}
+				{% endtag %}
+			{% endif %}
+			{% if 'phone' in allowedTypes %}
+				{% tag 'div' with {
+					id: 'link-type-phone',
+					class: 'width-50 ' ~ (value.linkType != 'phone' ? 'hidden' : null),
+				} %}
+					{{ forms.textField({
+						label: field.getAttributeLabel('phone'),
+						instructions: field.getAttributeHint('phone'),
+						attribute: 'phone',
+						inputmode: 'tel',
+						type: 'tel',
+						id: 'phone',
+						name: 'phone',
+						value: value.phone,
+						required: true,
+						errors: field.getErrors('phone'),
+					}) }}
+				{% endtag %}
+			{% endif %}
+			{% if 'email' in allowedTypes %}
+				{% tag 'div' with {
+					id: 'link-type-email',
+					class: 'width-50 ' ~ (value.linkType != 'email' ? 'hidden' : null),
+				} %}
+					{{ forms.textField({
+						label: field.getAttributeLabel('email'),
+						instructions: field.getAttributeHint('email'),
+						attribute: 'email',
+						inputmode: 'email',
+						id: 'email',
+						name: 'email',
+						value: value.email,
+						required: true,
+						fieldClass: 'width-50',
+					}) }}
+				{% endtag %}
+			{% endif %}
+		</div>
+	{% if tabs|length > 0 %}
+		{% for pluginHandle, tab in tabs %}
+			{% include pluginHandle ~ "/_fields/link/input" %}
+		{% endfor %}
+	{% endif %}
 {% endnamespace %}
+</div>
+
+{% css %}
+	.link-field-inner .field::before {
+		display: none;
+	}
+	.link-field-inner {
+		position: relative;
+		padding: 30px 0 10px;
+	}
+	.link-field-inner .field-tab-wrapper {
+		position: absolute;
+		right: 0;
+		top: 0;
+		display: flex;
+	}
+	#content .link-field-inner .flex-fields {
+		padding-top: 5px;
+	}
+	.field-tab-wrapper .field-tab {
+		padding: 2px 8px;
+		cursor: pointer;
+		background-color: #F2F7FC;
+		--tab-radius: 5px;
+		border-style: solid;
+		border-width: 0.5px;
+		border-top-width: 1px;
+		border-bottom-width: 1px;
+	}
+	.field-tab-wrapper .field-tab:hover {
+		background-color: rgba(154,165,177,.15);
+	}
+	.field-tab-wrapper .field-tab.active {
+		background: var(--white);
+	}
+	.field-tab-wrapper .field-tab:first-child {
+		border-top-left-radius: var(--tab-radius);
+		border-bottom-left-radius: var(--tab-radius);
+		border-left-width: 1px;
+	}
+	.field-tab-wrapper .field-tab:last-child {
+		border-top-right-radius: var(--tab-radius);
+		border-bottom-right-radius: var(--tab-radius);
+		border-right-width: 1px;
+	}
+	#content .link-field-inner .flex-fields {
+		display: none;
+	}
+	#content .link-field-inner .active.flex-fields {
+		display: flex;
+	}
+{% endcss %}
+
+{% js %}
+	document.addEventListener('click', e => {
+		if (!e.target.closest('.field-tab')) return
+		if (e.target.classList.contains('active')) return
+		let minHeight = 170
+		e.target.closest('.field-tab-wrapper').querySelectorAll('.field-tab').forEach(el => el.classList.remove('active'))
+		e.target.classList.add('active')
+
+		e.target.closest('.link-field-inner').querySelectorAll('.flex-fields').forEach(el => {
+			el.classList.remove('active')
+		})
+
+		let tab = document.querySelector(`[id*="field-tab-${e.target.getAttribute('data-tab')}"]`)
+		tab.classList.add('active')
+		minHeight = Math.max(tab.getBoundingClientRect().height, minHeight) + 40
+		e.target.closest('.link-field-inner').style.height = minHeight + 'px'
+	})
+{% endjs %}

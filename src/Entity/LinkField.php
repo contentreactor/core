@@ -2,9 +2,11 @@
 
 namespace ContentReactor\Core\Entity;
 
+use ContentReactor\Core\events\LinkAttributesEvent;
 use craft\elements\Asset;
 use craft\elements\Entry;
 use Spatie\DataTransferObject\DataTransferObject;
+use yii\base\Event;
 
 class LinkField extends DataTransferObject
 {
@@ -16,6 +18,8 @@ class LinkField extends DataTransferObject
 	public ?string $url;
 	public ?string $phone;
 	public ?string $email;
+
+	public array $tabs = [];
 
 	public function getUrl(): string
 	{
@@ -29,6 +33,22 @@ class LinkField extends DataTransferObject
 		};
 
 		return $return ?? '';
+	}
+
+	public function getHtmlAttributes(): array
+	{
+		$event = new LinkAttributesEvent([
+			'attributes' => [],
+			'linkField' => $this,
+		]);
+
+		Event::trigger(
+			LinkAttributesEvent::class,
+			LinkAttributesEvent::EVENT_BEFORE_RENDER_HTML_ATTRIBUTES,
+			$event,
+		);
+
+		return $event->attributes;
 	}
 
 	public function toArray(): array
