@@ -1,16 +1,14 @@
 {% import '_includes/forms.twig' as forms %}
 <div class="link-field-inner">
 {% namespace field.handle %}
-	{% if tabs|length > 0 %}
-		<div class="field-tab-wrapper">
-			<div class="field-tab active" data-tab="link-field">{{ 'Link Field' }}</div>
-			{% for pluginHandle, tab in tabs %}
-			<div class="field-tab" data-tab="{{ (tab::TAB_LABEL)|kebab }}">{{ tab::TAB_LABEL }}</div>
-			{% endfor %}
-		</div>
-	{% endif %}
+	<div class="field-tab-wrapper">
+		<div class="field-tab active" data-tab="link-field">{{ 'Link Field' }}</div>
+		{% for pluginHandle, tab in tabs %}
+		<div class="field-tab" data-tab="{{ (tab::TAB_LABEL)|kebab }}">{{ tab::TAB_LABEL }}</div>
+		{% endfor %}
+	</div>
 	{% set allowedTypes = field.getAllowedLinkTypes()|map(v => v.value) %}
-		<div class="flex-fields" id="field-tab-link-field">
+		<div class="flex-fields active" id="field-tab-link-field">
 			{{ forms.textField({
 				label: field.attributeLabel('text'),
 				instructions: field.attributeHint('text'),
