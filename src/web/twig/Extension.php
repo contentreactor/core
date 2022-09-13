@@ -15,6 +15,7 @@ use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
+use Twig\TwigTest;
 
 class Extension extends AbstractExtension implements GlobalsInterface
 {
@@ -61,6 +62,13 @@ class Extension extends AbstractExtension implements GlobalsInterface
 					'associativity' => ExpressionParser::OPERATOR_LEFT
 				]
 			]
+		];
+	}
+
+	public function getTests(): array
+	{
+		return [
+			'instanceof' =>  new TwigTest('instanceof', [$this, 'instanceofTest']),
 		];
 	}
 
@@ -144,5 +152,10 @@ class Extension extends AbstractExtension implements GlobalsInterface
 	public function getGlobals(): array
 	{
 		return [];
+	}
+
+	public function instanceofTest(mixed $var, string $className): bool
+	{
+		return $var instanceof $className;
 	}
 }
