@@ -13,9 +13,20 @@ class Core extends AssetBundle
 	{
 		BaseHelper::registerModule();
 
+		$this->sourcePath = __DIR__ . "/dist";
+
+
 		$this->depends = [
 			VerbbCpAsset::class,
 			CpAsset::class,
+		];
+
+		$this->js = [
+			'cp.js'
+		];
+
+		$this->css = [
+			'cp.css'
 		];
 
 		parent::init();

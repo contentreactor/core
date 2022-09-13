@@ -153,8 +153,10 @@
 	{% endif %}
 {% endnamespace %}
 </div>
-
-{% css %}
+{% do view.registerCssFile(view.assetManager.getPublishedUrl('@ContentReactor/Core/web/assets/cp/dist', false, 'cp.css')) %}
+{% do view.registerJsFile(view.assetManager.getPublishedUrl('@ContentReactor/Core/web/assets/cp/dist', false, 'cp.js')) %}
+	
+{# {% css %}
 	.link-field-inner .field::before {
 		display: none;
 	}
@@ -222,4 +224,4 @@
 		minHeight = Math.max(tab.getBoundingClientRect().height, minHeight) + 40
 		e.target.closest('.link-field-inner').style.height = minHeight + 'px'
 	})
-{% endjs %}
+{% endjs %} #}
