@@ -2,9 +2,9 @@
 	"name": "contentreactor/core",
 	"description": "ContentReactor Template plugin for site.",
 	"type": "craft-plugin",
-	"version": "2.3.3",
+	"version": "2.3.4",
 	"license": "MIT",
-    "keywords": [
+	"keywords": [
 		"craft",
 		"cms",
 		"craftcms",

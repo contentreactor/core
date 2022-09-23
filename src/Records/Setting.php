@@ -26,7 +26,7 @@ class Setting extends ActiveRecord
 	{
 		return [
 			[['plugin', 'key', 'siteId'], 'required'],
-			[['plugin', 'key', 'value'], 'string', 'max' => 255],
+			[['plugin', 'key', 'value'], 'string', 'skipOnEmpty' => false],
 			[['siteId'], 'number', 'integerOnly' => true],
 			[['key', 'value'], 'safe'],
 		];
