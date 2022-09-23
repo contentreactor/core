@@ -113,7 +113,7 @@ class Link extends Field
 			'value' => $value,
 			'field' => $this,
 			'tabs' => $tabs,
-			'ownerId' => $this->_getCanonicalParent($element)?->id,
+			'ownerId' => $element?->id,
 		]);
 	}
 
