@@ -22,6 +22,8 @@ use ContentReactor\Core\Records\Setting;
 use ContentReactor\Core\Services\DB;
 use ContentReactor\Core\Services\Plugins;
 use ContentReactor\Core\web\twig\Extension;
+use ContentReactor\Core\web\twig\variables\ContentReactor as CRVariable;
+use craft\web\twig\variables\CraftVariable;
 use Illuminate\Support\Collection;
 use yii\base\Event;
 
@@ -71,6 +73,15 @@ class Core extends Plugin
 			'db' => DB::class,
 			'plugins' => Plugins::class,
 		]);
+
+		Event::on(
+			CraftVariable::class,
+			CraftVariable::EVENT_INIT,
+			function (Event $event) {
+				$variable = $event->sender;
+				$variable->set('cr', CRVariable::class);
+			}
+		);
 	}
 
 	protected function _events(): void
