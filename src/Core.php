@@ -49,6 +49,7 @@ class Core extends Plugin
 		parent::init();
 		self::$plugin = $this;
 		$this->name = 'Core';
+		Craft::setAlias('@core', __DIR__);
 
 		$request = Craft::$app->getRequest();
 		if ($request->getIsConsoleRequest()) {
@@ -63,12 +64,14 @@ class Core extends Plugin
 
 	protected function _config(): void
 	{
-		Craft::$app->getI18n()->translations['core'] = [
+		Craft::$app->getI18n()->translations['site'] = [
 			'class' => PhpMessageSource::class,
-			'basePath' => __DIR__ . '/translations',
-			'allowOverrides' => true,
+			'sourceLanguage' => 'en',
+			'basePath' => '@core/translations',
 			'forceTranslation' => true,
+			'allowOverrides' => true,
 		];
+		// dd(Craft::$app->getI18n());
 		$this->setComponents([
 			'db' => DB::class,
 			'plugins' => Plugins::class,

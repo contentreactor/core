@@ -131,7 +131,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
 		$content = implode(' ', $content);
 		$word = str_word_count(strip_tags($content));
 		$est = round($word / 200);
-		$readingTime = Craft::t('core', 'minutes of reading time');
+		$readingTime = Craft::t('contentreactor-core', 'minutes of reading time');
 		return $est . ($onlyNumber ? "" : " $readingTime");
 	}
 

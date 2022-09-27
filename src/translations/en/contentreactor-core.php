@@ -1,23 +1,28 @@
 <?php
 
 return [
-	"Email" => "Email",
 	"Vienna" => "Vienna",
 	"Belgrade" => "Belgrade",
+	"minutes of reading time" => "minutes of reading time",
 
-	// Button Field
-	'Button' => 'Button',
+	// Link Field
+	"The field couldn\'t be saved." => "The field couldn\'t be saved.",
+	'Link' => 'Link',
+	'Link Type' => 'Link Type',
 	'Allowed Link Types' => 'Allowed Link Types',
-	'Default Text Color' => 'Default Text Color',
-	'Default Text Hover Color' => 'Default Text Hover Color',
-	'Default Background Color' => 'Default Background Color',
-	'Default Background Hover Color' => 'Default Background Hover Color',
+	'Is link text mandatory?' => 'Is link text mandatory?',
 	'You must select at least {min, number} of the {attribute}.' => 'You must select at least {min, number} of the {attribute}.',
-	"The button text field can't be empty." => "The button text field can't be empty.",
-	'The button tag must be selected.' => 'The button tag must be selected.',
-	"Entry can't be empty if the link type is Entry." => "Entry can't be empty if the link type is Entry.",
-	"Asset can't be empty if the link type is Asset." => "Asset can't be empty if the link type is Asset.",
-	"Url can't be empty if the link type is Url." => "Url can't be empty if the link type is Url.",
-	"Email can't be empty if the link type is Email." => "Email can't be empty if the link type is Email.",
-	"Phone can't be empty if the link type is Phone." => "Phone can't be empty if the link type is Phone.",
+	"The link text field can\'t be empty." => "The link text field can\'t be empty.",
+	'Entry' => 'Entry',
+	"Entry can\'t be empty." => "Entry can\'t be empty.",
+	'Asset' => 'Asset',
+	"Asset can\'t be empty." => "Asset can\'t be empty.",
+	'URL' => 'URL',
+	"URL can\'t be empty." => "URL can\'t be empty.",
+	'Email' => 'Email',
+	"Email can\'t be empty." => "Email can\'t be empty.",
+	'Phone' => 'Phone',
+	"Phone can\'t be empty." => "Phone can\'t be empty.",
+	'Open in a new tab' => 'Open in a new tab',
+	'Open in the current tab' => 'Open in the current tab',
 ];

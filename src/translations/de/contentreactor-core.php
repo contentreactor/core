@@ -1,7 +1,6 @@
 <?php
 
 return [
-	"Email"		=> "E-mail",
 	"Vienna"	=> "Wien",
 	"Belgrade"	=> "Belgrad",
 	"minutes of reading time" => "Minuten",
@@ -9,6 +8,7 @@ return [
 	// Link Field
 	"The field couldn\'t be saved." => 'Das Feld konnte nicht gespeichert werden.',
 	'Link' => 'Link',
+	'Link Type' => 'Link-Typ',
 	'Allowed Link Types' => 'Erlaubte Link-Typen',
 	'Is link text mandatory?' => 'Ist der Linktext erforderlich?',
 	'You must select at least {min, number} of the {attribute}.' => 'Sie müssen mindestens {min, number} der/des {attribute} auswählen.',
