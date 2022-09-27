@@ -31,6 +31,14 @@ class Link extends Field
 		return [
 			'allowedLinkTypes' => Craft::t('contentreactor-core', 'Allowed Link Types'),
 			'textNotOptional' => Craft::t('contentreactor-core', 'Is link text mandatory?'),
+			'text' => Craft::t('contentreactor-core', 'Text'),
+			'target' => Craft::t('contentreactor-core', 'Target'),
+			'linkType' => Craft::t('contentreactor-core', 'Link Type'),
+			'entry' => Craft::t('contentreactor-core', 'Entry'),
+			'asset' => Craft::t('contentreactor-core', 'Asset'),
+			'url' => Craft::t('contentreactor-core', 'URL'),
+			'phone' => Craft::t('contentreactor-core', 'Phone'),
+			'email' => Craft::t('contentreactor-core', 'Email'),
 		];
 	}
 
@@ -160,7 +168,7 @@ class Link extends Field
 		}
 
 		if ($this->hasErrors()) {
-			$element->addError($this->handle, $this->_errorMessage);
+			$element->addError($this->handle, Craft::t('contentreactor-core', $this->_errorMessage));
 			$element->addModelErrors($this, $this->handle);
 		}
 	}
@@ -168,11 +176,11 @@ class Link extends Field
 	public function getAvailableLinkTypes(): array
 	{
 		return [
-			['value' => 'entry', 'label' => 'Entry'],
-			['value' => 'asset', 'label' => 'Asset'],
-			['value' => 'url', 'label' => 'Url'],
-			['value' => 'phone', 'label' => 'Phone'],
-			['value' => 'email', 'label' => 'Email'],
+			['value' => 'entry', 'label' => Craft::t('contentreactor-core', 'Entry')],
+			['value' => 'asset', 'label' => Craft::t('contentreactor-core', 'Asset')],
+			['value' => 'url', 'label' => Craft::t('contentreactor-core', 'Url')],
+			['value' => 'phone', 'label' => Craft::t('contentreactor-core', 'Phone')],
+			['value' => 'email', 'label' => Craft::t('contentreactor-core', 'Email')],
 		];
 	}
 
@@ -217,12 +225,5 @@ class Link extends Field
 			'phone' => '',
 			'email' => '',
 		];
-	}
-
-	private function _getCanonicalParent($element): ?ElementInterface
-	{
-		if (!$element) return null;
-		if ($element->owner) return $element->owner;
-		return $this->_getCanonicalParent($element->owner);
 	}
 }
