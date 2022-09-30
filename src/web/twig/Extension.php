@@ -40,6 +40,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
 			new TwigFilter('splice', [$this, 'spliceFilter']),
 			new TwigFilter('uncamel', [$this, 'uncamelFilter']),
 			new TwigFilter('first', [$this, 'firstFilter']),
+			new TwigFilter('mapNeo', [$this, 'mapNeoFilter']),
 
 			// type casts
 			new TwigFilter('array', fn (mixed $var): array => (array) $var),
@@ -157,5 +158,20 @@ class Extension extends AbstractExtension implements GlobalsInterface
 	public function instanceofTest(mixed $var, string $className): bool
 	{
 		return $var instanceof $className;
+	}
+	
+	public function mapNeoFilter(array|Collection $array): array
+	{
+		$output = [];
+		foreach ($array as $value) {
+			$key = is_string($value->type) ? $value->handle : $value->type->handle;
+			if (!isset($output[$key])) {
+				$output[$key] = $value;
+				continue;
+			}
+			if (!is_array($output[$key])) $output[$key] = [$output[$key]];
+			$output[$key][] = $value;
+		}
+		return $output;
 	}
 }

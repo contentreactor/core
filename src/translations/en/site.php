@@ -57,5 +57,6 @@ return [
 	'Text Area' => 'Text Area',
 	'Text Link' => 'Text Link',
 	'Tip' => 'Tip',
+	'Tips Heading' => 'Tipps Überschrift',
 	'Whitepaper Block' => 'Whitepaper Block',
 ];
