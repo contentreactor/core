@@ -104,18 +104,17 @@ class Link extends Field
 	protected function inputHtml(mixed $value, ElementInterface $element = null): string
 	{
 		$tabs = [];
-		if ($this->hasEventHandlers(LinkTabsEvent::EVENT_LINK_TABS)) {
-			$event = new LinkTabsEvent([
-				'linkField' => $value,
-				'tabs' => $tabs,
-			]);
-			Event::trigger(
-				LinkTabsEvent::class,
-				LinkTabsEvent::EVENT_LINK_TABS,
-				$event,
-			);
-			$tabs = $event->tabs;
-		}
+		$event = new LinkTabsEvent([
+			'linkField' => $value,
+			'tabs' => $tabs,
+		]);
+		Event::trigger(
+			LinkTabsEvent::class,
+			LinkTabsEvent::EVENT_LINK_TABS,
+			$event,
+		);
+		$tabs = $event->tabs;
+
 
 		return Craft::$app->getView()->renderTemplate('contentreactor-core/_fields/link/input', [
 			'value' => $value,
