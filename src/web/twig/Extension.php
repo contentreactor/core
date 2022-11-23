@@ -6,7 +6,7 @@ use Craft;
 use craft\elements\Entry;
 use craft\helpers\UrlHelper;
 use ContentReactor\Core\web\twig\node\expression\ConstOperator;
-use ContentReactor\Core\web\twig\variables\ContentReactorVariable;
+use craft\helpers\StringHelper;
 use GuzzleHttp\Client;
 use Illuminate\Support\Collection;
 use Symfony\Component\VarDumper\VarDumper;
@@ -36,11 +36,12 @@ class Extension extends AbstractExtension implements GlobalsInterface
 	public function getFilters(): array
 	{
 		return [
-			new TwigFilter('readTime', [$this, 'readTimeFilter']),
-			new TwigFilter('splice', [$this, 'spliceFilter']),
-			new TwigFilter('uncamel', [$this, 'uncamelFilter']),
 			new TwigFilter('first', [$this, 'firstFilter']),
 			new TwigFilter('mapNeo', [$this, 'mapNeoFilter']),
+			new TwigFilter('readTime', [$this, 'readTimeFilter']),
+			new TwigFilter('slugify', [$this, 'slugifyFilter']),
+			new TwigFilter('splice', [$this, 'spliceFilter']),
+			new TwigFilter('uncamel', [$this, 'uncamelFilter']),
 
 			// type casts
 			new TwigFilter('array', fn (mixed $var): array => (array) $var),
@@ -119,6 +120,21 @@ class Extension extends AbstractExtension implements GlobalsInterface
 	{
 		return reset($array);
 	}
+	
+	public function mapNeoFilter(array|Collection $array): array
+	{
+		$output = [];
+		foreach ($array as $value) {
+			$key = is_string($value->type) ? $value->handle : $value->type->handle;
+			if (!isset($output[$key])) {
+				$output[$key] = $value;
+				continue;
+			}
+			if (!is_array($output[$key])) $output[$key] = [$output[$key]];
+			$output[$key][] = $value;
+		}
+		return $output;
+	}
 
 	public function readTimeFilter(Entry $entry, string $fieldHandle = 'blogContent', bool $onlyNumber = false): string
 	{
@@ -134,6 +150,11 @@ class Extension extends AbstractExtension implements GlobalsInterface
 		$est = round($word / 200);
 		$readingTime = Craft::t('contentreactor-core', 'minutes of reading time');
 		return $est . ($onlyNumber ? "" : " $readingTime");
+	}
+
+	public function slugifyFilter(string $str): string
+	{
+		return StringHelper::slugify($str);
 	}
 
 	public function spliceFilter(array $array, int $offset, ?int $length = null, array $replacement = []): array
@@ -158,20 +179,5 @@ class Extension extends AbstractExtension implements GlobalsInterface
 	public function instanceofTest(mixed $var, string $className): bool
 	{
 		return $var instanceof $className;
-	}
-	
-	public function mapNeoFilter(array|Collection $array): array
-	{
-		$output = [];
-		foreach ($array as $value) {
-			$key = is_string($value->type) ? $value->handle : $value->type->handle;
-			if (!isset($output[$key])) {
-				$output[$key] = $value;
-				continue;
-			}
-			if (!is_array($output[$key])) $output[$key] = [$output[$key]];
-			$output[$key][] = $value;
-		}
-		return $output;
 	}
 }
