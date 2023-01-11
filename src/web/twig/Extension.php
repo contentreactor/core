@@ -2,6 +2,7 @@
 
 namespace ContentReactor\Core\web\twig;
 
+use ContentReactor\Core\events\TextContentEvent;
 use Craft;
 use craft\elements\Entry;
 use craft\helpers\UrlHelper;
@@ -16,6 +17,7 @@ use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 use Twig\TwigTest;
+use yii\base\Event;
 
 class Extension extends AbstractExtension implements GlobalsInterface
 {
@@ -138,14 +140,25 @@ class Extension extends AbstractExtension implements GlobalsInterface
 
 	public function readTimeFilter(Entry $entry, string $fieldHandle = 'blogContent', bool $onlyNumber = false): string
 	{
-		$content = $entry->$fieldHandle->all();
-		$content = array_filter($content, function ($element) {
-			return $element->text != null;
-		});
-		$content = array_map(function ($text) {
-			return $text->text->getParsedContent();
-		}, $content);
-		$content = implode(' ', $content);
+		$contentBlocks = $entry->$fieldHandle->all();
+		$textBlocks = [
+			'text',
+			'richText',
+		];
+		Event::trigger(
+			TextContentEvent::class,
+			TextContentEvent::EVENT_FILTER_TEXT_BLOCKS,
+			static fn(TextContentEvent $event) => $event->textBlocks = $textBlocks
+		);
+
+		$content = '';
+
+		foreach ($contentBlocks as $contentBlock) {
+			foreach ($textBlocks as $textBlock) {
+				$content .= ($contentBlock->$textBlock ?? '') . ' ';
+			}
+		}
+
 		$word = str_word_count(strip_tags($content));
 		$est = round($word / 200);
 		$readingTime = Craft::t('contentreactor-core', 'minutes of reading time');
