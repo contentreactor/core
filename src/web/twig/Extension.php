@@ -141,20 +141,21 @@ class Extension extends AbstractExtension implements GlobalsInterface
 	public function readTimeFilter(Entry $entry, string $fieldHandle = 'blogContent', bool $onlyNumber = false): string
 	{
 		$contentBlocks = $entry->$fieldHandle->all();
-		$textBlocks = [
+		$event = new TextContentEvent(['textBlocks' => [
 			'text',
 			'richText',
-		];
+		]]);
+
 		Event::trigger(
 			TextContentEvent::class,
 			TextContentEvent::EVENT_FILTER_TEXT_BLOCKS,
-			static fn(TextContentEvent $event) => $event->textBlocks = $textBlocks
+			$event,
 		);
 
 		$content = '';
 
 		foreach ($contentBlocks as $contentBlock) {
-			foreach ($textBlocks as $textBlock) {
+			foreach ($event->textBlocks as $textBlock) {
 				$content .= ($contentBlock->$textBlock ?? '') . ' ';
 			}
 		}
