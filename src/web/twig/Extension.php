@@ -122,11 +122,16 @@ class Extension extends AbstractExtension implements GlobalsInterface
 	{
 		return reset($array);
 	}
-	
+
+	/**
+	 * @param Block[]|Collection<int, Block> $array
+	 * @return array<string, Block>|array<string, array<int, Block>>
+	 */
 	public function mapNeoFilter(array|Collection $array): array
 	{
 		$output = [];
 		foreach ($array as $value) {
+			$value->useMemoized($array);
 			$key = is_string($value->type) ? $value->handle : $value->type->handle;
 			if (!isset($output[$key])) {
 				$output[$key] = $value;
