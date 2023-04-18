@@ -7,8 +7,9 @@ use craft\elements\Asset;
 use craft\elements\Entry;
 use Spatie\DataTransferObject\DataTransferObject;
 use yii\base\Event;
+use craft\base\Model;
 
-class LinkField extends DataTransferObject
+class LinkField extends Model
 {
 	public ?string $text;
 	public ?string $linkType;
@@ -51,7 +52,7 @@ class LinkField extends DataTransferObject
 		return $event->attributes;
 	}
 
-	public function toArray(): array
+	public function toArray(array $fields = [], array $expand = [], $recursive = true): array
 	{
 		$value = parent::toArray();
 

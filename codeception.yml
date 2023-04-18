@@ -1,0 +1,30 @@
+actor: Tester
+paths:
+  tests: tests
+  log: tests/_output
+  output: tests/_output
+  data: tests/_data
+  support: tests/_support
+  envs: tests/_envs
+bootstrap: _bootstrap.php
+coverage:
+  enabled: true
+  include:
+    - src/*
+settings:
+params:
+  - tests/.env
+modules:
+  config:
+    \craft\test\Craft:
+      configFile: 'tests/_craft/config/test.php'
+      entryUrl: 'http://testcraft.test/index.php'
+      projectConfig: {}
+      migrations: []
+      plugins:
+        contentreactor-core:
+          class: '\ContentReactor\Core\Core'
+          handle: contentreactor-core
+      cleanup: true
+      transaction: true
+      dbSetup: {clean: false, setupCraft: false}

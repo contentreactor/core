@@ -19,6 +19,8 @@ class Link extends Field
 
 	public bool $textNotOptional = true;
 
+	public bool $urlNotOptional = true;
+
 	private string $_errorMessage = 'The field couldn\'t be saved.';
 
 	public static function displayName(): string
@@ -37,6 +39,7 @@ class Link extends Field
 			'entry' => Craft::t('contentreactor-core', 'Entry'),
 			'asset' => Craft::t('contentreactor-core', 'Asset'),
 			'url' => Craft::t('contentreactor-core', 'URL'),
+			'youtube' => Craft::t('contentreactor-core', 'YouTube'),
 			'phone' => Craft::t('contentreactor-core', 'Phone'),
 			'email' => Craft::t('contentreactor-core', 'Email'),
 		];
@@ -75,7 +78,7 @@ class Link extends Field
 			$value = Json::decodeIfJson($value);
 		}
 
-		if (!is_array($value)) {
+		if (!is_array($value) || empty($value)) {
 			$value = $this->_default();
 		}
 
@@ -156,9 +159,9 @@ class Link extends Field
 		if ($value->linkType == 'asset' && empty($value->asset)) {
 			$this->addError('asset', $this->_getErrors('asset'));
 		}
-		if ($value->linkType == 'url' && empty($value->url)) {
-			$this->addError('url', $this->_getErrors('url'));
-		}
+		// if ($value->linkType == 'url' && empty($value->url)) {
+		// 	$this->addError('url', $this->_getErrors('url'));
+		// }
 		if ($value->linkType == 'email' && empty($value->email)) {
 			$this->addError('email', $this->_getErrors('email'));
 		}
@@ -178,6 +181,7 @@ class Link extends Field
 			['value' => 'entry', 'label' => Craft::t('contentreactor-core', 'Entry')],
 			['value' => 'asset', 'label' => Craft::t('contentreactor-core', 'Asset')],
 			['value' => 'url', 'label' => Craft::t('contentreactor-core', 'Url')],
+			['value' => 'youtube', 'label' => Craft::t('contentreactor-core', 'YouTube')],
 			['value' => 'phone', 'label' => Craft::t('contentreactor-core', 'Phone')],
 			['value' => 'email', 'label' => Craft::t('contentreactor-core', 'Email')],
 		];
@@ -201,7 +205,8 @@ class Link extends Field
 			'text' => Craft::t('contentreactor-core', 'The link text field can\'t be empty.'),
 			'entry' => Craft::t('contentreactor-core', 'Entry can\'t be empty if the link type is Entry.'),
 			'asset' => Craft::t('contentreactor-core', 'Asset can\'t be empty if the link type is Asset.'),
-			'url' => Craft::t('contentreactor-core', 'Url can\'t be empty if the link type is Url.'),
+			'url' => Craft::t('contentreactor-core', 'Url can\'t be empty if the Url content\'s are mandatory.'),
+			'youtube' => Craft::t('contentreactor-core', 'Video ID can\'t be empty if the link type is YouTube.'),
 			'email' => Craft::t('contentreactor-core', 'Email can\'t be empty if the link type is Email.'),
 			'phone' => Craft::t('contentreactor-core', 'Phone can\'t be empty if the link type is Phone.'),
 		];
