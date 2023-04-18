@@ -102,9 +102,28 @@
 						id: 'url',
 						name: 'url',
 						value: value.url,
-						required: true,
+						required: field.urlNotOptional,
 						fieldClass: 'width-50',
 						errors: field.getErrors('url'),
+					}) }}
+				{% endtag %}
+			{% endif %}
+			{% if 'youtube' in allowedTypes %}
+				{% tag 'div' with {
+					id: 'link-type-youtube',
+					class: 'width-50 ' ~ (value.linkType != 'youtube' ? 'hidden' : null),
+				} %}
+					{{ forms.textField({
+						label: field.getAttributeLabel('youtube'),
+						instructions: field.getAttributeHint('youtube'),
+						attribute: 'youtube',
+						inputmode: 'youtube',
+						id: 'youtube',
+						name: 'youtube',
+						value: value.youtube,
+						required: true,
+						fieldClass: 'width-50',
+						errors: field.getErrors('youtube'),
 					}) }}
 				{% endtag %}
 			{% endif %}

@@ -32,14 +32,15 @@ class Link extends Field
 	{
 		return [
 			'allowedLinkTypes' => Craft::t('contentreactor-core', 'Allowed Link Types'),
-			'textNotOptional' => Craft::t('contentreactor-core', 'Is link text mandatory?'),
+			'textNotOptional' => Craft::t('contentreactor-core', 'Is the link text mandatory?'),
+			'urlNotOptional' => Craft::t('contentreactor-core', 'Is the URL mandatory?'),
 			'text' => Craft::t('contentreactor-core', 'Text'),
 			'target' => Craft::t('contentreactor-core', 'Target'),
 			'linkType' => Craft::t('contentreactor-core', 'Link Type'),
 			'entry' => Craft::t('contentreactor-core', 'Entry'),
 			'asset' => Craft::t('contentreactor-core', 'Asset'),
 			'url' => Craft::t('contentreactor-core', 'URL'),
-			'youtube' => Craft::t('contentreactor-core', 'YouTube'),
+			'youtube' => Craft::t('contentreactor-core', 'YouTube video ID'),
 			'phone' => Craft::t('contentreactor-core', 'Phone'),
 			'email' => Craft::t('contentreactor-core', 'Email'),
 		];
@@ -80,6 +81,10 @@ class Link extends Field
 
 		if (!is_array($value) || empty($value)) {
 			$value = $this->_default();
+		}
+
+		if (!empty(array_intersect_key($value, $this->_default()))) {
+			$value = array_merge($this->_default(), $value);
 		}
 
 		$allowedLinkTypes = array_column($this->getAllowedLinkTypes(), 'value');
@@ -159,9 +164,12 @@ class Link extends Field
 		if ($value->linkType == 'asset' && empty($value->asset)) {
 			$this->addError('asset', $this->_getErrors('asset'));
 		}
-		// if ($value->linkType == 'url' && empty($value->url)) {
-		// 	$this->addError('url', $this->_getErrors('url'));
-		// }
+		if ($value->linkType == 'url' && $this->urlNotOptional && empty($value->url)) {
+			$this->addError('url', $this->_getErrors('url'));
+		}
+		if ($value->linkType == 'youtube' && empty($value->youtube)) {
+			$this->addError('youtube', $this->_getErrors('youtube'));
+		}
 		if ($value->linkType == 'email' && empty($value->email)) {
 			$this->addError('email', $this->_getErrors('email'));
 		}
@@ -205,7 +213,7 @@ class Link extends Field
 			'text' => Craft::t('contentreactor-core', 'The link text field can\'t be empty.'),
 			'entry' => Craft::t('contentreactor-core', 'Entry can\'t be empty if the link type is Entry.'),
 			'asset' => Craft::t('contentreactor-core', 'Asset can\'t be empty if the link type is Asset.'),
-			'url' => Craft::t('contentreactor-core', 'Url can\'t be empty if the Url content\'s are mandatory.'),
+			'url' => Craft::t('contentreactor-core', 'URL can\'t be empty if the URL content is mandatory.'),
 			'youtube' => Craft::t('contentreactor-core', 'Video ID can\'t be empty if the link type is YouTube.'),
 			'email' => Craft::t('contentreactor-core', 'Email can\'t be empty if the link type is Email.'),
 			'phone' => Craft::t('contentreactor-core', 'Phone can\'t be empty if the link type is Phone.'),
@@ -226,6 +234,7 @@ class Link extends Field
 			'entry' => null,
 			'asset' => null,
 			'url' => '',
+			'youtube' => '',
 			'phone' => '',
 			'email' => '',
 		];

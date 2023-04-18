@@ -11,6 +11,16 @@ coverage:
   enabled: true
   include:
     - src/*
+  exclude:
+    - src/etc/*
+    - src/migrations/*
+    - src/templates/*
+    - src/translations/*
+    - src/web/assets/*
+    - docs/*
+    - templates/*
+    - tests/*
+    - vendor/*
 settings:
 params:
   - tests/.env
@@ -28,3 +38,4 @@ modules:
       cleanup: true
       transaction: true
       dbSetup: {clean: false, setupCraft: false}
+      fullMock: false
