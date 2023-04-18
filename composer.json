@@ -2,7 +2,7 @@
 	"name": "contentreactor/core",
 	"description": "ContentReactor Template plugin for site.",
 	"type": "craft-plugin",
-	"version": "2.6.0",
+	"version": "2.7.0",
 	"license": "MIT",
 	"keywords": [
 		"craft",
@@ -45,6 +45,7 @@
 	"scripts": {
 		"check-cs": "ecs check --ansi",
 		"fix-cs": "ecs check --ansi --fix",
+		"tests": "codecept run unit",
 		"phpstan": "phpstan --memory-limit=1G"
 	},
 	"extra": {

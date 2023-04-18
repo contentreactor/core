@@ -17,6 +17,7 @@ class LinkField extends Model
 	public ?int $entry;
 	public ?int $asset;
 	public ?string $url;
+	public ?string $youtube;
 	public ?string $phone;
 	public ?string $email;
 
@@ -30,6 +31,7 @@ class LinkField extends Model
 			'phone' => "tel:{$this->phone}",
 			'email' => "mailto:{$this->email}",
 			'url' => $this->url,
+			'youtube' => "https://www.youtube.com/watch?v={$this->youtube}",
 			default => '',
 		};
 

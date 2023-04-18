@@ -10,6 +10,15 @@
 		on: field.textNotOptional,
 		first: true,
 	}) }}
+	{{ forms.lightswitchField({
+		label: field.getAttributeLabel('urlNotOptional'),
+		instructions: field.getAttributeHint('urlNotOptional'),
+		attribute: 'urlNotOptional',
+		id: 'urlNotOptional',
+		name: 'urlNotOptional',
+		on: field.urlNotOptional,
+		first: true,
+	}) }}
 	{{ forms.checkboxSelectField({
 		label: field.getAttributeLabel('allowedLinkTypes'),
 		instructions: field.getAttributeHint('allowedLinkTypes'),

@@ -46,4 +46,14 @@ class LinkFieldTest extends Unit
 			array_column($field->getAvailableLinkTypes(), 'value'),
 		);
 	}
+
+	public function testYoutubeOptionReturnsValidLink(): void
+	{
+		/** @var LinkField */
+		$field = Craft::$app->getFields()->getFieldByHandle('linkField');
+		$this->assertStringContainsString(
+			'https://www.youtube.com/watch?v=',
+			$field->normalizeValue(['linkType' => 'youtube'])->getUrl()
+		);
+	}
 }
