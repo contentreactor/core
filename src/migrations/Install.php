@@ -23,15 +23,17 @@ class Install extends Migration
 
 	public function createTables(): void
 	{
-		$this->createTable(self::PLUGINS, [
-			'plugin' => $this->string()->notNull(),
-			'siteId' => $this->integer()->notNull(),
-			'key' => $this->string()->notNull(),
-			'value' => $this->text()->notNull(),
-			'dateCreated' => $this->dateTime()->notNull(),
-			'dateUpdated' => $this->dateTime()->notNull(),
-			'uid' => $this->uid(),
-		]);
+		if (!$this->db->tableExists(self::PLUGINS)) {
+			$this->createTable(self::PLUGINS, [
+				'plugin' => $this->string()->notNull(),
+				'siteId' => $this->integer()->notNull(),
+				'key' => $this->string()->notNull(),
+				'value' => $this->text()->notNull(),
+				'dateCreated' => $this->dateTime()->notNull(),
+				'dateUpdated' => $this->dateTime()->notNull(),
+				'uid' => $this->uid(),
+			]);
+		}
 	}
 
 	public function addIndexes(): void
