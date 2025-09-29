@@ -1,8 +1,7 @@
 {
 	"name": "contentreactor/core",
 	"description": "ContentReactor Template plugin for site.",
-	"type": "craft-plugin",
-	"version": "2.7.1",
+	"type": "library",
 	"license": "MIT",
 	"keywords": [
 		"craft",
@@ -24,41 +23,36 @@
 	"minimum-stability": "dev",
 	"prefer-stable": true,
 	"require": {
-		"php": "^8.0",
-		"craftcms/cms": "^4.0",
-		"symfony/var-dumper": "*"
+		"php": "^8.2",
+		"craftcms/cms": "^5"
 	},
 	"require-dev": {
-		"codeception/codeception": "^5.0",
-		"codeception/module-asserts": "*",
-		"codeception/module-phpbrowser": "*",
-		"codeception/module-yii2": "^1.1",
-		"craftcms/ecs": "dev-main",
-		"craftcms/phpstan": "dev-main",
-		"vlucas/phpdotenv": "^5.4.0"
+		"developion/coding-standards": "^1.1",
+		"fakerphp/faker": "^1.23",
+		"friendsofphp/php-cs-fixer": "^3.54",
+		"marcusgaius/phpstan": "^1.0",
+		"markhuot/craft-pest": "^2.0",
+		"nystudio107/craft-autocomplete": "^1.12",
+		"markhuot/craft-pest-core": "^2.0",
+		"pestphp/pest": "^3.8"
 	},
 	"autoload": {
 		"psr-4": {
-			"ContentReactor\\Core\\": "src/"
+			"ContentReactor\\Core\\": "src/",
+			"Tests\\": "tests/"
 		}
 	},
 	"scripts": {
-		"check-cs": "ecs check --ansi",
-		"fix-cs": "ecs check --ansi --fix",
-		"tests": "codecept run unit",
-		"phpstan": "phpstan --memory-limit=1G"
-	},
-	"extra": {
-		"name": "ContentReactor Core",
-		"handle": "contentreactor-core",
-		"developer": "ContentReactor",
-		"developerUrl": "https://www.contentreactor.com/",
-		"class": "ContentReactor\\Core\\Core"
+		"phpstan": "phpstan --memory-limit=2G",
+		"check-cs": "php-cs-fixer check --diff --ansi --using-cache=no",
+		"fix-cs": "php-cs-fixer fix --diff --ansi --using-cache=no",
+		"pest": "pest"
 	},
 	"config": {
 		"allow-plugins": {
+			"craftcms/plugin-installer": true,
 			"yiisoft/yii2-composer": true,
-			"craftcms/plugin-installer": true
+			"pestphp/pest-plugin": true
 		}
 	}
 }

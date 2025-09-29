@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace ContentReactor\Core\events;
+namespace ContentReactor\Core\Events;
 
 use ContentReactor\Core\Base\CacheClearInterface;
 use yii\base\Event;
@@ -10,7 +11,8 @@ use yii\base\Event;
  */
 class CacheClearEvent extends Event
 {
-	const EVENT_BEFORE_CACHE_CLEAR = 'beforeClearCache';
+	public const EVENT_BEFORE_CACHE_CLEAR = 'beforeClearCache';
 
-	public $cacheClearers = [];
+	/** @var CacheClearInterface[] */
+	public array $cacheClearers = [];
 }

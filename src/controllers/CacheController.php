@@ -1,13 +1,14 @@
 <?php
+declare(strict_types=1);
 
 namespace ContentReactor\Core\controllers;
 
-use ContentReactor\Core\events\CacheClearEvent;
+use ContentReactor\Core\Base\CacheClearInterface;
+use ContentReactor\Core\Events\CacheClearEvent;
 use Craft;
-use craft\web\Controller;
 use craft\helpers\FileHelper;
 use craft\utilities\ClearCaches;
-use ContentReactor\Core\Base\CacheClearInterface;
+use craft\web\Controller;
 use InvalidArgumentException;
 use Throwable;
 use yii\base\Event;
@@ -75,7 +76,7 @@ class CacheController extends Controller
 		TagDependency::invalidate($cache, 'template');
 
 		return $this->asJson([
-			'status' => 'success'
+			'status' => 'success',
 		]);
 	}
 }

@@ -1,22 +1,29 @@
 <?php
+declare(strict_types=1);
 
 namespace ContentReactor\Core\web\twig;
 
-use ContentReactor\Core\events\TextContentEvent;
+use ContentReactor\Core\Events\TextContentEvent;
+use ContentReactor\Core\web\twig\node\expression\ConstOperator;
 use Craft;
 use craft\elements\Entry;
-use craft\helpers\UrlHelper;
-use ContentReactor\Core\web\twig\node\expression\ConstOperator;
-use craft\helpers\StringHelper;
+use craft\helpers\{
+	StringHelper,
+	UrlHelper,
+};
 use GuzzleHttp\Client;
 use Illuminate\Support\Collection;
 use Symfony\Component\VarDumper\VarDumper;
-use Twig\ExpressionParser;
-use Twig\Extension\AbstractExtension;
-use Twig\Extension\GlobalsInterface;
-use Twig\TwigFilter;
-use Twig\TwigFunction;
-use Twig\TwigTest;
+use Twig\{
+	ExpressionParser,
+	TwigFilter,
+	TwigFunction,
+	TwigTest,
+};
+use Twig\Extension\{
+	AbstractExtension,
+	GlobalsInterface,
+};
 use yii\base\Event;
 
 class Extension extends AbstractExtension implements GlobalsInterface
@@ -63,9 +70,9 @@ class Extension extends AbstractExtension implements GlobalsInterface
 				'::' => [
 					'precedence' => 500,
 					'class' => ConstOperator::class,
-					'associativity' => ExpressionParser::OPERATOR_LEFT
-				]
-			]
+					'associativity' => ExpressionParser::OPERATOR_LEFT,
+				],
+			],
 		];
 	}
 
@@ -92,8 +99,8 @@ class Extension extends AbstractExtension implements GlobalsInterface
 			'options' => [
 				'headers' => [
 					'Content-Type' => 'application/json',
-					'Accept' => 'application/json'
-				]
+					'Accept' => 'application/json',
+				],
 			],
 		], $config);
 		$method = 'GET';
@@ -102,7 +109,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
 
 		$client = new Client([
 			'base_uri' => $baseUrl,
-			'timeout' => 10
+			'timeout' => 10,
 		]);
 
 		try {

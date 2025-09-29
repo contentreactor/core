@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace ContentReactor\Core\web\assets\front;
 
@@ -13,14 +14,14 @@ class Core extends AssetBundle
 		$this->depends = [];
 
 		$this->js = [
-			'app.js'
+			'app.js',
 		];
 
 		$this->css = [
 			[
 				'app.css',
 				'as' => 'style',
-				'rel' => 'stylesheet preload'
+				'rel' => 'stylesheet preload',
 			],
 		];
 

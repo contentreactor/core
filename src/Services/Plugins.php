@@ -1,19 +1,22 @@
 <?php
+declare(strict_types=1);
 
 namespace ContentReactor\Core\Services;
 
-use Craft;
-use craft\base\Model;
-use craft\base\PluginInterface;
-use craft\events\PluginEvent;
 use ContentReactor\Core\Core;
+use Craft;
+use craft\base\{
+	Model,
+	PluginInterface,
+};
+use craft\events\PluginEvent;
 use yii\base\Component;
 
 class Plugins extends Component
 {
-	const EVENT_BEFORE_SAVE_PLUGIN_SETTINGS = 'beforeSavePluginSettings';
+	public const EVENT_BEFORE_SAVE_PLUGIN_SETTINGS = 'beforeSavePluginSettings';
 
-	const EVENT_AFTER_SAVE_PLUGIN_SETTINGS = 'afterSavePluginSettings';
+	public const EVENT_AFTER_SAVE_PLUGIN_SETTINGS = 'afterSavePluginSettings';
 
 	public function savePluginSettings(PluginInterface $plugin, array $settings): bool
 	{

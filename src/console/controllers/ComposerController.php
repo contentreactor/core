@@ -1,11 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace ContentReactor\Core\console\controllers;
 
-use Craft;
-use craft\base\Plugin as CraftPlugin;
-use craft\console\Controller;
 use ContentReactor\Core\Core;
+use Craft;
+use craft\console\Controller;
 use yii\console\ExitCode;
 
 class ComposerController extends Controller

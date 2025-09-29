@@ -1,14 +1,19 @@
 <?php
+declare(strict_types=1);
 
 namespace ContentReactor\Core\controllers;
 
+use ContentReactor\Core\Core;
 use Craft;
 use craft\base\Model;
-use craft\helpers\ArrayHelper;
-use craft\helpers\UrlHelper;
-use craft\web\Controller;
-use craft\web\Response;
-use ContentReactor\Core\Core;
+use craft\helpers\{
+	ArrayHelper,
+	UrlHelper,
+};
+use craft\web\{
+	Controller,
+	Response,
+};
 use yii\web\NotFoundHttpException;
 
 class SettingsController extends Controller
@@ -30,7 +35,7 @@ class SettingsController extends Controller
 		);
 		$crumbs = [
 			['label' => Craft::t('app', 'Settings'), 'url' => UrlHelper::cpUrl('settings')],
-			['label' => 'ContentReactor', 'url' => UrlHelper::cpUrl('contentreactor-core/settings')]
+			['label' => 'ContentReactor', 'url' => UrlHelper::cpUrl('contentreactor-core/settings')],
 		];
 
 		if (empty($contentreactorPlugins)) {

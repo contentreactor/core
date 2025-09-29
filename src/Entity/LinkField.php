@@ -1,13 +1,15 @@
 <?php
+declare(strict_types=1);
 
 namespace ContentReactor\Core\Entity;
 
-use ContentReactor\Core\events\LinkAttributesEvent;
-use craft\elements\Asset;
-use craft\elements\Entry;
-use Spatie\DataTransferObject\DataTransferObject;
-use yii\base\Event;
+use ContentReactor\Core\Events\LinkAttributesEvent;
 use craft\base\Model;
+use craft\elements\{
+	Asset,
+	Entry,
+};
+use yii\base\Event;
 
 class LinkField extends Model
 {

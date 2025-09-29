@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace ContentReactor\Core\events;
+namespace ContentReactor\Core\Events;
 
 use yii\base\Event;
 
@@ -9,7 +10,7 @@ use yii\base\Event;
  */
 class TextContentEvent extends Event
 {
-	const EVENT_FILTER_TEXT_BLOCKS = 'filterTextBlocksEvent';
+	public const EVENT_FILTER_TEXT_BLOCKS = 'filterTextBlocksEvent';
 
 	public array $textBlocks = [];
 }

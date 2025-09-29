@@ -1,13 +1,14 @@
 <?php
+declare(strict_types=1);
 
 namespace ContentReactor\Core\Services;
 
+use ContentReactor\Core\Records\Setting;
 use Craft;
 use craft\base\PluginInterface;
 use craft\elements\Entry;
 use craft\helpers\ArrayHelper;
 use craft\web\UrlManager;
-use ContentReactor\Core\Records\Setting;
 
 class DB
 {
@@ -62,13 +63,13 @@ class DB
 				$setting = Setting::findOne([
 					'plugin' => $plugin->id,
 					'siteId' => $currentSite->id,
-					'key' => $plugin->id . '_' . $settingKey
+					'key' => $plugin->id . '_' . $settingKey,
 				]);
 				if (!$setting) {
 					$setting = new Setting([
 						'plugin' => $plugin->id,
 						'siteId' => $currentSite->id,
-						'key' => $plugin->id . '_' . $settingKey
+						'key' => $plugin->id . '_' . $settingKey,
 					]);
 				}
 				if (gettype($plugin->getSettings()->$settingKey) == 'array' && empty($settingValue)) {
@@ -123,13 +124,13 @@ class DB
 			$setting = Setting::findOne([
 				'plugin' => $plugin->id,
 				'siteId' => $currentSite->id,
-				'key' => $plugin->id . '_' . $key
+				'key' => $plugin->id . '_' . $key,
 			]);
 			if (!$setting) {
 				$setting = new Setting([
 					'plugin' => $plugin->id,
 					'siteId' => $currentSite->id,
-					'key' => $plugin->id . '_' . $key
+					'key' => $plugin->id . '_' . $key,
 				]);
 			}
 			if (gettype($plugin->getSettings()->$key) == 'array' && empty($value)) {
@@ -160,7 +161,7 @@ class DB
 		$sql = $connection->prepare($query);
 		$sql->execute([
 			'type' => $entryType,
-			'section' => $section
+			'section' => $section,
 		]);
 		$result = $sql->fetch($connection::FETCH_NUM);
 		static::$slugs[$section][$entryType] = $result ? reset($result) : '';

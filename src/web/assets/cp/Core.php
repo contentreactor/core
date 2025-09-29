@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace ContentReactor\Core\web\assets\cp;
 
@@ -15,18 +16,17 @@ class Core extends AssetBundle
 
 		$this->sourcePath = __DIR__ . "/dist";
 
-
 		$this->depends = [
 			VerbbCpAsset::class,
 			CpAsset::class,
 		];
 
 		$this->js = [
-			'cp.js'
+			'cp.js',
 		];
 
 		$this->css = [
-			'cp.css'
+			'cp.css',
 		];
 
 		parent::init();

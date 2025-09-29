@@ -1,11 +1,14 @@
 <?php
+declare(strict_types=1);
 
 namespace ContentReactor\Core\web\twig\node\expression;
 
 use Exception;
 use Twig\Compiler;
-use Twig\Node\Expression\AbstractExpression;
-use Twig\Node\Expression\NameExpression;
+use Twig\Node\Expression\{
+	AbstractExpression,
+	NameExpression,
+};
 use Twig\Node\Node;
 
 class ConstOperator extends AbstractExpression
@@ -14,7 +17,7 @@ class ConstOperator extends AbstractExpression
 	{
 		parent::__construct([
 			'left' => $left,
-			'right' => $right
+			'right' => $right,
 		], array(), $lineno);
 	}
 

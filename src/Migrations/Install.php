@@ -1,22 +1,25 @@
 <?php
+declare(strict_types=1);
 
-namespace ContentReactor\Core\migrations;
+namespace ContentReactor\Core\Migrations;
 
-use craft\db\Migration;
-use craft\db\Table;
+use craft\db\{
+	Migration,
+	Table,
+};
 
 class Install extends Migration
 {
-	const PLUGINS = '{{%contentreactor_plugins}}';
+	public const PLUGINS = '{{%contentreactor_plugins}}';
 
-	public function safeUp()
+	public function safeUp(): void
 	{
 		$this->createTables();
 		$this->addIndexes();
 		$this->addForeignKeys();
 	}
 
-	public function safeDown()
+	public function safeDown(): void
 	{
 		$this->dropTables();
 	}

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 return [
 	'2-Column Rich Text with Icons' => '2-spaltiger Rich Text mit Icons',

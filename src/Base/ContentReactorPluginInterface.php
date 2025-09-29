@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace ContentReactor\Core\Base;
 
-interface CacheClearInterface
+interface ContentReactorPluginInterface
 {
-	public function clear(): void;
 }

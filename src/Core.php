@@ -1,30 +1,31 @@
 <?php
+declare(strict_types=1);
 
 namespace ContentReactor\Core;
 
-use Craft;
-use craft\base\Plugin;
-use craft\events\PluginEvent;
-use craft\events\RegisterComponentTypesEvent;
-use craft\events\RegisterTemplateRootsEvent;
-use craft\events\RegisterUrlRulesEvent;
-use craft\helpers\ArrayHelper;
-use craft\helpers\UrlHelper;
-use craft\i18n\PhpMessageSource;
-use craft\services\Fields as FieldsService;
-use craft\services\Plugins as CraftPlugins;
-use craft\web\UrlManager;
-use craft\web\View;
-use ContentReactor\Core\fields\Button as ButtonField;
-use ContentReactor\Core\fields\Link as LinkField;
 use ContentReactor\Core\Models\Settings;
 use ContentReactor\Core\Records\Setting;
-use ContentReactor\Core\Services\DB;
-use ContentReactor\Core\Services\Plugins;
+use ContentReactor\Core\Services\{
+	DB,
+	Plugins,};
 use ContentReactor\Core\web\twig\Extension;
 use ContentReactor\Core\web\twig\variables\ContentReactor as CRVariable;
+use Craft;
+use craft\base\Plugin;
+use craft\events\{
+	PluginEvent,
+	RegisterTemplateRootsEvent,
+	RegisterUrlRulesEvent,};
+use craft\helpers\{
+	ArrayHelper,
+	UrlHelper,};
+use craft\i18n\PhpMessageSource;
+use craft\services\Plugins as CraftPlugins;
+use craft\web\{
+	Response,
+	UrlManager,
+	View,};
 use craft\web\twig\variables\CraftVariable;
-use Illuminate\Support\Collection;
 use yii\base\Event;
 
 /**
@@ -38,8 +39,6 @@ use yii\base\Event;
  */
 class Core extends Plugin
 {
-	public static Core $plugin;
-
 	public bool $hasCpSettings = true;
 
 	public string $schemaVersion = '1.0.0';
@@ -47,7 +46,6 @@ class Core extends Plugin
 	public function init(): void
 	{
 		parent::init();
-		self::$plugin = $this;
 		$this->name = 'Core';
 		Craft::setAlias('@core', __DIR__);
 
@@ -57,9 +55,6 @@ class Core extends Plugin
 		}
 
 		$this->_config();
-		$this->_events();
-		$this->_twigExtensions();
-		$this->_environment();
 	}
 
 	protected function _config(): void
@@ -71,7 +66,6 @@ class Core extends Plugin
 			'forceTranslation' => true,
 			'allowOverrides' => true,
 		];
-		// dd(Craft::$app->getI18n());
 		$this->setComponents([
 			'db' => DB::class,
 			'plugins' => Plugins::class,
@@ -101,8 +95,8 @@ class Core extends Plugin
 			UrlManager::class,
 			UrlManager::EVENT_REGISTER_CP_URL_RULES,
 			function (RegisterUrlRulesEvent $event) {
-				$event->rules["{$this->id}/settings/save"] = "{$this->id}/settings/save";
-				$event->rules["{$this->id}/settings"] = "{$this->id}/settings";
+				$event->rules["$this->id/settings/save"] = "$this->id/settings/save";
+				$event->rules["$this->id/settings"] = "$this->id/settings";
 			}
 		);
 
@@ -110,7 +104,7 @@ class Core extends Plugin
 			UrlManager::class,
 			UrlManager::EVENT_REGISTER_SITE_URL_RULES,
 			function (RegisterUrlRulesEvent $event) {
-				$event->rules['POST cache/clear'] = "{$this->id}/cache";
+				$event->rules['POST cache/clear'] = "$this->id/cache";
 			}
 		);
 
@@ -135,7 +129,12 @@ class Core extends Plugin
 			function (PluginEvent $event) {
 				if (stripos($event->plugin->getHandle(), 'contentreactor') === false) return;
 				$currentSite = Craft::$app->getSites()->getCurrentSite();
-				$path = Craft::$app->getPath()->getStoragePath() . "/{$event->plugin->getHandle()}-site-{$currentSite->id}.php";
+				$path = sprintf(
+					'%s/%s-site-%s.php',
+					Craft::$app->getPath()->getStoragePath(),
+					$event->plugin->getHandle(),
+					$currentSite->id,
+				);
 				if (!file_exists($path)) {
 					file_put_contents($path, "<?php\n\nreturn [];\n");
 				}
@@ -149,61 +148,30 @@ class Core extends Plugin
 				if (stripos($event->plugin->getHandle(), 'contentreactor') === false) return;
 				$currentSite = Craft::$app->getSites()->getCurrentSite();
 				$prefix = $event->plugin->id . '_';
-				$path = Craft::$app->getPath()->getStoragePath() . "/{$event->plugin->getHandle()}-site-{$currentSite->id}.php";
+				$path = sprintf(
+					'%s/%s-site-%s.php',
+					Craft::$app->getPath()->getStoragePath(),
+					$event->plugin->getHandle(),
+					$currentSite->id,
+				);
 				$settings = $this->db->getPluginSettingsRaw($event->plugin);
 				$settings = ArrayHelper::map(
 					$settings,
-					fn (Setting $setting) => substr($setting->key, strlen($prefix)),
-					fn (Setting $setting) => unserialize($setting->value)
+					fn(Setting $setting) => substr($setting->key, strlen($prefix)),
+					fn(Setting $setting) => unserialize($setting->value)
 				);
 				file_put_contents($path, "<?php\n\nreturn " . var_export($settings, true) . ";\n");
 			}
 		);
-
-		Event::on(
-			FieldsService::class,
-			FieldsService::EVENT_REGISTER_FIELD_TYPES,
-			static function (RegisterComponentTypesEvent $event) {
-				$event->types[] = ButtonField::class;
-				$event->types[] = LinkField::class;
-			}
-		);
 	}
 
-	protected function _consoleEvents(): void
+	public function getSettingsResponse(): Response
 	{
-	}
-
-	protected function _twigExtensions(): void
-	{
-		Craft::$app->getView()->registerTwigExtension(new Extension);
+		return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl("$this->id/settings"));
 	}
 
 	protected function createSettingsModel(): Settings
 	{
 		return new Settings();
-	}
-
-	public function getSettingsResponse(): mixed
-	{
-		return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl("{$this->id}/settings"));
-	}
-
-	private function _environment(): void
-	{
-		if (version_compare(Craft::$app->getVersion(), '4.1.0', '<')) {
-			Collection::macro('one', function () {
-				return $this->first(...func_get_args());
-			});
-		}
-
-		Collection::macro('filterMap', function (bool $condition, ?callable $callback) {
-			$return = [];
-			foreach ($this as $key => $value) {
-				if (!$condition) continue;
-				$return[$key] = $value;
-			}
-			return $return;
-		});
 	}
 }

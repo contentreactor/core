@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace ContentReactor\Core\events;
+namespace ContentReactor\Core\Events;
 
 use ContentReactor\Core\Entity\LinkField;
 use craft\base\Model;
@@ -12,7 +13,7 @@ use yii\base\Event;
  */
 class LinkTabsEvent extends Event
 {
-	const EVENT_LINK_TABS = 'linkTabsEvents';
+	public const EVENT_LINK_TABS = 'linkTabsEvents';
 
 	public LinkField $linkField;
 
