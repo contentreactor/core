@@ -6,11 +6,12 @@ namespace ContentReactor\Core\Helpers;
 use ContentReactor\Core\Base\ConfiglessSettingsContract;
 use ContentReactor\Core\Records\Setting;
 use Craft;
+use craft\base\Model;
 use craft\base\Plugin;
 
 class PluginHelper
 {
-	public static function saveSettings(Plugin $plugin, ConfiglessSettingsContract $settings): bool
+	public static function saveSettings(Plugin $plugin, ConfiglessSettingsContract&Model $settings): bool
 	{
 		$siteId = Craft::$app->getSites()->getCurrentSite()->id;
 		$oldSettings = clone $settings;
@@ -41,7 +42,7 @@ class PluginHelper
 		return true;
 	}
 
-	public static function loadSettings(Plugin $plugin, ConfiglessSettingsContract $settings): void
+	public static function loadSettings(Plugin $plugin, ConfiglessSettingsContract&Model $settings): void
 	{
 		$settingRecord = Setting::find()
 			->where([
@@ -49,6 +50,9 @@ class PluginHelper
 				'key' => $settings::class,
 			])
 			->one();
+
+		if (!$settingRecord) return;
+
 		$setting = json_decode($settingRecord->value, true);
 		$settings->load($setting, '');
 	}
