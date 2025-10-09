@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace ContentReactor\Core\web\twig;
+namespace ContentReactor\Core\Web\Twig;
 
 use ContentReactor\Core\Events\TextContentEvent;
-use ContentReactor\Core\web\twig\node\expression\ConstOperator;
+use ContentReactor\Core\Web\Twig\Node\Expression\ConstOperator;
 use Craft;
 use craft\elements\Entry;
 use craft\helpers\{

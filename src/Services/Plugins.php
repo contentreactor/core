@@ -59,7 +59,7 @@ class Plugins extends Component
 		}
 
 		$settings = $plugin->getSettings();
-		$values = Core::getInstance()->db->getPluginSettings($plugin);
+		$values = Craft::$app->get(Core::ID)->db->getPluginSettings($plugin);
 		$settings->setAttributes($values, false);
 
 		return $settings;

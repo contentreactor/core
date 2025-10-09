@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace ContentReactor\Core\web\assets\front;
+namespace ContentReactor\Core\Web\Assets\Front;
 
 use craft\web\AssetBundle;
 

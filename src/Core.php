@@ -7,26 +7,30 @@ use ContentReactor\Core\Models\Settings;
 use ContentReactor\Core\Records\Setting;
 use ContentReactor\Core\Services\{
 	DB,
-	Plugins,};
-use ContentReactor\Core\web\twig\Extension;
-use ContentReactor\Core\web\twig\variables\ContentReactor as CRVariable;
+	Plugins,
+};
+use ContentReactor\Core\Web\Twig\Extension;
+use ContentReactor\Core\Web\Twig\Variables\ContentReactor as CRVariable;
 use Craft;
-use craft\base\Plugin;
 use craft\events\{
 	PluginEvent,
 	RegisterTemplateRootsEvent,
-	RegisterUrlRulesEvent,};
+	RegisterUrlRulesEvent,
+};
 use craft\helpers\{
 	ArrayHelper,
-	UrlHelper,};
+	UrlHelper,
+};
 use craft\i18n\PhpMessageSource;
 use craft\services\Plugins as CraftPlugins;
 use craft\web\{
 	Response,
 	UrlManager,
-	View,};
+	View,
+};
 use craft\web\twig\variables\CraftVariable;
 use yii\base\Event;
+use yii\base\Module;
 
 /**
  * Class Core
@@ -37,16 +41,14 @@ use yii\base\Event;
  * @property Plugins $plugins
  * @property DB $db
  */
-class Core extends Plugin
+class Core extends Module
 {
-	public bool $hasCpSettings = true;
-
-	public string $schemaVersion = '1.0.0';
+	public const ID = 'Core';
 
 	public function init(): void
 	{
 		parent::init();
-		$this->name = 'Core';
+		$this->id = self::ID;
 		Craft::setAlias('@core', __DIR__);
 
 		$request = Craft::$app->getRequest();
@@ -79,6 +81,11 @@ class Core extends Plugin
 				$variable->set('cr', CRVariable::class);
 			}
 		);
+	}
+
+	public function getSettingsResponse(): Response
+	{
+		return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl("$this->id/settings"));
 	}
 
 	protected function _events(): void
@@ -163,11 +170,6 @@ class Core extends Plugin
 				file_put_contents($path, "<?php\n\nreturn " . var_export($settings, true) . ";\n");
 			}
 		);
-	}
-
-	public function getSettingsResponse(): Response
-	{
-		return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl("$this->id/settings"));
 	}
 
 	protected function createSettingsModel(): Settings

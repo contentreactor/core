@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace ContentReactor\Core\web\twig\node\expression;
+namespace ContentReactor\Core\Web\Twig\Node\Expression;
 
 use Exception;
 use Twig\Compiler;

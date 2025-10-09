@@ -3,6 +3,7 @@ declare (strict_types=1);
 
 namespace ContentReactor\Core\Base;
 
+use ContentReactor\Core\Web\Twig\Extension;
 use Craft;
 use craft\base\Plugin;
 use craft\db\MigrationManager;
@@ -18,7 +19,7 @@ abstract class ContentReactorPlugin extends Plugin implements ContentReactorPlug
 	{
 		parent::init();
 
-		$this->registerNamespaces();
+		// $this->registerNamespaces();
 		$this->registerExtensions();
 	}
 
@@ -41,11 +42,11 @@ abstract class ContentReactorPlugin extends Plugin implements ContentReactorPlug
 
 	final protected function registerExtensions(): void
 	{
+		Craft::$app->getView()->registerTwigExtension(new Extension);
 		if (empty($this->extensions)) return;
 
 		foreach ($this->extensions as $extensionClass) {
-			if (!is_a($extensionClass, AbstractExtension::class)) continue;
-			Craft::$app->getView()->registerTwigExtension($extensionClass);
+			Craft::$app->getView()->registerTwigExtension(new $extensionClass);
 		}
 	}
 }

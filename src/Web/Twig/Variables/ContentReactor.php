@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace ContentReactor\Core\web\twig\variables;
+namespace ContentReactor\Core\Web\Twig\Variables;
 
 use craft\helpers\UrlHelper;
 
