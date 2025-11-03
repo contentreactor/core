@@ -57,7 +57,7 @@ class Core extends Module
 		Craft::$app->getI18n()->translations['site'] = [
 			'class' => PhpMessageSource::class,
 			'sourceLanguage' => 'en',
-			'basePath' => '@core/translations',
+			'basePath' => '@core/Translations',
 			'forceTranslation' => true,
 			'allowOverrides' => true,
 		];
