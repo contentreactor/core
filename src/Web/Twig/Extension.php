@@ -48,7 +48,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
 			new TwigFilter('first', [$this, 'firstFilter']),
 			new TwigFilter('mapNeo', [$this, 'mapNeoFilter']),
 			new TwigFilter('readTime', [$this, 'readTimeFilter']),
-			new TwigFilter('slugify', [$this, 'slugifyFilter']),
+			new TwigFilter('slugify', StringHelper::slugify(...)),
 			new TwigFilter('splice', [$this, 'spliceFilter']),
 			new TwigFilter('uncamel', [$this, 'uncamelFilter']),
 
@@ -176,11 +176,6 @@ class Extension extends AbstractExtension implements GlobalsInterface
 		$est = round($word / 200);
 		$readingTime = Craft::t('contentreactor-core', 'minutes of reading time');
 		return $est . ($onlyNumber ? "" : " $readingTime");
-	}
-
-	public function slugifyFilter(string $str): string
-	{
-		return StringHelper::slugify($str);
 	}
 
 	public function spliceFilter(array $array, int $offset, ?int $length = null, array $replacement = []): array
